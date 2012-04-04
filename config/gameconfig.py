@@ -84,6 +84,3 @@ class Config():
         except:
             print "Configuration Error: Failure loading configuration file."
             sys.exit(1)
-            
-        print "CFG File: " + str(config.getint("ArenaMUD2", "LogLevel"))
-        print "CFG Console: " + str(config.getint("ArenaMUD2", "ConsoleLogLevel"))
