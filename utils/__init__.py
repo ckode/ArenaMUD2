@@ -14,27 +14,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from twisted.conch.telnet import StatefulTelnetProtocol
-     
-
-#===========================================
-# Player class. 
-#
-# All players are of this type
-#===========================================
-class Player(StatefulTelnetProtocol):
-    """
-    Player character class. Sub-class of Character. Each user is defined by Player.
-    """
-    
-    def __init__(self):
-        """
-        Initialize the Player class object
-        """
-        self.name = "David"
-        
-    def __repr__(self):
-        """
-        Player __call__ method
-        """
-        return self.name
+"""
+Utilities ArenaMUD module
+"""

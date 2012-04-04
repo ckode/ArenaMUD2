@@ -1,5 +1,5 @@
 #  ArenaMUD2 - A multiplayer combat game - http://arenamud.david-c-brown.com
-#  Copyright (C) 2009, 2010 - David C Brown & Mark Richardson
+#  Copyright (C) 2012 - David C Brown & Mark Richardson
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ConfigParser import ConfigParser 
+import sys
 
 
 
@@ -66,19 +67,23 @@ class Config():
             config.readfp(open(cfg))
         except IOError as (errno, strerror):
             print "I/O error opening {0}: {1}".format(cfg, strerror) 
-            UnrecoverableError()
+            sys.exit(1)
         except:
-            UnrecoverableError()
-            raise        
+            print "Configuration Error: Failure loading configuration file."
+            sys.exit(1)            
         
         try:
-            self.name          = config.get("ArenaMUD2", "ServerName")
-            self.port          = config.getint("ArenaMUD2", "ServerPort")
-            self.datadir       = "data/"      #config.get("ArenaMUD2", "DataDirectory")
-            self.mapsdir       = "maps/"      #config.get("ArenaMUD2", "MapsDirectory")
-            self.maps          = config.get("ArenaMUD2", "MapList").split()
-            self.logFile       = config.get("ArenaMUD2", "LogFile")         
-            self.logLevel      = config.getint("ArenaMUD2", "LogLevel")
+            self.name               = config.get("ArenaMUD2", "ServerName")
+            self.port               = config.getint("ArenaMUD2", "ServerPort")
+            self.datadir            = "data/"      #config.get("ArenaMUD2", "DataDirectory")
+            self.mapsdir            = "maps/"      #config.get("ArenaMUD2", "MapsDirectory")
+            self.maps               = config.get("ArenaMUD2", "MapList").split()
+            self.logFile            = config.get("ArenaMUD2", "LogFile")         
+            self.logLevel           = config.getint("ArenaMUD2", "LogLevel")
+            self.consoleLogLevel    = config.getint("ArenaMUD2", "ConsoleLogLevel")
         except:
-            print "Failure loading configuration file"
+            print "Configuration Error: Failure loading configuration file."
+            sys.exit(1)
             
+        print "CFG File: " + str(config.getint("ArenaMUD2", "LogLevel"))
+        print "CFG Console: " + str(config.getint("ArenaMUD2", "ConsoleLogLevel"))

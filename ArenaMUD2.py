@@ -1,5 +1,5 @@
 #  ArenaMUD2 - A multiplayer combat game - http://arenamud.david-c-brown.com
-#  Copyright (C) 2009, 2010 - David C Brown & Mark Richardson
+#  Copyright (C) 2012 - David C Brown & Mark Richardson
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@ from twisted.internet import reactor
 from twisted.conch.telnet import TelnetTransport
 
 # Python imports
-import logging
 
 # ArenaMUD2 imports
 from config.gameconfig import Config, GameConfig
-from logger.gamelogger import logger, console
+from logger.gamelogger import GameLogger, logger
 from character.players import Player
 
 
@@ -50,8 +49,8 @@ def startup():
     factory = SonzoFactory()
 
     factory.protocol = lambda: TelnetTransport(Player)
-    reactor.listenTCP(GameConfig.port, factory)
-    console("Starting ArenaMUD2 Version: NoDamnVersion -  A SonzoSoft Product.")
+    reactor.listenTCP(gameconfig.port, factory)
+    logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion - A SonzoSoft Product.")
     reactor.run()
 
    
@@ -61,6 +60,6 @@ def startup():
 if __name__ == '__main__':
     """If main, start main()."""
     
-    logger = logging.getLogger("ArenaMUD2")
-    GameConfig = Config()
+    gameconfig = Config()
+    logger = GameLogger(gameconfig)
     startup()
