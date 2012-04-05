@@ -14,33 +14,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from character.players import LOGIN, PLAYING, AllPlayers
+import unittest
+import amtests.testtext 
+          
 
-from logger.gamelogger import logger
-
-
-
-def askUsername(player):
-    """
-    getUsername()
-    
-    Ask user for a username.
-    """
-    
-    player.transport.write("Enter your login or type 'new': ")
-    
-    
-def getUsername(player, line):
-    """
-    getUsername()
-    
-    Check for username or new and work.
-    """
-    
-    player.name = line.capitalize()
-    AllPlayers[player.name] = player
-    logger.log.info( "{0} just logged in.".format(player) )
-    player.STATUS = PLAYING
-    
-    from commands.communicate import tellWorld
-    tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
+# utils.text tests
+suite = unittest.TestLoader().loadTestsFromTestCase(amtests.testtext.test_text)
+unittest.TextTestRunner(verbosity=2).run(suite)

@@ -1,5 +1,5 @@
 #  ArenaMUD2 - A multiplayer combat game - http://arenamud.david-c-brown.com
-#  Copyright (C) 2012 - David C Brown & Mark Richardson
+#  Copyright (C) 2009, 2010 - David C Brown & Mark Richardson
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -14,30 +14,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from character.players import AllPlayers, LOGIN
-from utils.login import getUsername
-from utils.text import cleanPlayerInput
-
-
-
-def GameParser(player, line):
-    """
-    GameParser()
-    
-    Parses information send my client and
-    makes decisions based on that information.
-    """
-    
-    line = cleanPlayerInput(line)
-    
-    # Probably make a "status" checker function to handle status not PLAYING.
-    if player.STATUS is LOGIN:
-        getUsername(player, line)
-        return
-    
-    if line <> "":
-        from commands.communicate import say
-        
-        say( player, line )
-        
-            
+"""
+ArenaMUD2 Tests Module
+"""
