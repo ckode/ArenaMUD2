@@ -15,12 +15,17 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from ConfigParser import ConfigParser 
+import logger.gamelogger
 import sys
 
 
 
-GameConfig = None
 
+
+#def setGameConfig():
+#    global GameConfig
+#    GameConfig = Config()
+    
 #==================================================
 # Class Config
 #
@@ -39,27 +44,14 @@ class Config():
         """Initializes the config object"""
         
         self.configFile          = "ArenaMUD2.cfg"
-    
-        # Logging
-        self.logFile             = ""
-        self.logLevel            = 0
+          
+        self.loadConfig(self.configFile)
         
-        # Server 
-        self.name                = ""
-        self.port                = 0
-        self.datadir             = ""
-        self.playersdb           = ""
-        self.mapsdir             = ""
-        self.maps                = []
         
-        self.loadConfig()
-        
-    def loadConfig(self):
+    def loadConfig(self, cfg):
         """
         Load configuration file from disk
         """
-
-        cfg = "ArenaMUD2.cfg"
 
         # Load the config file
         config = ConfigParser()
@@ -75,6 +67,7 @@ class Config():
         try:
             self.name               = config.get("ArenaMUD2", "ServerName")
             self.port               = config.getint("ArenaMUD2", "ServerPort")
+            self.maxplayers         = config.getint("ArenaMUD2", "MaxPlayers")
             self.datadir            = "data/"      #config.get("ArenaMUD2", "DataDirectory")
             self.mapsdir            = "maps/"      #config.get("ArenaMUD2", "MapsDirectory")
             self.maps               = config.get("ArenaMUD2", "MapList").split()
@@ -84,3 +77,9 @@ class Config():
         except:
             print "Configuration Error: Failure loading configuration file."
             sys.exit(1)
+
+
+
+# Initialize game config and game logging
+GameConfig = Config()
+logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)

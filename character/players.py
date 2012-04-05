@@ -14,8 +14,21 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+LOGIN = 0
+PLAYING = 1  
+AllPlayers = {} 
+
+# Twisted imports
 from twisted.conch.telnet import StatefulTelnetProtocol
-     
+
+# ArenaMUD2 imports
+from config.gameconfig import GameConfig
+from logger.gamelogger import logger
+from commands.parser import GameParser
+
+# Python imports
+
+
 
 #===========================================
 # Player class. 
@@ -29,12 +42,86 @@ class Player(StatefulTelnetProtocol):
     
     def __init__(self):
         """
+        Player->__init__()
+        
         Initialize the Player class object
         """
-        self.name = "David"
+        self.STATUS = LOGIN
+        self.IP = None
+        
+        self.name = "Unknown"
+        
         
     def __repr__(self):
         """
-        Player __call__ method
+        Player->__call__()
         """
         return self.name
+    
+    
+    def connectionMade(self):
+        """
+        Player->connectionMade(): Overrides Twisted's method.
+        
+        Called when someone connects to the server.
+        """
+     
+        self.IP = self.transport.getPeer().host
+        logger.log.info("{0} CONNECTED!".format(self.IP))
+        
+        # Check for max players 
+        if len(AllPlayers) >= GameConfig.maxplayers:
+            logger.log.info("To many connected.  Refusing new client: {0}".format(self.IP))
+            self.sendLine("Too many connections, try again later.")
+            self.disconnectClient()
+        
+        from utils.login import askUsername    
+        askUsername(self)    
+        
+            
+    def disconnectClient(self):
+        """
+        Player->disconnectClient()  Overrides Twisted's method.
+        
+        Disconnect a client and clean up game information.
+        """
+        
+        self.sendLine("Goodbye.")
+        
+        # Remove from AllPlayers before disconnecting
+        if AllPlayers.has_key(self.name):
+            # replace del with function to do full cleanup.
+            del AllPlayers[self.name]
+            
+        self.transport.loseConnection()
+      
+      
+    def connectionLost(self, reason):
+        """
+        Player->connectionList()  Overrides Twisted's method.
+        
+        Player lost connection.  Clean up.
+        """
+        
+        # Remove from AllPlayers before disconnecting
+        if AllPlayers.has_key(self.name):
+            logger.log.info( "{0} just hung up!!!".format(self.name) )
+            # replace del with function to do full cleanup.
+            del AllPlayers[self.name]
+        else:
+            logger.log.info( "Unknown just hung up!!!" )
+      
+    
+    def lineReceived(self, line):
+        """
+        Player->lineReceived()  Overrides Twisted's method.
+        
+        Handles lines received from the client.
+        """
+        
+        GameParser(self, line)
+        
+        
+        
+   
+    

@@ -17,7 +17,7 @@
 import logging
 
 
-logger = None
+
 
 class GameLogger:
     """
@@ -74,3 +74,7 @@ class GameLogger:
         self.logLevel = level
         self.logFile.setLevel(self.logLevel)
     
+    
+logger = None
+
+  
