@@ -14,16 +14,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-
-Base = declarative_base()
-
-
-
 
 class Room:
     """
@@ -31,25 +21,27 @@ class Room:
     """
     
     def __init__(self):
-        __tablename__ = "Rooms"
+        """
+        Initialize room object.
+        """
         
-        id          = Column(String, unique=True)
+        id          = None
                 
-        name        = Column(String(50), nullable=False)
-        nospawn     = Column(bool, nullable=False)
-        nw          = Column(Integer, nullable=True)
-        n           = Column(Integer, nullable=True)
-        ne          = Column(Integer, nullable=True)
-        e           = Column(Integer, nullable=True)
-        se          = Column(Integer, nullable=True)
-        s           = Column(Integer, nullable=True)
-        sw          = Column(Integer, nullable=True)
-        w           = Column(Integer, nullable=True)
-        u           = Column(Integer, nullable=True)
-        w           = Column(Integer, nullable=True)
+        name        = "Room"
+        nospawn     = False
+        nw          = None
+        n           = None
+        ne          = None
+        e           = None
+        se          = None
+        s           = None
+        sw          = None
+        w           = None
+        u           = None
+        w           = None
         
-        spell       = Column(Integer, nullable=True)
-        light       = Column(Integer, nullable=False)
+        spell       = None
+        light       = 3
         
         
         players     = {}

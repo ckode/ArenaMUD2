@@ -26,6 +26,7 @@ from twisted.conch.telnet import TelnetTransport
 from config.gameconfig import GameConfig
 from character.players import Player
 from logger.gamelogger import logger
+from world.maps import World
 
 
 class SonzoFactory(ServerFactory):

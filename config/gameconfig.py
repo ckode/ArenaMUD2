@@ -16,15 +16,12 @@
 
 from ConfigParser import ConfigParser 
 import logger.gamelogger
+import world.maps
 import sys
 
 
 
 
-
-#def setGameConfig():
-#    global GameConfig
-#    GameConfig = Config()
     
 #==================================================
 # Class Config
@@ -83,3 +80,4 @@ class Config():
 # Initialize game config and game logging
 GameConfig = Config()
 logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
+world.maps.World = world.maps.GameMap(GameConfig.maps[0])

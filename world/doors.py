@@ -14,10 +14,35 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 
 
-Base = declarative_base()
+class Door:
+    """
+    Doors class
+    """
+
+    def __init__(self):
+        """
+        Initialize Doors object.
+        """
+        
+        self.id = None
+        self.exit1 = None
+        self.exit2 = None
+        
+        
+        
+    def getExitRoom(self, roomid):
+        """
+        getExitRoom(self, roomid)
+        
+        Return the room the door leads too.
+        Takes current room's roomid.
+        """
+        
+        if self.exit1 is not roomid:
+            return self.exit2
+        else:
+            return self.exit1
+        
+        
