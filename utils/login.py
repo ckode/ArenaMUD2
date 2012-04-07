@@ -43,4 +43,8 @@ def getUsername(player, line):
     player.STATUS = PLAYING
     
     from commands.communicate import tellWorld
+    from world.maps import World
+    
     tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
+    World.mapGrid[player.room].players[player.name] = player 
+    World.mapGrid[player.room].displayRoom(player)

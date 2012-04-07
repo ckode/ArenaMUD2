@@ -16,7 +16,6 @@
 
 import sqlite3
 
-from logger.gamelogger import logger
 from world.doors import Door
 from world.rooms import Room
 
@@ -35,13 +34,15 @@ class GameMap:
         
         Creates GameMap object and loads maps
         """
+
+        from logger.gamelogger import logger
         
         self.mapGrid  = {}
         self.doors    = {}
         self.height   = 10
         self.width    = 10
         self.depth    = 10
-        
+         
          
         # create 10x10x10 game world grid
         for x in range(self.height):
@@ -63,14 +64,14 @@ class GameMap:
             logger.log.critical( "Database errors using: {0}".format(mapdb) )
                 
         
-        #logger.log.info("Loading doors.")    
+        logger.log.info("Loading doors.")    
         # Load doors
         for row in d_results:
             self.doors[row[0]]           = Door()
             self.doors[row[0]].exits1    = row[1]
             self.doors[row[0]].exits1    = row[2]
        
-        #logger.log.info("Loading rooms.")
+        logger.log.info("Loading rooms.")
         # Load rooms into grid. 
         for row in r_results:
             rid = str(row[0]).zfill(3)
@@ -90,7 +91,7 @@ class GameMap:
             self.mapGrid[rid].d         = row[11]
             self.mapGrid[rid].spell     = row[12]
             self.mapGrid[rid].light     = row[13]            
-
+         
 
         
         def getExits(self, roomid):
@@ -101,6 +102,14 @@ class GameMap:
             x = roomid[0]
             y = roomid[1]
             z = roomid[2]
+            
+            
+        def movePlayer(player, fromRoom, ToRoom):
+            """
+            Moves player from one room to another.
+            """
+            
+            
                             
       
 World = None

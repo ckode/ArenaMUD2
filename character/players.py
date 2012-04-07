@@ -25,6 +25,9 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 from config.gameconfig import GameConfig
 from logger.gamelogger import logger
 from commands.parser import GameParser
+from world.maps import World
+from commands.communicate import tellWorld, BLUE
+
 
 # Python imports
 
@@ -48,8 +51,11 @@ class Player(StatefulTelnetProtocol):
         """
         self.STATUS = LOGIN
         self.IP = None
-        
+        self.room = "000"
         self.name = "Unknown"
+        self.vision = 3
+        self.blind = False
+        
         
         
     def __repr__(self):
@@ -85,13 +91,13 @@ class Player(StatefulTelnetProtocol):
         
         Disconnect a client and clean up game information.
         """
-        
-        self.sendLine("Goodbye.")
-        
+              
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
+            logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
+            del World.mapGrid[self.room].players[self.name]
             
         self.transport.loseConnection()
       
@@ -107,9 +113,9 @@ class Player(StatefulTelnetProtocol):
         if AllPlayers.has_key(self.name):
             logger.log.info( "{0} just hung up!!!".format(self.name) )
             # replace del with function to do full cleanup.
+            tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
             del AllPlayers[self.name]
-        else:
-            logger.log.info( "Unknown just hung up!!!" )
+            del World.mapGrid[self.room].players[self.name]
       
     
     def lineReceived(self, line):

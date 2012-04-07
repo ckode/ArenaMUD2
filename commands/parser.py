@@ -17,7 +17,7 @@
 from character.players import AllPlayers, LOGIN
 from utils.login import getUsername
 from utils.text import cleanPlayerInput
-
+from world.maps import World
 
 
 def GameParser(player, line):
@@ -35,9 +35,18 @@ def GameParser(player, line):
         getUsername(player, line)
         return
     
-    if line <> "":
+    if line == "":
+        World.mapGrid[player.room].displayRoom(player)
+        return
+    if line == "/quit":
+        from commands.communicate import tellWorld, BLUE
+        tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
+        player.disconnectClient()
+        return
+    else:
         from commands.communicate import say
-        
         say( player, line )
+        return
+    
         
             

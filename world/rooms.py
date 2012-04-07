@@ -25,28 +25,26 @@ class Room:
         Initialize room object.
         """
         
-        id          = None
+        self.id          = None
                 
-        name        = "Room"
-        nospawn     = False
-        nw          = None
-        n           = None
-        ne          = None
-        e           = None
-        se          = None
-        s           = None
-        sw          = None
-        w           = None
-        u           = None
-        w           = None
+        self.name        = "Room"
+        self.nospawn     = False
+        self.nw          = None
+        self.n           = None
+        self.ne          = None
+        self.e           = None
+        self.se          = None
+        self.s           = None
+        self.sw          = None
+        self.w           = None
+        self.u           = None
+        self.w           = None
         
-        spell       = None
-        light       = 3
-        
-        
-        players     = {}
-        pSpells     = []
-        items       = {}
+        self.spell       = None
+        self.light       = 3     
+        self.players     = {}
+        self.pSpells     = []
+        self.items       = {}
         
         
         
@@ -62,54 +60,109 @@ class Room:
 
         
         
-    def getNortWesthxit(self):
-        if self.nw is not None:
-            return self.nw.exitRoom(self.id)
 
-        
-    def getNorthExit(self):
-        if self.n is not None:
-            return self.n.exitRoom(self.id)
-
-        
-    def getNorthEastExit(self):
-        if self.ne is not None:
-            return self.ne.exitRoom(self.id)
-
-        
-    def getEastExit(self):
-        if self.e is not None:
-            return self.e.exitRoom(self.id)
-        
-
-    def getSouthEastExit(self):
-        if self.se is not None:
-            return self.se.exitRoom(self.id)
-        
-        
-    def getSouthExit(self):
-        if self.s is not None:
-            return self.s.exitRoom(self.id)
-        
-        
-    def getSouthWestExit(self):
-        if self.sw is not None:
-            return self.sw.exitRoom(self.id)
-        
-        
-    def getWestExit(self):
-        if self.w is not None:
-            return self.w.xitRoom(self.id)
-        
-        
-    def getUpExit(self):
-        if self.u is not None:
-            return self.u.exitRoom(self.id)
-        
-        
-    def getDownExit(self):
-        if self.d is not None:
-            return self.d.exitRoom(self.id)
                 
                 
+    def getExits(self):
+        """
+        Return exits text
+        """
+        
+        exitsExists = False
+        
+        if self.n:
+            exits = "north"
+            count += 1        
+        if self.ne:
+            if not exitsExists:
+                exits = "northeast"
+            else:
+                exits += ", northeast"
+        if self.e:
+            if not exitsExists:
+                exits = "east"
+            else:
+                exits += ", east" 
+        if self.se:
+            if not exitsExists:
+                exits = "southeast"
+            else:
+                exits += ", southeast" 
+        if self.s:
+            if not exitsExists:
+                exits = "south"
+            else:
+                exits += ", south"               
+        if self.sw:
+            if not exitsExists:
+                exits = "southwest"
+            else:
+                exits += ", southwest"
+        if self.sw:
+            if not exitsExists:
+                exits = "southwest"
+            else:
+                exits += ", southwest"
+        if self.w:
+            if not exitsExists:
+                exits = "west"
+            else:
+                exits += ", west"
+        if self.nw:
+            if not exitsExists:
+                exits = "northwest"
+            else:
+                exits += ", northwest"
+        if exitsExists is None:
+            exits += "NONE."
+        else:
+            exits += "."
+        
+        return exits
+ 
+
+    def whosInRoom(self, player):
+        """
+        Return a list of who is in the room.
+        """
+        
+        found = False
+        ptext = ""
+        for _player in self.players.keys():
+            if _player <> player.name:
+                if found:
+                    ptext += ", {0}".format(_player)
+                else:
+                    ptext += _player
+                    found = True
+        
+        if len(ptext) > 0:
+            return ptext + "."
+        else:
+            return None
+                
+    
+    def displayRoom(self, player):
+        """
+        Display the room
+        """
+        from commands.communicate import WHITE, GREEN, LCYAN, LMAGENTA
+        
+        if player.blind:
+            player.sendLine( "{0}You are blind.".format(WHITE) )
+            return
+        
+        if player.vision < self.light:
+            player.sendLine( "{0}You cannot see anything, it's too dark.".format(WHITE) )
+            return
+        
+        player.sendLine( "{0}{1}".format(LCYAN, self.name) )
+        
+        playersinroom = self.whosInRoom(player)
+        if playersinroom is not None:
+            player.sendLine( "{0}Also here:{1} {2}".format(GREEN, LMAGENTA, playersinroom) )
+            
+        player.sendLine("{0}Obvious exits: {1}{2}".format(GREEN, self.getExits(), WHITE) )
+        
+        
         
