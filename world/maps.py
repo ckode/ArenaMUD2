@@ -20,6 +20,21 @@ from world.doors import Door
 from world.rooms import Room
 
 
+# Directions
+NORTH              = 1
+NE                 = 2
+EAST               = 3
+SE                 = 4
+SOUTH              = 5
+SW                 = 6
+WEST               = 7
+NW                 = 8
+UP                 = 9
+DOWN               = 10
+
+DIRS         = { NORTH: 'north', NE: 'northeast', EAST: 'east', SE: 'southeast', SOUTH: 'south',
+                 SW: 'southwest', WEST: 'west', NW: 'northwest', UP: 'up', DOWN: 'down' }
+
 
 class GameMap:
     """
@@ -94,20 +109,23 @@ class GameMap:
          
 
         
-        def getExits(self, roomid):
-            """
-            Returns exit directions.
-            """
+    def getExits(self, roomid):
+        """
+        Returns exit directions.
+        """
                             
-            x = roomid[0]
-            y = roomid[1]
-            z = roomid[2]
+        x = roomid[0]
+        y = roomid[1]
+        z = roomid[2]
             
             
-        def movePlayer(player, fromRoom, ToRoom):
-            """
-            Moves player from one room to another.
-            """
+    def movePlayer(self, player, direction):
+        """
+        Moves player from one room to another.
+        """
+        from commands.communicate import tellWorld, WHITE
+        tellWorld( player, "{1}You can't go {0}, move isn't implemented yet!".format(DIRS[direction], WHITE), 
+                           "{2}{0} tried to go {1}, but move isn't implemented yet!".format(player, DIRS[direction], WHITE) )
             
             
                             

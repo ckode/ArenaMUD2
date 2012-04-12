@@ -95,6 +95,7 @@ class Player(StatefulTelnetProtocol):
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
+            tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
             logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
             del World.mapGrid[self.room].players[self.name]

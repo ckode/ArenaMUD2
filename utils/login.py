@@ -26,7 +26,7 @@ def askUsername(player):
     
     Ask user for a username.
     """
-    
+    player.sendLine("Welcome to ArenaMUD2.")
     player.transport.write("Enter your login or type 'new': ")
     
     
