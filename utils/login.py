@@ -14,9 +14,8 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from character.players import LOGIN, PLAYING, AllPlayers
-
-from logger.gamelogger import logger
+from utils.defines import LOGIN, PLAYING
+import logger.gamelogger
 
 
 
@@ -36,11 +35,13 @@ def getUsername(player, line):
     
     Check for username or new and work.
     """
+    from world.maps import World
+    from character.players import AllPlayers
     
     player.name = line.capitalize()
     AllPlayers[player.name] = player
-    logger.log.info( "{0} just logged in.".format(player) )
-    player.STATUS = PLAYING
+    logger.gamelogger.logger.log.info( "{0} just logged in.".format(player) )
+    player.status = PLAYING
     
     from commands.communicate import tellWorld
     from world.maps import World

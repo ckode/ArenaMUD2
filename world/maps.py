@@ -16,25 +16,15 @@
 
 import sqlite3
 
-from world.doors import Door
-from world.rooms import Room
+import world.doors
+import world.rooms
+from utils.defines import WHITE
+from utils.defines import DIRS, NORTH, NE, EAST, SE
+from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
+from utils.defines import PURGATORY
 
 
-# Directions
-NORTH              = 1
-NE                 = 2
-EAST               = 3
-SE                 = 4
-SOUTH              = 5
-SW                 = 6
-WEST               = 7
-NW                 = 8
-UP                 = 9
-DOWN               = 10
-
-DIRS         = { NORTH: 'north', NE: 'northeast', EAST: 'east', SE: 'southeast', SOUTH: 'south',
-                 SW: 'southwest', WEST: 'west', NW: 'northwest', UP: 'up', DOWN: 'down' }
-
+World = None
 
 class GameMap:
     """
@@ -57,6 +47,7 @@ class GameMap:
         self.height   = 10
         self.width    = 10
         self.depth    = 10
+
          
          
         # create 10x10x10 game world grid
@@ -82,7 +73,7 @@ class GameMap:
         logger.log.info("Loading doors.")    
         # Load doors
         for row in d_results:
-            self.doors[row[0]]           = Door()
+            self.doors[row[0]]           = world.doors.Door()
             self.doors[row[0]].exits1    = row[1]
             self.doors[row[0]].exits1    = row[2]
        
@@ -91,25 +82,25 @@ class GameMap:
         for row in r_results:
             rid = str(row[0]).zfill(3)
             
-            self.mapGrid[rid]           = Room()
+            self.mapGrid[rid]               = world.rooms.Room()
             
-            self.mapGrid[rid].name      = str(row[1])
-            self.mapGrid[rid].n         = row[2]            
-            self.mapGrid[rid].ne        = row[3]
-            self.mapGrid[rid].e         = row[4]            
-            self.mapGrid[rid].se        = row[5]
-            self.mapGrid[rid].s         = row[6]            
-            self.mapGrid[rid].sw        = row[7]
-            self.mapGrid[rid].w         = row[8]            
-            self.mapGrid[rid].nw        = row[9]
-            self.mapGrid[rid].u         = row[10]            
-            self.mapGrid[rid].d         = row[11]
-            self.mapGrid[rid].spell     = row[12]
-            self.mapGrid[rid].light     = row[13]            
-         
-
-        
-    def getExits(self, roomid):
+            self.mapGrid[rid].name          = str(row[1])
+            self.mapGrid[rid].dirs[NORTH]   = row[2]            
+            self.mapGrid[rid].dirs[NE]      = row[3]
+            self.mapGrid[rid].dirs[EAST]    = row[4]            
+            self.mapGrid[rid].dirs[SE]      = row[5]
+            self.mapGrid[rid].dirs[SOUTH]   = row[6]            
+            self.mapGrid[rid].dirs[SW]      = row[7]
+            self.mapGrid[rid].dirs[WEST]    = row[8]            
+            self.mapGrid[rid].dirs[NW]      = row[9]
+            self.mapGrid[rid].dirs[UP]      = row[10]            
+            self.mapGrid[rid].dirs[DOWN]    = row[11]
+            self.mapGrid[rid].spell         = row[12]
+            self.mapGrid[rid].light         = row[13]                     
+            
+            
+            
+    def getExit(self, direction):
         """
         Returns exit directions.
         """
@@ -119,15 +110,7 @@ class GameMap:
         z = roomid[2]
             
             
-    def movePlayer(self, player, direction):
-        """
-        Moves player from one room to another.
-        """
-        from commands.communicate import tellWorld, WHITE
-        tellWorld( player, "{1}You can't go {0}, move isn't implemented yet!".format(DIRS[direction], WHITE), 
-                           "{2}{0} tried to go {1}, but move isn't implemented yet!".format(player, DIRS[direction], WHITE) )
-            
+
             
                             
       
-World = None

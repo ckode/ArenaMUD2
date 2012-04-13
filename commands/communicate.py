@@ -14,60 +14,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from character.players import AllPlayers, PLAYING
+import character.players 
+import world.maps
 
-
-
-
-
-#############ANSI defines################
-#          Foreground Colors
-RESET              = chr(27) + "[0m"
-BOLD               = chr(27) + "[1m"
-ITALIC             = chr(27) + "[3m"
-UNDERLINE          = chr(27) + "[4m"
-INVERSE            = chr(27) + "[7m"
-STRIKE             = chr(27) + "[9m"
-BOLD_OFF           = chr(27) + "[22m"
-ITALIC_OFF         = chr(27) + "[23m"
-UNDERLINE_OFF      = chr(27) + "[24m"
-INVERSE_OFF        = chr(27) + "[27m"
-STRIKE_OFF         = chr(27) + "[29m"
-BLACK              = chr(27) + "[30m"
-RED                = chr(27) + "[31m"
-GREEN              = chr(27) + "[32m"
-BROWN              = chr(27) + "[33m"
-YELLOW             = chr(27) + "[1;33m"
-BLUE               = chr(27) + "[34m"
-MAGENTA            = chr(27) + "[35m"
-CYAN               = chr(27) + "[36m"
-WHITE              = chr(27) + "[37m"
-DEFAULT            = chr(27) + "[39m"
-#        Light Foreground Colors
-LRED               = chr(27) + "[1;31m"
-LGREEN             = chr(27) + "[1;32m"
-LBLUE              = chr(27) + "[1;34m"
-LMAGENTA           = chr(27) + "[1;35m"
-LCYAN              = chr(27) + "[1;36m"
-#          Background Colors
-B_BLACK            = chr(27) + "[40m"
-B_RED              = chr(27) + "[41m"
-B_GREEN            = chr(27) + "[42m"
-B_YELLOW           = chr(27) + "[43m"
-B_BLUE             = chr(27) + "[44m"
-B_MAGENTA          = chr(27) + "[45m"
-B_CYAN             = chr(27) + "[46m"
-B_WHITE            = chr(27) + "[47m"
-B_DEFAULT          = chr(27) + "[49m"
-
-#          Cursor and delete line
-DELETELINE         = chr(27) + "[2K"
-FIRSTCOL           = chr(27) + "[80D"
-CURPOS             = chr(27) + "6n"
-SAVECUR            = chr(27) + "s"
-RESTORECUR         = chr(27) + "u"
-DELETELEFT         = chr(27) + "[1K"
-CLEARSCREEN        = chr(27) + "[2J"
+from utils.defines import WHITE, LBLUE, LGREEN
+from utils.defines import DELETELEFT, FIRSTCOL
+from utils.defines import PLAYING
 
 
 
@@ -79,16 +31,45 @@ def say( player, line ):
     Say something to the room you are in.
     """
     
-    player.sendLine( "{1}You said:{2} {0}".format(line, LGREEN, WHITE) )
+    sendToPlayer(player, "{1}You said:{2} {0}".format(line, LGREEN, WHITE) )
     
     # When rooms are introduced, limit to current room.
-    for client in AllPlayers.values():    
+    for client in character.players.AllPlayers.values():    
         if client is not player:
-            client.sendLine( "{2}{0} says:{3} {1}".format(player, line, LGREEN, WHITE) )    
+            sendToPlayer(client, "{2}{0} says:{3} {1}".format(player, line, LGREEN, WHITE) )    
+            
+
+ 
+            
+def sendToRoomNotPlayer(player, line):
+    """
+    sendToRoomNotPlayer(self, line)
+    
+    Send text to everyone in the room except the player.
+    """
+     
+    World = world.maps.World            
+    for _player in world.maps.World.mapGrid[player.room].players.keys():
+        if player.name <> _player:
+            sendToplayer(character.players.AllPlayers[_player], line)
+            
             
  
+def sendToPlayer(player, line):
+    """
+    Player->sendToPlayer(self, line):
+          
+    Handles any flags before any sending
+    text to the player.
+    """
+                
+    player.transport.write(DELETELEFT)
+    player.transport.write(FIRSTCOL)
+    player.sendLine(line + WHITE)
+    if player.status == PLAYING or player.status == PURGATORY:
+        player.statLine()        
  
-            
+           
 def tellWorld( player, playerMsg, OtherPlayersMsg ):
     """
     tellWorld(player, playerMsg, OtherPlayersMsg)
@@ -103,10 +84,10 @@ def tellWorld( player, playerMsg, OtherPlayersMsg ):
     """
     
     if playerMsg is not None:
-        player.sendLine( "{1}{0}{2}".format(playerMsg, LBLUE, WHITE) )    
+        sendToPlayer( player, "{1}{0}{2}".format(playerMsg, LBLUE, WHITE) )    
         
-    for client in AllPlayers.values(): 
-        if client is not player and client.STATUS is PLAYING:
-            client.sendLine( "{1}{0}{2}".format(OtherPlayersMsg, LBLUE, WHITE) )    
+    for client in character.players.AllPlayers.values(): 
+        if client is not player and client.status is PLAYING:
+            sendToPlayer( client, "{1}{0}{2}".format(OtherPlayersMsg, LBLUE, WHITE) )    
     
     

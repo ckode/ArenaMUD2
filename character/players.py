@@ -14,19 +14,22 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-LOGIN = 0
-PLAYING = 1  
+ 
 AllPlayers = {} 
 
 # Twisted imports
 from twisted.conch.telnet import StatefulTelnetProtocol
 
 # ArenaMUD2 imports
-from config.gameconfig import GameConfig
-from logger.gamelogger import logger
-from commands.parser import GameParser
-from world.maps import World
-from commands.communicate import tellWorld, BLUE
+
+import world.maps
+
+import logger.gamelogger
+import commands.parser
+import commands.communicate
+from utils.defines import BLUE, WHITE 
+from utils.defines import DELETELEFT, FIRSTCOL
+from utils.defines import PLAYING, LOGIN, PURGATORY
 
 
 # Python imports
@@ -49,12 +52,17 @@ class Player(StatefulTelnetProtocol):
         
         Initialize the Player class object
         """
-        self.STATUS = LOGIN
+        self.status = LOGIN
         self.IP = None
         self.room = "000"
         self.name = "Unknown"
-        self.vision = 3
+        
+        
+        self.resting = False
+        self.moving = False
+        self.held = False
         self.blind = False
+        self.vision = 3
         
         
         
@@ -73,12 +81,13 @@ class Player(StatefulTelnetProtocol):
         """
      
         self.IP = self.transport.getPeer().host
-        logger.log.info("{0} CONNECTED!".format(self.IP))
+        logger.gamelogger.logger.log.info("{0} CONNECTED!".format(self.IP))
         
         # Check for max players 
+        from config.gameconfig import GameConfig
         if len(AllPlayers) >= GameConfig.maxplayers:
-            logger.log.info("To many connected.  Refusing new client: {0}".format(self.IP))
-            self.sendLine("Too many connections, try again later.")
+            logger.gamelogger.logger.log.info("To many connected.  Refusing new client: {0}".format(self.IP))
+            commands.communicate.sendLine(player, "Too many connections, try again later.")
             self.disconnectClient()
         
         from utils.login import askUsername    
@@ -95,10 +104,10 @@ class Player(StatefulTelnetProtocol):
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
-            tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
-            logger.log.info( "{0} just logged off.".format(self.name) )
+            commands.communicate.tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
+            logger.gamelogger.logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
-            del World.mapGrid[self.room].players[self.name]
+            del world.maps.World.mapGrid[self.room].players[self.name]
             
         self.transport.loseConnection()
       
@@ -112,11 +121,11 @@ class Player(StatefulTelnetProtocol):
         
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
-            logger.log.info( "{0} just hung up!!!".format(self.name) )
+            logger.gamelogger.logger.log.info( "{0} just hung up!!!".format(self.name) )
             # replace del with function to do full cleanup.
-            tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
+            commands.communicate.tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
             del AllPlayers[self.name]
-            del World.mapGrid[self.room].players[self.name]
+            del world.maps.World.mapGrid[self.room].players[self.name]
       
     
     def lineReceived(self, line):
@@ -126,9 +135,18 @@ class Player(StatefulTelnetProtocol):
         Handles lines received from the client.
         """
         
-        GameParser(self, line)
+        commands.parser.GameParser(self, line)
         
         
         
    
-    
+    def statLine(self):
+        """
+        Player->statLine(self)
+        
+        Displays players statline.
+        """
+        self.transport.write(DELETELEFT)
+        self.transport.write(FIRSTCOL)
+        self.transport.write("[Fake Statline]: " + WHITE)        
+        

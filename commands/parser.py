@@ -16,31 +16,44 @@
 
 import re
 
-from character.players import AllPlayers, LOGIN, PLAYING
-
+import world.maps
 from utils.login import getUsername
 from utils.text import cleanPlayerInput
-from world.maps import World
-from world.maps import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+from utils.defines import LOGIN, PLAYING
+from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+from utils.functions import movePlayer
+
+            
+            
+            
+def statusMatrix(player, line):
+    """
+    Routes player's input based on their
+    status if statis isn't "PLAYING"
+    """
+    
+    if player.status is LOGIN:
+        getUsername(player, line)
+        return 
 
 
 
 # Command list.
 commands = { '/quit':            "",
-             'north':            World.movePlayer,
-             'ne':               World.movePlayer,
-             'northeast':        World.movePlayer,
-             'east':             World.movePlayer,
-             'se':               World.movePlayer,
-             'southeast':        World.movePlayer,
-             'south':            World.movePlayer,
-             'sw':               World.movePlayer,
-             'southwest':        World.movePlayer,
-             'west':             World.movePlayer,
-             'nw':               World.movePlayer,
-             'northwest':        World.movePlayer,      
-             'up':               World.movePlayer,
-             'down':             World.movePlayer,
+             'north':            movePlayer,
+             'ne':               movePlayer,
+             'northeast':        movePlayer,
+             'east':             movePlayer,
+             'se':               movePlayer,
+             'southeast':        movePlayer,
+             'south':            movePlayer,
+             'sw':               movePlayer,
+             'southwest':        movePlayer,
+             'west':             movePlayer,
+             'nw':               movePlayer,
+             'northwest':        movePlayer,      
+             'up':               movePlayer,
+             'down':             movePlayer,
              'rest':             ""
              
            }
@@ -56,13 +69,13 @@ def GameParser(player, line):
     line = cleanPlayerInput(line)
     
     # If not playing, don't use main game parser
-    if player.STATUS is not PLAYING:
+    if player.status is not PLAYING:
         statusMatrix(player, line)
         return
  
     # If just hit enter, display room
     if line == "":
-        World.mapGrid[player.room].displayRoom(player)
+        world.maps.World.mapGrid[player.room].displayRoom(player)
         return      
     
     cmd = line.split()
@@ -127,12 +140,5 @@ def GameParser(player, line):
         
  
             
-def statusMatrix(player, line):
-    """
-    Routes player's input based on their
-    status if statis isn't "PLAYING"
-    """
+
     
-    if player.STATUS is LOGIN:
-        getUsername(player, line)
-        return 

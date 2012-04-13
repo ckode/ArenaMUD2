@@ -14,7 +14,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Python imports
 from ConfigParser import ConfigParser 
+
+# ArenaMUD2 imports
 import logger.gamelogger
 import world.maps
 import sys

@@ -15,6 +15,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+from utils.defines import DIRS, NORTH, NE, EAST, SE
+from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
+from utils.defines import WHITE, GREEN, LCYAN, LMAGENTA
+from commands.communicate import sendToPlayer
+
 class Room:
     """
     Room class
@@ -29,16 +34,18 @@ class Room:
                 
         self.name        = "Room"
         self.nospawn     = False
-        self.nw          = None
-        self.n           = None
-        self.ne          = None
-        self.e           = None
-        self.se          = None
-        self.s           = None
-        self.sw          = None
-        self.w           = None
-        self.u           = None
-        self.w           = None
+        
+        self.dirs        = {}
+        self.dirs[NORTH] = None
+        self.dirs[NE]    = None
+        self.dirs[EAST]  = None
+        self.dirs[SE]    = None
+        self.dirs[SOUTH] = None
+        self.dirs[SW]    = None
+        self.dirs[WEST]  = None
+        self.dirs[NW]    = None
+        self.dirs[UP]    = None
+        self.dirs[DOWN]  = None
         
         self.spell       = None
         self.light       = 3     
@@ -54,72 +61,30 @@ class Room:
         """
         
         return self.name
-    
-    
-
-
+     
         
-        
-
                 
                 
     def getExits(self):
         """
-        Return exits text
+        Return exits text for display in room description
         """
         
-        exitsExists = False
-        
-        if self.n:
-            exits = "north"
-            count += 1        
-        if self.ne:
-            if not exitsExists:
-                exits = "northeast"
-            else:
-                exits += ", northeast"
-        if self.e:
-            if not exitsExists:
-                exits = "east"
-            else:
-                exits += ", east" 
-        if self.se:
-            if not exitsExists:
-                exits = "southeast"
-            else:
-                exits += ", southeast" 
-        if self.s:
-            if not exitsExists:
-                exits = "south"
-            else:
-                exits += ", south"               
-        if self.sw:
-            if not exitsExists:
-                exits = "southwest"
-            else:
-                exits += ", southwest"
-        if self.sw:
-            if not exitsExists:
-                exits = "southwest"
-            else:
-                exits += ", southwest"
-        if self.w:
-            if not exitsExists:
-                exits = "west"
-            else:
-                exits += ", west"
-        if self.nw:
-            if not exitsExists:
-                exits = "northwest"
-            else:
-                exits += ", northwest"
-        if exitsExists is None:
-            exits += "NONE."
+        exits = ""     
+        for x in range(NORTH, DOWN):
+            if self.dirs[x]:
+                if exits == "":
+                    exits += DIRS[x]
+                else:
+                    exits += ", {0}".format(DIRS[x])
+        if exits == "":
+            exits = "NONE."
         else:
             exits += "."
         
         return exits
- 
+    
+
 
     def whosInRoom(self, player):
         """
@@ -146,23 +111,22 @@ class Room:
         """
         Display the room
         """
-        from commands.communicate import WHITE, GREEN, LCYAN, LMAGENTA
         
         if player.blind:
-            player.sendLine( "{0}You are blind.".format(WHITE) )
+            sendToPlayer( player, "{0}You are blind.".format(WHITE) )
             return
         
         if player.vision < self.light:
-            player.sendLine( "{0}You cannot see anything, it's too dark.".format(WHITE) )
+            sendToPlayer( player, "{0}You cannot see anything, it's too dark.".format(WHITE) )
             return
         
-        player.sendLine( "{0}{1}".format(LCYAN, self.name) )
+        sendToPlayer( player, "{0}{1}".format(LCYAN, self.name) )
         
         playersinroom = self.whosInRoom(player)
         if playersinroom is not None:
-            player.sendLine( "{0}Also here:{1} {2}".format(GREEN, LMAGENTA, playersinroom) )
+            sendToPlayer( player, "{0}Also here:{1} {2}".format(GREEN, LMAGENTA, playersinroom) )
             
-        player.sendLine("{0}Obvious exits: {1}{2}".format(GREEN, self.getExits(), WHITE) )
+        sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, self.getExits(), WHITE) )
         
         
         

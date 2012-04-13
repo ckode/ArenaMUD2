@@ -24,9 +24,8 @@ from twisted.conch.telnet import TelnetTransport
 
 # ArenaMUD2 imports
 from config.gameconfig import GameConfig
-from character.players import Player
-from logger.gamelogger import logger
-from world.maps import World
+import character.players
+import logger.gamelogger
 
 
 class SonzoFactory(ServerFactory):
@@ -48,9 +47,9 @@ def startup():
     #Create server factory
     factory = SonzoFactory()
 
-    factory.protocol = lambda: TelnetTransport(Player)
+    factory.protocol = lambda: TelnetTransport(character.players.Player)
     reactor.listenTCP(GameConfig.port, factory)
-    logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion - A SonzoSoft Product.")
+    logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion - A SonzoSoft Product.")
     reactor.run()
 
    
