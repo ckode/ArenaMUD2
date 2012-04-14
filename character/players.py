@@ -54,7 +54,7 @@ class Player(StatefulTelnetProtocol):
         """
         self.status = LOGIN
         self.IP = None
-        self.room = "000"
+        self.room = ""
         self.name = "Unknown"
         
         
@@ -64,7 +64,7 @@ class Player(StatefulTelnetProtocol):
         self.blind = False
         self.vision = 3
         
-        
+                
         
     def __repr__(self):
         """
@@ -104,7 +104,8 @@ class Player(StatefulTelnetProtocol):
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
-            character.communicate.tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
+            character.communicate.tellWorld(self, None, "{0}{1} has quit!!!".format(BLUE, self.name) )
+            self.sendLine("Goodbye!")
             logger.gamelogger.logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
             del world.maps.World.mapGrid[self.room].players[self.name]

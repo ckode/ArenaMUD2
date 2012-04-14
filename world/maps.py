@@ -42,11 +42,13 @@ class GameMap:
 
         from logger.gamelogger import logger
         
-        self.mapGrid  = {}
-        self.doors    = {}
-        self.height   = 10
-        self.width    = 10
-        self.depth    = 10
+        self.mapGrid     = {}
+        self.roomsList   = []
+        self.levelnames  = {}
+        self.doors       = {}
+        self.height      = 10
+        self.width       = 10
+        self.depth       = 10
 
          
          
@@ -65,6 +67,8 @@ class GameMap:
             d_results = cursor.fetchall()
             cursor.execute("SELECT * FROM rooms;")
             r_results = cursor.fetchall()
+            cursor.execute("SELECT * FROM maplevelnames;")
+            n_results = cursor.fetchall()
             
         except:
             logger.log.critical( "Database errors using: {0}".format(mapdb) )
@@ -75,14 +79,15 @@ class GameMap:
         for row in d_results:
             self.doors[row[0]]           = world.doors.Door()
             self.doors[row[0]].id        = row[0]
-            self.doors[row[0]].exit1     = str(row[1])
-            self.doors[row[0]].exit2    = str(row[2])
+            self.doors[row[0]].exit1     = str(row[1]).zfill(3)
+            self.doors[row[0]].exit2     = str(row[2]).zfill(3)
 
        
         logger.log.info("Loading rooms.")
         # Load rooms into grid. 
         for row in r_results:
             rid = str(row[0]).zfill(3)
+            self.roomsList.append(rid)
             
             self.mapGrid[rid]               = world.rooms.Room()
             
@@ -100,8 +105,10 @@ class GameMap:
             self.mapGrid[rid].dirs[DOWN]    = row[11]
             self.mapGrid[rid].spell         = row[12]
             self.mapGrid[rid].light         = row[13]                     
-            
-            
+        
+        # load map level names (z axis of the map) 
+        for row in n_results:
+            self.levelnames[row[0]]         = str(row[1])
             
     def getExit(self, direction):
         """

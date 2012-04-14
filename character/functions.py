@@ -16,6 +16,8 @@
 
 from twisted.internet import reactor
 
+import random
+
 from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
 from world.maps import World
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN
@@ -34,27 +36,34 @@ def movePlayer(player, direction):
         
     player.resting = False
              
+    if player.moving is True:
+        sendToPlayer( player, "You are already moving, slow down!" )
+        return
+    
     if player.held:
-        player.moving = False
+        player.moving is False
         sendToPlayer( player, "You cannot move!" )           
         
     curRoom = World.mapGrid[player.room]
     # Run into the wall/ceiling/floor, if no door
     if not curRoom.dirs[direction]:
-        if direction == DOWN:
+        if direction is DOWN:
             sendToPlayer( player, "You run into the floor!" )
             sendToRoomNotPlayer( player, "{0} ran into the floor!".format(player) )
             return
-        elif direction == UP:
+        elif direction is UP:
             sendToPlayer( player, "You run into the ceiling!" )
             sendToRoomNotPlayer( player, "{0} ran into the ceiling!".format(player) )            
             return
         else:
             sendToPlayer( player, "You run into the {0} wall!".format(DIRS[direction]) )
-            sendToRoomNotPlayer( player, "{0} ran into the {0} wall!".format(player, DIRS[direction]) )     
+            sendToRoomNotPlayer( player, "{0} ran into the {1} wall!".format(player, DIRS[direction]) )     
             return
     else:
+        player.moving = True
         reactor.callLater(.5, move, player, direction)
+  
+  
         
         
 def move(player, direction):
@@ -73,6 +82,7 @@ def move(player, direction):
     player.room = newRoom.id
     sendToRoomNotPlayer( player, "{0} entered from the {1}.".format(player, DIRS[OPPOSITEDIRS[direction]]) ) 
     displayRoom(player, player.room)
+    player.moving = False
     
 
     
@@ -99,3 +109,13 @@ def displayRoom(player, room):
             
     sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, curRoom.getExits(), WHITE) )
         
+        
+        
+def spawnPlayer( player ):
+    """
+    Spawn the player in the map.
+    """
+    
+    room = random.sample(World.roomsList, 1)[0]
+    player.room = room
+    World.mapGrid[room].players[player.name] = player
