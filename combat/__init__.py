@@ -15,5 +15,5 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-ArenaMUD2 Commands Module
+ArenaMUD2 Combat Module
 """

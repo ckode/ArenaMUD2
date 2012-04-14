@@ -25,7 +25,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 import world.maps
 
 import logger.gamelogger
-import commands.parser
+import utils.parser
 import character.communicate
 from utils.defines import BLUE, WHITE 
 from utils.defines import DELETELEFT, FIRSTCOL
@@ -136,7 +136,7 @@ class Player(StatefulTelnetProtocol):
         Handles lines received from the client.
         """
         
-        commands.parser.GameParser(self, line)
+        utils.parser.GameParser(self, line)
         
         
         

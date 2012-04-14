@@ -49,7 +49,7 @@ def startup():
 
     factory.protocol = lambda: TelnetTransport(character.players.Player)
     reactor.listenTCP(GameConfig.port, factory)
-    logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion - A SonzoSoft Product.")
+    logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion")
     reactor.run()
 
    

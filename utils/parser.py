@@ -21,6 +21,7 @@ from utils.login import getUsername
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
+from utils.playercommands import showMap
 from character.functions import movePlayer, displayRoom
 
             
@@ -54,7 +55,8 @@ commands = { '/quit':            "",
              'northwest':        movePlayer,      
              'up':               movePlayer,
              'down':             movePlayer,
-             'rest':             ""
+             'rest':             "",
+             'map':              showMap
              
            }
 
@@ -133,7 +135,9 @@ def GameParser(player, line):
             elif each == "rest" and len(cmd) == 1 and len(cmd[0]) == 4:
                 commands[each](player)
                 return                            
-                 
+            elif each == "map" and len(cmd) == 1 and len(cmd[0]) == 3:
+                commands[each](player)
+                return                           
     from character.communicate import say
     say( player, line )
  

@@ -74,7 +74,7 @@ class GameMap:
             logger.log.critical( "Database errors using: {0}".format(mapdb) )
                 
         
-        logger.log.info("Loading doors.")    
+        logger.log.debug("Loading doors.")    
         # Load doors
         for row in d_results:
             self.doors[row[0]]           = world.doors.Door()
@@ -83,7 +83,7 @@ class GameMap:
             self.doors[row[0]].exit2     = str(row[2]).zfill(3)
 
        
-        logger.log.info("Loading rooms.")
+        logger.log.debug("Loading rooms.")
         # Load rooms into grid. 
         for row in r_results:
             rid = str(row[0]).zfill(3)
@@ -106,7 +106,8 @@ class GameMap:
             self.mapGrid[rid].spell         = row[12]
             self.mapGrid[rid].light         = row[13]                     
         
-        # load map level names (z axis of the map) 
+        # load map level names (z axis of the map)
+        logger.log.debug("Loading level names.")
         for row in n_results:
             self.levelnames[row[0]]         = str(row[1])
             
