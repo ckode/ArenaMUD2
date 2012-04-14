@@ -30,7 +30,12 @@ class Door:
         self.exit1 = None
         self.exit2 = None
         
-        
+    
+    def __repr__(self):
+        """
+        String defining object
+        """
+        return "Door ID: {0} exit1: {1} exit2: {2}".format(self.id, self.exit1, self.exit2)
         
     def getExitRoom(self, roomid):
         """
@@ -40,7 +45,7 @@ class Door:
         Takes current room's roomid.
         """
         
-        if self.exit1 is not roomid:
+        if self.exit1 == roomid:
             return self.exit2
         else:
             return self.exit1

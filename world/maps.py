@@ -61,9 +61,9 @@ class GameMap:
         try:
             conn = sqlite3.connect("data\\" + mapdb)
             cursor = conn.cursor()
-            cursor.execute("SELECT * FROM DOORS;")
+            cursor.execute("SELECT * FROM doors;")
             d_results = cursor.fetchall()
-            cursor.execute("SELECT * FROM ROOMS;")
+            cursor.execute("SELECT * FROM rooms;")
             r_results = cursor.fetchall()
             
         except:
@@ -74,8 +74,10 @@ class GameMap:
         # Load doors
         for row in d_results:
             self.doors[row[0]]           = world.doors.Door()
-            self.doors[row[0]].exits1    = row[1]
-            self.doors[row[0]].exits1    = row[2]
+            self.doors[row[0]].id        = row[0]
+            self.doors[row[0]].exit1     = str(row[1])
+            self.doors[row[0]].exit2    = str(row[2])
+
        
         logger.log.info("Loading rooms.")
         # Load rooms into grid. 
@@ -84,6 +86,7 @@ class GameMap:
             
             self.mapGrid[rid]               = world.rooms.Room()
             
+            self.mapGrid[rid].id            = rid
             self.mapGrid[rid].name          = str(row[1])
             self.mapGrid[rid].dirs[NORTH]   = row[2]            
             self.mapGrid[rid].dirs[NE]      = row[3]

@@ -18,7 +18,7 @@ import unittest
 import string
 
 from utils.text import cleanPlayerInput
-from commands.communicate import LGREEN, WHITE, YELLOW, BLACK
+from character.communicate import LGREEN, WHITE, YELLOW, BLACK
 
 
 class test_text(unittest.TestCase):

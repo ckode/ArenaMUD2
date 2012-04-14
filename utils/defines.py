@@ -28,6 +28,18 @@ UP                 = 9
 DOWN               = 10
 
 
+OPPOSITEDIRS   =  { NORTH: SOUTH,
+                    NE: SW,
+                    EAST: WEST,
+                    SE: NW,
+                    SOUTH: NORTH,
+                    SW: NE,
+                    WEST: EAST,
+                    NW: SE,
+                    UP: DOWN,
+                    DOWN: UP
+                  }
+
 # Direction text matrix
 DIRS         = { NORTH: 'north', NE: 'northeast', EAST: 'east', SE: 'southeast', SOUTH: 'south',
                  SW: 'southwest', WEST: 'west', NW: 'northwest', UP: 'up', DOWN: 'down' }

@@ -26,7 +26,7 @@ import world.maps
 
 import logger.gamelogger
 import commands.parser
-import commands.communicate
+import character.communicate
 from utils.defines import BLUE, WHITE 
 from utils.defines import DELETELEFT, FIRSTCOL
 from utils.defines import PLAYING, LOGIN, PURGATORY
@@ -87,7 +87,7 @@ class Player(StatefulTelnetProtocol):
         from config.gameconfig import GameConfig
         if len(AllPlayers) >= GameConfig.maxplayers:
             logger.gamelogger.logger.log.info("To many connected.  Refusing new client: {0}".format(self.IP))
-            commands.communicate.sendLine(player, "Too many connections, try again later.")
+            self.sendLine(player, "Too many connections, try again later.")
             self.disconnectClient()
         
         from utils.login import askUsername    
@@ -104,7 +104,7 @@ class Player(StatefulTelnetProtocol):
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
-            commands.communicate.tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
+            character.communicate.tellWorld(player, "Goodbye!", "{0}{1} has quit!!!".format(BLUE, player.name) )
             logger.gamelogger.logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
             del world.maps.World.mapGrid[self.room].players[self.name]
@@ -123,7 +123,7 @@ class Player(StatefulTelnetProtocol):
         if AllPlayers.has_key(self.name):
             logger.gamelogger.logger.log.info( "{0} just hung up!!!".format(self.name) )
             # replace del with function to do full cleanup.
-            commands.communicate.tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
+            character.communicate.tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
             del AllPlayers[self.name]
             del world.maps.World.mapGrid[self.room].players[self.name]
       

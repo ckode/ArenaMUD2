@@ -21,7 +21,7 @@ from utils.login import getUsername
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
-from utils.functions import movePlayer
+from character.functions import movePlayer, displayRoom
 
             
             
@@ -75,7 +75,8 @@ def GameParser(player, line):
  
     # If just hit enter, display room
     if line == "":
-        world.maps.World.mapGrid[player.room].displayRoom(player)
+        #world.maps.World.mapGrid[player.room].displayRoom(player)
+        displayRoom(player, player.room)
         return      
     
     cmd = line.split()
@@ -133,7 +134,7 @@ def GameParser(player, line):
                 commands[each](player)
                 return                            
                  
-    from commands.communicate import say
+    from character.communicate import say
     say( player, line )
  
     

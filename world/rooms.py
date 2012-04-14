@@ -18,7 +18,7 @@
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import WHITE, GREEN, LCYAN, LMAGENTA
-from commands.communicate import sendToPlayer
+
 
 class Room:
     """
@@ -107,26 +107,6 @@ class Room:
             return None
                 
     
-    def displayRoom(self, player):
-        """
-        Display the room
-        """
-        
-        if player.blind:
-            sendToPlayer( player, "{0}You are blind.".format(WHITE) )
-            return
-        
-        if player.vision < self.light:
-            sendToPlayer( player, "{0}You cannot see anything, it's too dark.".format(WHITE) )
-            return
-        
-        sendToPlayer( player, "{0}{1}".format(LCYAN, self.name) )
-        
-        playersinroom = self.whosInRoom(player)
-        if playersinroom is not None:
-            sendToPlayer( player, "{0}Also here:{1} {2}".format(GREEN, LMAGENTA, playersinroom) )
-            
-        sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, self.getExits(), WHITE) )
-        
+
         
         

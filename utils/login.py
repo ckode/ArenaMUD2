@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from utils.defines import LOGIN, PLAYING
+from character.functions import displayRoom
 import logger.gamelogger
 
 
@@ -43,9 +44,10 @@ def getUsername(player, line):
     logger.gamelogger.logger.log.info( "{0} just logged in.".format(player) )
     player.status = PLAYING
     
-    from commands.communicate import tellWorld
+    from character.communicate import tellWorld
     from world.maps import World
     
     tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
     World.mapGrid[player.room].players[player.name] = player 
-    World.mapGrid[player.room].displayRoom(player)
+    #World.mapGrid[player.room].
+    displayRoom(player, player.room)

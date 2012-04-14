@@ -32,11 +32,7 @@ def say( player, line ):
     """
     
     sendToPlayer(player, "{1}You said:{2} {0}".format(line, LGREEN, WHITE) )
-    
-    # When rooms are introduced, limit to current room.
-    for client in character.players.AllPlayers.values():    
-        if client is not player:
-            sendToPlayer(client, "{2}{0} says:{3} {1}".format(player, line, LGREEN, WHITE) )    
+    sendToRoomNotPlayer(player, "{2}{0} says:{3} {1}".format(player, line, LGREEN, WHITE) )    
             
 
  
@@ -50,8 +46,8 @@ def sendToRoomNotPlayer(player, line):
      
     World = world.maps.World            
     for _player in world.maps.World.mapGrid[player.room].players.keys():
-        if player.name <> _player:
-            sendToplayer(character.players.AllPlayers[_player], line)
+        if player.name is not _player:
+            sendToPlayer(character.players.AllPlayers[_player], line)
             
             
  
