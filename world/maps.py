@@ -18,6 +18,7 @@ import sqlite3
 
 import world.doors
 import world.rooms
+import logger.gamelogger
 from utils.defines import WHITE
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
@@ -81,7 +82,8 @@ class GameMap:
             self.doors[row[0]].id        = row[0]
             self.doors[row[0]].exit1     = str(row[1]).zfill(3)
             self.doors[row[0]].exit2     = str(row[2]).zfill(3)
-
+            
+        logger.log.debug("{0} doors loaded.".format(len(self.doors)))
        
         logger.log.debug("Loading rooms.")
         # Load rooms into grid. 
@@ -104,13 +106,17 @@ class GameMap:
             self.mapGrid[rid].dirs[UP]      = row[10]            
             self.mapGrid[rid].dirs[DOWN]    = row[11]
             self.mapGrid[rid].spell         = row[12]
-            self.mapGrid[rid].light         = row[13]                     
+            self.mapGrid[rid].light         = row[13]      
+            
+        logger.log.debug("{0} rooms loaded.".format(len(self.roomsList)))
         
         # load map level names (z axis of the map)
         logger.log.debug("Loading level names.")
         for row in n_results:
             self.levelnames[row[0]]         = str(row[1])
             
+        logger.log.debug("{0} level names loaded.".format(len(self.levelnames)))
+        
     def getExit(self, direction):
         """
         Returns exit directions.

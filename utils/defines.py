@@ -47,9 +47,18 @@ DIRS         = { NORTH: 'north', NE: 'northeast', EAST: 'east', SE: 'southeast',
 #  Player status defines
 LOGIN = 0
 PLAYING = 1 
+GETCLASS = 2
 
 PURGATORY = 10
 
+
+# weaponText text identifiers
+YOUHIT     = 0
+YOUMISS    = 1
+VICTIMHIT  = 2
+VICTIMMISS = 3
+ROOMHIT    = 4
+ROOMMISS   = 5
 
 #############ANSI defines################
 #          Foreground Colors

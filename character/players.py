@@ -43,21 +43,35 @@ from utils.defines import PLAYING, LOGIN, PURGATORY
 #===========================================
 class Player(StatefulTelnetProtocol):
     """
-    Player character class. Sub-class of Character. Each user is defined by Player.
+    Player character class. 
     """
     
     def __init__(self):
         """
-        Player->__init__()
-        
         Initialize the Player class object
         """
+
         self.status = LOGIN
         self.IP = None
         self.room = ""
         self.name = "Unknown"
+        self.playerclass = ""
         
+        # Combat
+        self.attacks = 0
+        self.attkSkill = 0
+        self.critChange = 0
+        self.maxDamage = 0
+        self.minDamage = 0
+        self.weaponText = {}
+        self.maxPower = 100
+        self.power = 100
+        self.powerDesc = ""
+        self.hp = 0
+        self.maxhp = 0
+        self.steath = 0
         
+        self.sneaking = False
         self.resting = False
         self.moving = False
         self.held = False
@@ -75,8 +89,6 @@ class Player(StatefulTelnetProtocol):
     
     def connectionMade(self):
         """
-        Player->connectionMade(): Overrides Twisted's method.
-        
         Called when someone connects to the server.
         """
      
@@ -96,8 +108,6 @@ class Player(StatefulTelnetProtocol):
             
     def disconnectClient(self):
         """
-        Player->disconnectClient()  Overrides Twisted's method.
-        
         Disconnect a client and clean up game information.
         """
               
@@ -115,8 +125,6 @@ class Player(StatefulTelnetProtocol):
       
     def connectionLost(self, reason):
         """
-        Player->connectionList()  Overrides Twisted's method.
-        
         Player lost connection.  Clean up.
         """
         
@@ -131,8 +139,6 @@ class Player(StatefulTelnetProtocol):
     
     def lineReceived(self, line):
         """
-        Player->lineReceived()  Overrides Twisted's method.
-        
         Handles lines received from the client.
         """
         
@@ -143,11 +149,11 @@ class Player(StatefulTelnetProtocol):
    
     def statLine(self):
         """
-        Player->statLine(self)
-        
         Displays players statline.
         """
+        
+        statline = "[HP={0}/{1}={2}]: ".format(self.hp, self.powerDesc, self.power) 
         self.transport.write(DELETELEFT)
         self.transport.write(FIRSTCOL)
-        self.transport.write("[Fake Statline]: " + WHITE)        
+        self.transport.write( "{0}{1}".format(WHITE, statline) )        
         

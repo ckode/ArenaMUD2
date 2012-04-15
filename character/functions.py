@@ -23,7 +23,9 @@ from world.maps import World
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
 from utils.defines import PURGATORY
-
+from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
+from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
+from character.classes import Classes
 
 def movePlayer(player, direction):
     """
@@ -119,3 +121,27 @@ def spawnPlayer( player ):
     room = random.sample(World.roomsList, 1)[0]
     player.room = room
     World.mapGrid[room].players[player.name] = player
+    
+    
+    
+def applyClassAttributes(player, classid):
+    """
+    Apply choosen player class attributes
+    to the player.
+    """  
+    
+    player.attacks                    = Classes[classid].attacks
+    player.attkSkill                  = Classes[classid].attkSkill
+    player.maxDamage                  = Classes[classid].maxDamage
+    player.minDamage                  = Classes[classid].minDamage
+    player.weaponText[YOUHIT]         = Classes[classid].weaponText[YOUHIT]
+    player.weaponText[YOUMISS]        = Classes[classid].weaponText[YOUMISS]
+    player.weaponText[VICTIMHIT]      = Classes[classid].weaponText[VICTIMHIT]
+    player.weaponText[VICTIMMISS]     = Classes[classid].weaponText[VICTIMMISS]
+    player.weaponText[ROOMHIT]        = Classes[classid].weaponText[ROOMHIT]
+    player.weaponText[ROOMMISS]       = Classes[classid].weaponText[ROOMMISS]
+    player.powerDesc                  = Classes[classid].powerDesc
+    player.maxhp                      = Classes[classid].maxhp
+    player.hp                         = Classes[classid].maxhp
+    player.stealth                    = Classes[classid].stealth
+    

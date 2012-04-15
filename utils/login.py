@@ -14,9 +14,10 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import LOGIN, PLAYING
+from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import BLUE, WHITE
-from character.functions import displayRoom, spawnPlayer
+from character.functions import displayRoom, spawnPlayer, applyClassAttributes
+from character.classes import Classes
 import logger.gamelogger
 
 
@@ -37,18 +38,63 @@ def getUsername(player, line):
     
     Check for username or new and work.
     """
-    from world.maps import World
-    from character.players import AllPlayers
     
+    if line == "":
+        player.sendLine("Invalid name, please try again.")
+        askUsername(player)
+        return
+                           
     player.name = line.capitalize()
-    AllPlayers[player.name] = player
     logger.gamelogger.logger.log.info( "{0} just logged in.".format(player) )
-    player.status = PLAYING
+    player.status = GETCLASS
+    askClass(player)
+
     
-    from character.communicate import tellWorld, sendToRoomNotPlayer
-    from world.maps import World
     
-    tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
-    spawnPlayer( player )
-    sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
-    displayRoom(player, player.room)
+    
+def askClass(player):
+    """
+    getUsername()
+    
+    Ask user for a username.
+    """
+    player.sendLine("Choose your class.")
+    for each in Classes.keys():
+        player.sendLine(" - {0}) {1}".format(each, Classes[each].name))
+        
+    player.transport.write("\r\nEnter your choice: ")
+  
+  
+  
+    
+def getClass(player, line):
+    
+
+    if line == "":
+        player.sendLine("Invalid choice, please try again.")
+        askClass(player)
+        return         
+        
+    choice = int(line)
+    
+    if choice in Classes.keys():    
+        from world.maps import World
+        from character.players import AllPlayers        
+        AllPlayers[player.name] = player
+        applyClassAttributes(player, choice)
+        
+        player.status = PLAYING
+    
+        from character.communicate import tellWorld, sendToRoomNotPlayer
+        from world.maps import World
+    
+        tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
+        spawnPlayer( player )
+        sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
+        displayRoom(player, player.room)    
+    else:
+        player.sendLine("Invalid choice, please try again.")
+        askClass(player)
+        return            
+        
+    

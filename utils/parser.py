@@ -17,9 +17,9 @@
 import re
 
 import world.maps
-from utils.login import getUsername
+from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
-from utils.defines import LOGIN, PLAYING
+from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap
 from character.functions import movePlayer, displayRoom
@@ -36,6 +36,9 @@ def statusMatrix(player, line):
     if player.status is LOGIN:
         getUsername(player, line)
         return 
+    elif player.status is GETCLASS:
+        getClass(player, line)
+        return
 
 
 
