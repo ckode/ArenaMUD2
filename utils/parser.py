@@ -23,6 +23,8 @@ from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap
 from character.functions import movePlayer, displayRoom
+#from combat.functions import attack
+import combat.functions
 
             
             
@@ -59,8 +61,8 @@ commands = { '/quit':            "",
              'up':               movePlayer,
              'down':             movePlayer,
              'rest':             "",
-             'map':              showMap
-             
+             'map':              showMap,
+             'attack':           ""            
            }
 
 def GameParser(player, line):
@@ -140,7 +142,11 @@ def GameParser(player, line):
                 return                            
             elif each == "map" and len(cmd) == 1 and len(cmd[0]) == 3:
                 commands[each](player)
-                return                           
+                return         
+            elif each == "attack" and len(cmd) == 2:
+                combat.functions.attack(player, cmd[1]) #line[(len(cmd[0]) + 1):])
+                #commands[each](player)
+                return                
     from character.communicate import say
     say( player, line )
  

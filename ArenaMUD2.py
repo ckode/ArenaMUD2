@@ -19,11 +19,14 @@
 from twisted.internet.protocol import ServerFactory
 from twisted.internet import reactor
 from twisted.conch.telnet import TelnetTransport
+from twisted.internet.task import LoopingCall
 
 # Python imports
 
 # ArenaMUD2 imports
 from config.gameconfig import GameConfig
+from combat.queue import CombatQueue
+from combat.functions import doCombatRound
 import character.players
 import logger.gamelogger
 import character.classes
@@ -34,9 +37,11 @@ class SonzoFactory(ServerFactory):
     
     def __init__(self):
         """Initialize any attributes the server needs"""
-        pass
+        self.combatQueue = CombatQueue()
         
-
+        
+    def FourSecondLoop(self):
+        doCombatRound(self.combatQueue)  
 
 
 #============================================
@@ -51,6 +56,11 @@ def startup():
     factory.protocol = lambda: TelnetTransport(character.players.Player)
     reactor.listenTCP(GameConfig.port, factory)
     logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion")
+    
+    # 4 Second Loop
+    FourSecondLoop = LoopingCall(factory.FourSecondLoop)
+    FourSecondLoop.start(4)
+    
     reactor.run()
 
    

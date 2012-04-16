@@ -14,6 +14,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
 
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
@@ -107,6 +108,24 @@ class Room:
             return None
                 
     
-
+    def findPlayerInRoom(self, player, Name):
+        """
+        Search room players for a match
+        with name given.
+        """
+        victimList = []   
+        found = []
+        cName = Name.capitalize()
+            
+        NameSearch = re.compile( re.escape(Name.lower()) )
+        for name, victim in self.players.items():
+            if cName == name:
+                found.append(victim)
+                return found
+            if name is not "" and name <> player.name:
+                if NameSearch.match( name.lower() ):
+                    victimList.append(victim)
+    
+        return victimList
         
         

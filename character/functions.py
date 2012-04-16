@@ -20,7 +20,7 @@ import random
 
 from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
 from world.maps import World
-from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN
+from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN, BLUE
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
 from utils.defines import PURGATORY
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
@@ -119,8 +119,15 @@ def spawnPlayer( player ):
     """
     
     room = random.sample(World.roomsList, 1)[0]
+    
+    # Uncomment below to force spawn in a certain room
+    #room = "544"
+    
     player.room = room
+    player.resetStats()
     World.mapGrid[room].players[player.name] = player
+    sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
+    displayRoom(player, player.room)
     
     
     
@@ -144,4 +151,6 @@ def applyClassAttributes(player, classid):
     player.maxhp                      = Classes[classid].maxhp
     player.hp                         = Classes[classid].maxhp
     player.stealth                    = Classes[classid].stealth
+    player.critical                   = Classes[classid].critical
+    player.classid                    = classid
     

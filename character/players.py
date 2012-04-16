@@ -27,6 +27,7 @@ import world.maps
 import logger.gamelogger
 import utils.parser
 import character.communicate
+import character.functions 
 from utils.defines import BLUE, WHITE 
 from utils.defines import DELETELEFT, FIRSTCOL
 from utils.defines import PLAYING, LOGIN, PURGATORY
@@ -56,11 +57,12 @@ class Player(StatefulTelnetProtocol):
         self.room = ""
         self.name = "Unknown"
         self.playerclass = ""
+        self.classid = 0
         
         # Combat
         self.attacks = 0
         self.attkSkill = 0
-        self.critChange = 0
+        self.critical = 0
         self.maxDamage = 0
         self.minDamage = 0
         self.weaponText = {}
@@ -77,6 +79,9 @@ class Player(StatefulTelnetProtocol):
         self.held = False
         self.blind = False
         self.vision = 3
+        
+        self.attacking = None
+        
         
                 
         
@@ -157,3 +162,19 @@ class Player(StatefulTelnetProtocol):
         self.transport.write(FIRSTCOL)
         self.transport.write( "{0}{1}".format(WHITE, statline) )        
         
+        
+        
+    def resetStats(self):
+        """
+        Resets a players stats before respawning.
+        """
+        
+        character.functions.applyClassAttributes( self, self.classid )
+        self.hp = self.maxhp
+        self.power = self.maxPower
+        self.sneaking = False
+        self.resting = False
+        self.moving = False
+        self.held = False
+        self.blind = False
+        self.attacking = None

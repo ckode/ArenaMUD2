@@ -26,7 +26,7 @@ class CombatQueue():
         """
         Initialize CombatQueue object.
         """
-        self.QueueIndex = {}
+        self.queueIndex = {}
         self.combatQueue = []
 
 
@@ -35,19 +35,19 @@ class CombatQueue():
         Adds a new attack to the combat queue
         """
 
-        self.RemoveAttack(playerid)
+        self.removeAttack(playerid)
         # add new attack and update index.
         self.combatQueue.append(playerid)
-        self.UpdateIndex()
+        self.updateIndex()
 
 
     def removeAttack(self, playerid):
         """
         Remove an attack from the combat queue.
         """
-        if playerid in self.QueueIndex.keys():
-            del self.combatQueue[self.QueueIndex[playerid]]
-            self.UpdateIndex()
+        if playerid in self.queueIndex.keys():
+            del self.combatQueue[self.queueIndex[playerid]]
+            self.updateIndex()
 
 
     def updateIndex(self):
@@ -55,10 +55,10 @@ class CombatQueue():
         Rebuild combat queue index.
         """
 
-        self.QueueIndex.clear()
+        self.queueIndex.clear()
         x = 0
         for playerid in self.combatQueue:
-            self.QueueIndex[playerid] = x
+            self.queueIndex[playerid] = x
             x += 1
 
 
@@ -74,5 +74,10 @@ class CombatQueue():
         Removes all combat from the
         combat queue.
         """
-        self.QueueIndex.clear()
+        self.queueIndex.clear()
         del self.combatQueue[:]
+        
+        
+
+        
+        

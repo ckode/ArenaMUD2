@@ -37,9 +37,10 @@ class PlayerClass:
         self.maxDamage = 0
         self.minDamage = 0
         self.weaponText = {}
-        self.powerDesc = {}
+        self.powerDesc = ""
         self.maxhp = 0
         self.stealth = 0
+        self.critical = 0
         
         
         
@@ -67,6 +68,7 @@ def loadClasses():
                                  weapontextvictimmiss,
                                  weapontextroomhit,
                                  weapontextroommiss,
+                                 critical,
                                  classdesc FROM classes;""")    
         results = cursor.fetchall()
         
@@ -87,13 +89,15 @@ def loadClasses():
         classes[x].minDamage                 = row[4]
         classes[x].powerDesc                 = str(row[5])
         classes[x].maxhp                     = row[6]
-        classes[x].weaponText[YOUHIT]        = str(row[7])
-        classes[x].weaponText[YOUMISS]       = str(row[8])
-        classes[x].weaponText[VICTIMHIT]     = str(row[9])
-        classes[x].weaponText[VICTIMMISS]    = str(row[10])
-        classes[x].weaponText[ROOMHIT]       = str(row[11])
-        classes[x].weaponText[ROOMMISS]      = str(row[12])    
-        classes[x].desc                      = str(row[13])
+        classes[x].stealth                   = row[7]
+        classes[x].weaponText[YOUHIT]        = str(row[8])
+        classes[x].weaponText[YOUMISS]       = str(row[9])
+        classes[x].weaponText[VICTIMHIT]     = str(row[10])
+        classes[x].weaponText[VICTIMMISS]    = str(row[11])
+        classes[x].weaponText[ROOMHIT]       = str(row[12])
+        classes[x].weaponText[ROOMMISS]      = str(row[13])   
+        classes[x].critical                  = row[14]
+        classes[x].desc                      = str(row[15])
         x += 1
         
     logger.log.debug("{0} classes loaded.".format(len(classes)))

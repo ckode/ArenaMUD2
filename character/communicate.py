@@ -49,6 +49,20 @@ def sendToRoomNotPlayer(player, line):
         if player.name is not _player:
             sendToPlayer(character.players.AllPlayers[_player], line)
             
+
+def sendToRoomNotPlayerOrVictim(player, victim, line):
+    """
+    sendToRoomNotPlayerOrVictim(self, line)
+    
+    Send text to everyone in the room except the player or
+    victim.  Usually used in combat.
+    """
+     
+    World = world.maps.World            
+    for _player in world.maps.World.mapGrid[player.room].players.keys():
+        if player.name is not _player and victim.name is not _player:
+            sendToPlayer(character.players.AllPlayers[_player], line)
+
             
  
 def sendToPlayer(player, line):

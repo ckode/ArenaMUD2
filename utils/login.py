@@ -39,12 +39,19 @@ def getUsername(player, line):
     Check for username or new and work.
     """
     
+    
     if line == "":
         player.sendLine("Invalid name, please try again.")
         askUsername(player)
-        return
-                           
+        return  
+    
+    from character.players import AllPlayers                    
     player.name = line.capitalize()
+    if player.name in AllPlayers.keys():
+        player.sendLine("Name already exists, please try again.")
+        askUsername(player)
+        return          
+       
     logger.gamelogger.logger.log.info( "{0} just logged in.".format(player) )
     player.status = GETCLASS
     askClass(player)
@@ -90,8 +97,7 @@ def getClass(player, line):
     
         tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
         spawnPlayer( player )
-        sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
-        displayRoom(player, player.room)    
+   
     else:
         player.sendLine("Invalid choice, please try again.")
         askClass(player)
