@@ -162,9 +162,9 @@ def attack(player, vicName):
             sendToPlayer( player, "Why would you want to attack yourself?" )
         else:
             player.attacking = victims[0]
-            sendToPlayer( player, "{0}*Combat Engaged*{0}".format(BROWN, WHITE) )
-            sendToPlayer( player.attacking, "{0}{0} moves to attack you!".format(BROWN, player.name) )
-            sendToRoomNotPlayerOrVictim( player, victim, "{0}{0} moves to attack {0}!".format(BROWN, player.name, victim.name) )
+            sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
+            sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
+            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{0} moves to attack {0}!".format(BROWN, player.name, player.attacking) )
             player.factory.combatQueue.addAttack(player.name)
         
     
