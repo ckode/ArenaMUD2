@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sqlite3
+import os
 
 import world.doors
 import world.rooms
@@ -62,7 +63,7 @@ class GameMap:
  
         
         try:
-            conn = sqlite3.connect("data\\" + mapdb)
+            conn = sqlite3.connect(os.path.join("data", mapdb))
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM doors;")
             d_results = cursor.fetchall()

@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sqlite3
+import os
 
 from logger.gamelogger import logger
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
@@ -52,7 +53,7 @@ def loadClasses():
     """
     
     try:
-        conn = sqlite3.connect("data\\" + "ArenaMUD2.db")
+        conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
         cursor = conn.cursor()
         cursor.execute("""SELECT name, 
                                  attacks,
