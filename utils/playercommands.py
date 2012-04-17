@@ -14,7 +14,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import WHITE, RED
+from utils.defines import WHITE, RED, BROWN
+from character.functions import sendToRoomNotPlayer
+import combat.functions
 
 
 def showMap( player ):
@@ -47,4 +49,16 @@ def showMap( player ):
         r = "{0}".format(WHITE)
         
     player.sendLine(d)  
+    player.statLine()
+    
+    
+    
+def breakCombat(player):
+    """
+    Break off combat if engaged.
+    """
+    
+    if player.attacking:
+        sendToRoomNotPlayer( player, "{0}{1} breaks off combat.".format(BROWN, player.name) )
+    combat.functions.endCombat( player ) 
     player.statLine()

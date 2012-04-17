@@ -55,6 +55,7 @@ def doAttack(player, victim):
     Executes a players regular attack.
     """
     
+    victim.resting = False
     for attk in range(0, player.attacks):
         attackroll = random.randint(1, 100)
         if player.attkSkill >= attackroll:
@@ -133,7 +134,8 @@ def endCombat(player):
     Ends combat for user.
     """
     if player.status == PLAYING:
-        sendToPlayer( player, "{0}*Combat Off*{1}".format(BROWN, WHITE) )
+        if player.attacking:
+            sendToPlayer( player, "{0}*Combat Off*".format(BROWN) )
         player.factory.combatQueue.removeAttack(player.name)
         player.attacking = None
     else:
@@ -162,9 +164,11 @@ def attack(player, vicName):
             sendToPlayer( player, "Why would you want to attack yourself?" )
         else:
             player.attacking = victims[0]
+            player.resting = False
+            player.attacking.resting = False
             sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
             sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
-            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{0} moves to attack {0}!".format(BROWN, player.name, player.attacking) )
+            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {0}!".format(BROWN, player.name, player.attacking) )
             player.factory.combatQueue.addAttack(player.name)
         
     

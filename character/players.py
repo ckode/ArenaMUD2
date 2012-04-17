@@ -158,6 +158,8 @@ class Player(StatefulTelnetProtocol):
         """
         
         statline = "[HP={0}/{1}={2}]: ".format(self.hp, self.powerDesc, self.power) 
+        if self.resting:
+            statline = "{0}{1} ".format(statline, "(resting) ")
         self.transport.write(DELETELEFT)
         self.transport.write(FIRSTCOL)
         self.transport.write( "{0}{1}".format(WHITE, statline) )        

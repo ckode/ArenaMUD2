@@ -17,7 +17,7 @@
 import character.players 
 import world.maps
 
-from utils.defines import WHITE, LBLUE, LGREEN
+from utils.defines import WHITE, LBLUE, LGREEN, MAGENTA
 from utils.defines import DELETELEFT, FIRSTCOL
 from utils.defines import PLAYING
 
@@ -100,4 +100,14 @@ def tellWorld( player, playerMsg, OtherPlayersMsg ):
         if client is not player and client.status is PLAYING:
             sendToPlayer( client, "{1}{0}{2}".format(OtherPlayersMsg, LBLUE, WHITE) )    
     
+    
+    
+def gossip( player, msg):
+    """
+    Shouts messages to all players with 
+    player.status = playing
+    """
+    for client in character.players.AllPlayers.values(): 
+        if client.status is PLAYING:
+            sendToPlayer( client, "{0}{1} gossips: {2}".format(MAGENTA, player.name, msg) )     
     

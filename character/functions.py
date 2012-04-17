@@ -26,6 +26,7 @@ from utils.defines import PURGATORY
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
 from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
 from character.classes import Classes
+import combat.functions
 
 def movePlayer(player, direction):
     """
@@ -121,7 +122,7 @@ def spawnPlayer( player ):
     room = random.sample(World.roomsList, 1)[0]
     
     # Uncomment below to force spawn in a certain room
-    #room = "544"
+    room = "544"
     
     player.room = room
     player.resetStats()
@@ -154,3 +155,14 @@ def applyClassAttributes(player, classid):
     player.critical                   = Classes[classid].critical
     player.classid                    = classid
     
+
+def rest(player):
+    """
+    Set player in resting state.
+    """
+    
+    combat.functions.endCombat(player)
+    sendToPlayer( player, "You stop to rest." )
+    sendToRoomNotPlayer( player, "{0} stops to rest.".format(player.name) )
+    player.resting = True
+    player.statLine()

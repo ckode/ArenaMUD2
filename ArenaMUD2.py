@@ -27,9 +27,11 @@ from twisted.internet.task import LoopingCall
 from config.gameconfig import GameConfig
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
+from utils.gameutils import restHealing, naturalHealing
 import character.players
 import logger.gamelogger
 import character.classes
+
 
 
 class SonzoFactory(ServerFactory):
@@ -41,8 +43,15 @@ class SonzoFactory(ServerFactory):
         
         
     def FourSecondLoop(self):
+        # Do rest healing.
+        restHealing()
+        # Do combat round
         doCombatRound(self.combatQueue)  
 
+        
+    def FifteenSecondLoop(self):
+        naturalHealing()
+        
 
 #============================================
 # Start Game
@@ -60,6 +69,10 @@ def startup():
     # 4 Second Loop
     FourSecondLoop = LoopingCall(factory.FourSecondLoop)
     FourSecondLoop.start(4)
+    
+    # 4 Second Loop
+    FifteenSecondLoop = LoopingCall(factory.FourSecondLoop)
+    FifteenSecondLoop.start(15)
     
     reactor.run()
 
