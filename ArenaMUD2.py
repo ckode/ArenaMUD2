@@ -71,7 +71,7 @@ def startup():
     FourSecondLoop.start(4)
     
     # 4 Second Loop
-    FifteenSecondLoop = LoopingCall(factory.FourSecondLoop)
+    FifteenSecondLoop = LoopingCall(factory.FifteenSecondLoop)
     FifteenSecondLoop.start(15)
     
     reactor.run()
