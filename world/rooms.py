@@ -84,7 +84,24 @@ class Room:
             exits += "."
         
         return exits
+ 
     
+    def getItems(self):
+        """
+        Return list of items in room for room display.
+        """
+        
+        items = False     
+        for item in self.items.keys():
+            if item <> "" and items is False:
+                items += item
+            else:
+                items += ", {0}".format(item)
+                
+        if items is not False:
+            items += "."
+        
+        return items
 
 
     def whosInRoom(self, player):
