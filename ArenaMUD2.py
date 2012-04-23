@@ -31,6 +31,7 @@ from utils.gameutils import restHealing, naturalHealing
 import character.players
 import logger.gamelogger
 import character.classes
+from world.items import loadItems
 
 
 

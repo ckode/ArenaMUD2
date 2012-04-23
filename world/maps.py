@@ -19,6 +19,7 @@ import os
 
 import world.doors
 import world.rooms
+import world.items
 import logger.gamelogger
 from utils.defines import WHITE
 from utils.defines import DIRS, NORTH, NE, EAST, SE
@@ -42,6 +43,8 @@ class GameMap:
         Creates GameMap object and loads maps
         """
 
+        self.ItemsList = world.items.loadItems()
+        
         from logger.gamelogger import logger
         
         self.mapGrid     = {}
@@ -107,7 +110,10 @@ class GameMap:
             self.mapGrid[rid].dirs[UP]      = row[10]            
             self.mapGrid[rid].dirs[DOWN]    = row[11]
             self.mapGrid[rid].spell         = row[12]
-            self.mapGrid[rid].light         = row[13]      
+            self.mapGrid[rid].light         = row[13]    
+            item                            = row[14]
+            if item is not None:
+                self.mapGrid[rid].items[self.ItemsList[item].name] = self.ItemsList[item]
             
         logger.log.debug("{0} rooms loaded.".format(len(self.roomsList)))
         

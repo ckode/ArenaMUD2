@@ -85,7 +85,8 @@ def criticalRoll(player, damage):
     """
     critroll = random.randint(1, 100)
     if (100 - player.critical) < critroll:
-        return (damage * 2)
+        damage = player.maxDamage + random.randint(player.minDamage, player.maxDamage)
+        return damage
     return False
 
 
@@ -168,7 +169,7 @@ def attack(player, vicName):
             player.attacking.resting = False
             sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
             sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
-            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {0}!".format(BROWN, player.name, player.attacking) )
+            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )
             player.factory.combatQueue.addAttack(player.name)
         
     

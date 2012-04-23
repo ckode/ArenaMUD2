@@ -91,14 +91,14 @@ class Room:
         Return list of items in room for room display.
         """
         
-        items = False     
+        items = ""     
         for item in self.items.keys():
-            if item <> "" and items is False:
+            if item <> "" and items is "":
                 items += item
             else:
                 items += ", {0}".format(item)
                 
-        if items is not False:
+        if items is not "":
             items += "."
         
         return items

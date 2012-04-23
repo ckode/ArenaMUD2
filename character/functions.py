@@ -108,7 +108,7 @@ def displayRoom(player, room):
       
     items = curRoom.getItems()
     if items:
-        sendToPlayer( player, "{0}You notice: {1}".format(LMAGENT, items) )
+        sendToPlayer( player, "{0}You notice: {1}".format(LMAGENTA, items) )
         
     playersinroom = curRoom.whosInRoom(player)
     if playersinroom is not None:

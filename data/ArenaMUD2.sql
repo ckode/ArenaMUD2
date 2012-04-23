@@ -38,3 +38,16 @@ CREATE TABLE classes (
     weapontextvictimmiss VARCHAR( 100 )  NOT NULL,
     weapontextroommiss   VARCHAR( 100 )  NOT NULL 
 );
+
+
+CREATE TABLE items ( 
+    id            INTEGER         PRIMARY KEY AUTOINCREMENT
+                               NOT NULL
+                               UNIQUE,
+    name          VARCHAR( 25 )   NOT NULL,
+    itemaction    INTEGER         DEFAULT ( NULL ),
+    usetext       VARCHAR( 25 )   DEFAULT ( NULL ),
+    actiontext    VARCHAR( 256 )  DEFAULT ( NULL ),
+    description   VARCHAR( 512)   NOT NULL 
+                                  DEFAULT 'An Item.'
+);

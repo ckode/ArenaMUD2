@@ -34,7 +34,8 @@ CREATE TABLE rooms (
     d     INT            DEFAULT ( NULL ),
     spell INT            DEFAULT ( NULL ),
     light INT            NOT NULL
-                         DEFAULT ( 3 ) 
+                         DEFAULT ( 3 ),
+    item  INT            DEFAULT ( NULL ) 
 );
 
 
