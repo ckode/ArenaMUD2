@@ -19,7 +19,7 @@ from twisted.internet import reactor
 import random
 
 from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
-from world.maps import World
+import world.maps 
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN, BLUE
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
 from utils.defines import PURGATORY
@@ -47,7 +47,7 @@ def movePlayer(player, direction):
         player.moving is False
         sendToPlayer( player, "You cannot move!" )           
         
-    curRoom = World.mapGrid[player.room]
+    curRoom = world.maps.World.mapGrid[player.room]
     # Run into the wall/ceiling/floor, if no door
     if not curRoom.dirs[direction]:
         if direction is DOWN:
@@ -74,10 +74,10 @@ def move(player, direction):
     Moves the character from one room to the next.
     """
     
-    curRoom = World.mapGrid[player.room]
+    curRoom = world.maps.World.mapGrid[player.room]
     door = curRoom.dirs[direction]
-    roomid = World.doors[door].getExitRoom(curRoom.id)
-    newRoom = World.mapGrid[roomid]
+    roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
+    newRoom = world.maps.World.mapGrid[roomid]
     
     sendToRoomNotPlayer( player, "{0} left to the {1}.".format(player, DIRS[direction]) ) 
     del curRoom.players[player.name]
@@ -93,7 +93,7 @@ def displayRoom(player, room):
     """
     Display the room
     """
-    curRoom = World.mapGrid[room]
+    curRoom = world.maps.World.mapGrid[room]
     
     if player.blind:
         sendToPlayer( player, "{0}You are blind.".format(WHITE) )
@@ -123,14 +123,14 @@ def spawnPlayer( player ):
     Spawn the player in the map.
     """
     
-    room = random.sample(World.roomsList, 1)[0]
+    room = random.sample(world.maps.World.roomsList, 1)[0]
     
     # Uncomment below to force spawn in a certain room
     room = "544"
     
     player.room = room
     player.resetStats()
-    World.mapGrid[room].players[player.name] = player
+    world.maps.World.mapGrid[room].players[player.name] = player
     sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
     displayRoom(player, player.room)
     
@@ -158,6 +158,7 @@ def applyClassAttributes(player, classid):
     player.stealth                    = Classes[classid].stealth
     player.critical                   = Classes[classid].critical
     player.classid                    = classid
+    player.playerclass                = Classes[classid].name
     
 
 def rest(player):

@@ -17,7 +17,6 @@
 import sqlite3
 import os
 
-from logger.gamelogger import logger
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
 from utils.defines import ROOMHIT, ROOMMISS
 
@@ -44,7 +43,7 @@ class PlayerClass:
         self.critical = 0
         
         
-        
+
 
 def loadClasses():
     """
@@ -52,10 +51,12 @@ def loadClasses():
     and returns a dicts of class objects.
     """
     
+    from logger.gamelogger import logger
+	
     try:
         conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
         cursor = conn.cursor()
-        cursor.execute("""SELECT name, 
+        cursor.execute("""SELECT name,
                                  attacks,
                                  attackskill,
                                  maxdamage,
@@ -70,18 +71,18 @@ def loadClasses():
                                  weapontextroomhit,
                                  weapontextroommiss,
                                  critical,
-                                 classdesc FROM classes;""")    
+                                 classdesc FROM classes;""")
         results = cursor.fetchall()
-        
+
     except:
         logger.log.critical( "Database errors using: ArenaMUD2.db" )
-        
-        
+
+
     classes = {}
     x = 1
-    logger.log.debug("Loading classes.")
+    #logger.log.debug("Loading classes.")
     for row in results:
-        
+
         classes[x]                           = PlayerClass()
         classes[x].name                      = str(row[0])
         classes[x].attacks                   = row[1]
@@ -96,12 +97,12 @@ def loadClasses():
         classes[x].weaponText[VICTIMHIT]     = str(row[10])
         classes[x].weaponText[VICTIMMISS]    = str(row[11])
         classes[x].weaponText[ROOMHIT]       = str(row[12])
-        classes[x].weaponText[ROOMMISS]      = str(row[13])   
+        classes[x].weaponText[ROOMMISS]      = str(row[13])
         classes[x].critical                  = row[14]
         classes[x].desc                      = str(row[15])
         x += 1
-        
-    logger.log.debug("{0} classes loaded.".format(len(classes)))
+
+    #logger.log.debug("{0} classes loaded.".format(len(classes)))
     return classes    
     
 Classes = loadClasses()

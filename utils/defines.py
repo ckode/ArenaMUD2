@@ -44,6 +44,19 @@ OPPOSITEDIRS   =  { NORTH: SOUTH,
 DIRS         = { NORTH: 'north', NE: 'northeast', EAST: 'east', SE: 'southeast', SOUTH: 'south',
                  SW: 'southwest', WEST: 'west', NW: 'northwest', UP: 'up', DOWN: 'down' }
 
+				 
+DIRLOOKUP      = { "n":    1,
+                   "ne":   2,
+                   "e":    3,
+                   "se":   4,
+                   "s":    5,
+                   "sw":   6,
+                   "w":    7,
+                   "nw":   8,
+                   "u":    9,
+                   "d":   10
+                 }
+
 #  Player status defines
 LOGIN = 0
 PLAYING = 1 

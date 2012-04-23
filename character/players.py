@@ -99,7 +99,7 @@ class Player(StatefulTelnetProtocol):
      
         self.IP = self.transport.getPeer().host
         logger.gamelogger.logger.log.info("{0} CONNECTED!".format(self.IP))
-        
+
         # Check for max players 
         from config.gameconfig import GameConfig
         if len(AllPlayers) >= GameConfig.maxplayers:
@@ -124,7 +124,7 @@ class Player(StatefulTelnetProtocol):
             logger.gamelogger.logger.log.info( "{0} just logged off.".format(self.name) )
             del AllPlayers[self.name]
             del world.maps.World.mapGrid[self.room].players[self.name]
-            
+
         self.transport.loseConnection()
       
       
@@ -180,3 +180,10 @@ class Player(StatefulTelnetProtocol):
         self.held = False
         self.blind = False
         self.attacking = None
+		
+		
+    def displayDescription(self, player):
+	"""
+	Displays a description of the player.
+	"""
+	character.functions.sendToPlayer( player, "{0} is a {1}".format(self.name, self.playerclass) )

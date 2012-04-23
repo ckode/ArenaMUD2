@@ -17,6 +17,7 @@
 import sqlite3
 import os
 
+import character.functions
 
 class Item:
     """
@@ -35,7 +36,21 @@ class Item:
         self.useText = None
         self.actionText = None
         self.desc = ""
-        
+    
+    def __repr__(self):
+        """
+	String representation.
+	"""
+	return self.name
+
+
+    def displayDescription(self, player):
+    	"""
+	Displays a discription.
+	"""
+
+	character.functions.sendToPlayer( player, self.desc )
+	
         
 def loadItems():
     """
@@ -66,10 +81,10 @@ def loadItems():
         items[itemid]                           = Item()
         items[itemid].id                        = itemid
         items[itemid].name                      = str(row[1])
-        items[itemid].action                    = row[1]
-        items[itemid].useText                   = str(row[2])
-        items[itemid].actionText                = str(row[3])
-        items[itemid].desc                      = str(row[4])
+        items[itemid].action                    = row[2]
+        items[itemid].useText                   = str(row[3])
+        items[itemid].actionText                = str(row[4])
+        items[itemid].desc                      = str(row[5])
 
     logger.log.debug("{0} items loaded.".format(len(items)))
     return items

@@ -16,11 +16,10 @@
 
 import random
 
-from world.maps import World
+import world.maps
 from character.players import AllPlayers
-from character.communicate import sendToPlayer, sendToRoomNotPlayerOrVictim
-from character.communicate import  sendToRoomNotPlayer, tellWorld
-from character.functions import spawnPlayer
+import character.communicate
+import character.functions
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
 from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED
 
@@ -49,12 +48,12 @@ def doCombatRound(combatqueue):
                     endCombat(player)
                 
                 
-                
+
 def doAttack(player, victim):
     """
     Executes a players regular attack.
     """
-    
+
     victim.resting = False
     for attk in range(0, player.attacks):
         attackroll = random.randint(1, 100)
@@ -123,9 +122,9 @@ def displayDamage(player, victim, dmg, crit):
         vtext = WHITE + player.weaponText[VICTIMMISS].format(player.name)
         rtext = WHITE + player.weaponText[ROOMMISS].format(player.name, victim.name)
 
-    sendToPlayer( player, ptext )
-    sendToPlayer( victim, vtext )
-    sendToRoomNotPlayerOrVictim( player, victim, rtext )
+    character.communicate.sendToPlayer( player, ptext )
+    character.communicate.sendToPlayer( victim, vtext )
+    character.communicate.sendToRoomNotPlayerOrVictim( player, victim, rtext )
 
 
 
@@ -136,63 +135,63 @@ def endCombat(player):
     """
     if player.status == PLAYING:
         if player.attacking:
-            sendToPlayer( player, "{0}*Combat Off*".format(BROWN) )
+            character.communicate.sendToPlayer( player, "{0}*Combat Off*".format(BROWN) )
         player.factory.combatQueue.removeAttack(player.name)
         player.attacking = None
     else:
         player.factory.combatQueue.removeAttack(player.name)
         player.attacking = None
-   
-        
-        
-    
+
+
+
+
 def attack(player, vicName):
     """
     Check to see if the victim is in the room. If
     he is, engage combat.
     """
-    curRoom = World.mapGrid[player.room]
+    curRoom = world.maps.World.mapGrid[player.room]
     victims = curRoom.findPlayerInRoom(player, vicName)
 
     if not victims:
-        sendToPlayer( player, "You do not see {0} here.".format(vicName) )
+        character.communicate.sendToPlayer( player, "You do not see {0} here.".format(vicName) )
     elif len(victims) > 1:
-        sendToPlayer( player, "Who do you want to attack?" )
+        character.communicate.sendToPlayer( player, "Who do you want to attack?" )
         for name in victims:
-            sendToPlayer( player, " - {0}".format(name) )
+            character.communicate.sendToPlayer( player, " - {0}".format(name) )
     else:
         if victims[0].name == player.name:
-            sendToPlayer( player, "Why would you want to attack yourself?" )
+            character.communicate.sendToPlayer( player, "Why would you want to attack yourself?" )
         else:
             player.attacking = victims[0]
             player.resting = False
             player.attacking.resting = False
-            sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
-            sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
-            sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )
+            character.communicate.sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
+            character.communicate.sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
+            character.communicate.sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )
             player.factory.combatQueue.addAttack(player.name)
-        
-    
+
+
 
 def playerKilled(player):
     """
     Kill the player
     """
-    
-    sendToRoomNotPlayer( player, "{0} drops to the ground.".format(player.name) )
-    del World.mapGrid[player.room].players[player.name]
-    tellWorld( player, "You have died.", "{0} was killed.".format(player.name) )
+
+    character.communicate.sendToRoomNotPlayer( player, "{0} drops to the ground.".format(player.name) )
+    del world.maps.World.mapGrid[player.room].players[player.name]
+    character.communicate.tellWorld( player, "You have died.", "{0} was killed.".format(player.name) )
     endCombat( player )
-    spawnPlayer( player )
-    
-    
-    
+    character.functions.spawnPlayer( player )
+
+
+
 def clearAttacksPlayerDead(victim):
     """
     Remove all attacks against dead
     player.
     """
-    
+
     for player in AllPlayers.values():
         if player.attacking == victim:
             endCombat( player )

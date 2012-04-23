@@ -36,6 +36,17 @@ def say( player, line ):
             
 
  
+ 
+def sendToRoom(roomid, line):
+    """
+    sendToRoom(self, line)
+    
+    Send text to everyone in the room.
+    """
+     
+    World = world.maps.World            
+    for _player in world.maps.World.mapGrid[roomid].players.keys():
+        sendToPlayer(character.players.AllPlayers[_player], line)
             
 def sendToRoomNotPlayer(player, line):
     """

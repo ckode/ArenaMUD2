@@ -21,9 +21,10 @@ from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
-from utils.playercommands import showMap, showLevel, breakCombat
-from character.functions import movePlayer, displayRoom, rest
-from character.communicate import gossip
+from utils.playercommands import showMap, showLevel, breakCombat, look
+import character.functions
+#from character.functions import movePlayer, displayRoom, rest
+import character.communicate
 
 #from combat.functions import attack
 import combat.functions
@@ -48,27 +49,28 @@ def statusMatrix(player, line):
 
 # Command list.
 commands = { '/quit':            "",
-             'north':            movePlayer,
-             'ne':               movePlayer,
-             'northeast':        movePlayer,
-             'east':             movePlayer,
-             'se':               movePlayer,
-             'southeast':        movePlayer,
-             'south':            movePlayer,
-             'sw':               movePlayer,
-             'southwest':        movePlayer,
-             'west':             movePlayer,
-             'nw':               movePlayer,
-             'northwest':        movePlayer,      
-             'up':               movePlayer,
-             'down':             movePlayer,
+             'north':            "",
+             'ne':               "",
+             'northeast':        "",
+             'east':             "",
+             'se':               "",
+             'southeast':        "",
+             'south':            "",
+             'sw':               "",
+             'southwest':        "",
+             'west':             "",
+             'nw':               "",
+             'northwest':        "",
+             'up':               "",
+             'down':             "",
              'rest':             "",
              'map':              showMap,
              'attack':           "",
              'break':            breakCombat,
-             'rest':             rest,
-             'gossip':           gossip,
-             'level':            showLevel
+             'rest':             "",
+             'gossip':           "",
+             'level':            showLevel,
+             'look':             ""
            }
 
 def GameParser(player, line):
@@ -89,7 +91,7 @@ def GameParser(player, line):
     # If just hit enter, display room
     if line == "":
         #world.maps.World.mapGrid[player.room].displayRoom(player)
-        displayRoom(player, player.room)
+        character.functions.displayRoom(player, player.room)
         return      
     
     cmd = line.split()
@@ -102,49 +104,49 @@ def GameParser(player, line):
                 player.disconnectClient()
                 return
             elif each == "north" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, NORTH)
+                character.functions.movePlayer(player, NORTH)
                 return
             elif (each == "ne" and len(cmd) == 1 and len(cmd[0]) == 2):
-                commands['northeast'](player, NE)
+                character.functions.movePlayer(player, NE)
                 return
             elif (each == "northeast" and len(cmd) == 1 and len(cmd[0]) > 5 ):
-                commands['northeast'](player, NE)
+                character.functions.movePlayer(player, NE)
                 return
             elif each == "east" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, EAST)
+                character.functions.movePlayer(player, EAST)
                 return
-            elif (each == "se" and len(cmd) == 1 and len(cmd[0]) == 2): 
-                commands['southeast'](player, SE)
+            elif (each == "se" and len(cmd) == 1 and len(cmd[0]) == 2):
+                character.functions.movePlayer(player, SE)
                 return
             elif (each == "southeast" and len(cmd) == 1 and len(cmd[0]) > 5):
-                commands['southeast'](player, SE)
+                character.functions.movePlayer(player, SE)
                 return
             elif each == "south" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, SOUTH)
+                character.functions.movePlayer(player, SOUTH)
                 return
             elif (each == "sw" and len(cmd) == 1 and len(cmd[0]) == 2):
-                commands['southwest'](player, SW)
+                character.functions.movePlayer(player, SW)
                 return
             elif (each == "southwest" and len(cmd) == 1 and len(cmd[0]) > 5 ):
-                commands['southwest'](player, SW)
+                character.functions.movePlayer(player, SW)
                 return
             elif each == "west" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, WEST)
+                character.functions.movePlayer(player, WEST)
                 return
             elif (each == "nw" and len(cmd) == 1 and len(cmd[0]) == 2):
-                commands['northwest'](player, NW)
+                character.functions.movePlayer(player, NW)
                 return
             elif (each == "northwest" and len(cmd) == 1 and len(cmd[0]) != 2):
-                commands['northwest'](player, NW)
+                character.functions.movePlayer(player, NW)
                 return
             elif each == "up" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, UP)
+                character.functions.movePlayer(player, UP)
                 return
             elif each == "down" and len(cmd) == 1 and len(cmd[0]) != 2:
-                commands[each](player, DOWN)
+                character.functions.movePlayer(player, DOWN)
                 return
             elif each == "rest" and len(cmd) == 1 and len(cmd[0]) == 4:
-                commands[each](player)
+                character.functions.rest(player)
                 return                            
             elif each == "map" and len(cmd) == 1 and len(cmd[0]) == 3:
                 commands[each](player)
@@ -157,10 +159,13 @@ def GameParser(player, line):
                 return                
             elif each == "break" and len(cmd) == 1 and len(cmd[0]) > 2:
                 commands[each](player)
-                return        
+                return
             elif each == "gossip" and len(cmd) > 1 and len(cmd[0]) > 2:
-                commands[each](player, line[(len(cmd[0]) + 1):])
-                return                 
+                character.communicate.gossip(player, line[(len(cmd[0]) + 1):])
+                return            
+            elif each == "look" and len(cmd) > 1:
+                look(player, line[(len(cmd[0]) + 1):])
+                return
             
     from character.communicate import say
     say( player, line )

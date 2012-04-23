@@ -15,8 +15,11 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from utils.defines import WHITE, RED, BROWN, YELLOW
-from character.functions import sendToRoomNotPlayer
+from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
+import character.communicate    
+import character.functions
 import combat.functions
+import world.maps
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 
@@ -115,14 +118,49 @@ def showLevel( player ):
         
                 
     player.statLine()
-    
-    
+  
+
+def look(player, target):
+	"""
+	Player looks at something.
+	"""
+	curRoom = world.maps.World.mapGrid[player.room]
+	
+	targetList = curRoom.findInRoom(player, target)
+	if targetList and not DIRLOOKUP.has_key(target):
+		if len(targetList) > 1:
+			character.communicate.sendToPlayer( player, "What do you want to attack?" )
+			for name in targetList:
+				character.communicate.sendToPlayer( player, " - {0}".format(name) )
+		else:
+		        character.communicate.sendToRoomNotPlayer( player, "{0} looks {1} up and down.".format(player.name, targetList[0].name) )
+			targetList[0].displayDescription(player)
+	else:
+
+		if DIRLOOKUP.has_key(target) and curRoom.hasExit(DIRLOOKUP[target]):
+			lookdir = DIRLOOKUP[target]
+			door = curRoom.dirs[lookdir]
+			roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
+                        otherRoom = world.maps.World.mapGrid[roomid]
+			character.communicate.sendToRoomNotPlayer( player, "{0} looks {1}".format(player.name, DIRS[lookdir]) )
+			character.functions.displayRoom( player, roomid )
+			if lookdir == UP:
+				character.communicate.sendToRoom( roomid, "{0} peeks in from below.".format(player.name) )
+			elif lookdir == DOWN:
+				character.communicate.sendToRoom( roomid, "{0} peeks in from above.".format(player.name) )
+			else:
+				character.communicate.sendToRoom( roomid, "{0} peeks in from the {1}.".format(player.name, DIRS[OPPOSITEDIRS[lookdir]]) )
+
+		else:
+			character.communicate.sendToPlayer( player, "You do not see {0} here.".format(target) )
+
+
 def breakCombat(player):
     """
     Break off combat if engaged.
     """
     
     if player.attacking:
-        sendToRoomNotPlayer( player, "{0}{1} breaks off combat.".format(BROWN, player.name) )
+        character.communicate.sendToRoomNotPlayer( player, "{0}{1} breaks off combat.".format(BROWN, player.name) )
     combat.functions.endCombat( player ) 
     player.statLine()

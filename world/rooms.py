@@ -153,4 +153,28 @@ class Room:
     
         return victimList
         
+      
+		
+    def findInRoom(self, player, Name):
+        """
+        Search room both items and players for a match
+        with name given.
+        """
+		
+        foundList = []   
+        found = []
         
+        fulllist = {}
+        fulllist.update(self.players)
+        fulllist.update(self.items)
+                    
+        NameSearch = re.compile( re.escape(Name.lower()) )
+        for name, target in fulllist.items():
+            if Name.lower() == name.lower():
+                found.append(target)
+                return found
+            if name is not "" and name <> player.name:
+                if NameSearch.match( name.lower() ):
+                    foundList.append(target)
+    
+        return foundList

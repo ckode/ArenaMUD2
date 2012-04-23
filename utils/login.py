@@ -16,7 +16,7 @@
 
 from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import BLUE, WHITE
-from character.functions import displayRoom, spawnPlayer, applyClassAttributes
+import character.functions
 from character.classes import Classes
 import logger.gamelogger
 
@@ -88,7 +88,7 @@ def getClass(player, line):
         from world.maps import World
         from character.players import AllPlayers        
         AllPlayers[player.name] = player
-        applyClassAttributes(player, choice)
+        character.functions.applyClassAttributes(player, choice)
         
         player.status = PLAYING
     
@@ -96,7 +96,7 @@ def getClass(player, line):
         from world.maps import World
     
         tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
-        spawnPlayer( player )
+        character.functions.spawnPlayer( player )
    
     else:
         player.sendLine("Invalid choice, please try again.")
