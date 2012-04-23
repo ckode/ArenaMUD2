@@ -21,7 +21,7 @@ from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING, GETCLASS
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
-from utils.playercommands import showMap, breakCombat
+from utils.playercommands import showMap, showLevel, breakCombat
 from character.functions import movePlayer, displayRoom, rest
 from character.communicate import gossip
 
@@ -67,7 +67,8 @@ commands = { '/quit':            "",
              'attack':           "",
              'break':            breakCombat,
              'rest':             rest,
-             'gossip':           gossip
+             'gossip':           gossip,
+             'level':            showLevel
            }
 
 def GameParser(player, line):
@@ -147,7 +148,10 @@ def GameParser(player, line):
                 return                            
             elif each == "map" and len(cmd) == 1 and len(cmd[0]) == 3:
                 commands[each](player)
-                return         
+                return
+            elif each == "level" and len(cmd) == 1 and len(cmd[0]) == 5:
+                commands[each](player)
+                return    
             elif each == "attack" and len(cmd) == 2:
                 combat.functions.attack(player, cmd[1])
                 return                

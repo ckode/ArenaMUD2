@@ -103,6 +103,14 @@ class Room:
         
         return items
 
+    def hasExit(self, dir):
+        """
+        Return true if an exit exists in the direction given
+        """
+        if self.dirs[dir]:
+            return True
+        else:
+            return False
 
     def whosInRoom(self, player):
         """

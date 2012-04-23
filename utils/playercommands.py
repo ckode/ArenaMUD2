@@ -14,9 +14,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import WHITE, RED, BROWN
+from utils.defines import WHITE, RED, BROWN, YELLOW
 from character.functions import sendToRoomNotPlayer
 import combat.functions
+from utils.defines import DIRS, NORTH, NE, EAST, SE
+from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 
 
 def showMap( player ):
@@ -51,6 +53,68 @@ def showMap( player ):
     player.sendLine(d)  
     player.statLine()
     
+def showLevel( player ):
+    """
+    version of showMap that shows doors.
+    """
+    
+    from world.maps import World
+   
+    z = int(player.room[2:])
+    roomLine = "{0}".format(WHITE)
+    exitLine = "{0}".format(WHITE)
+    marker = ''
+     
+    player.sendLine("{0}{1}{2}".format(YELLOW, (World.levelnames[z]).center(27, " "), WHITE))
+    
+    for x in range(World.height):
+        for y in range(World.width):
+            room = "{0}{1}{2}".format(x, y, z)
+            if World.mapGrid[room]:
+                if room == player.room:
+                    marker = "{0}X{1}".format(RED, WHITE)
+                else:
+                    marker = '#'
+                if World.mapGrid[room].hasExit(EAST) and World.mapGrid[room].hasExit(WEST):
+                    roomLine += '-' + marker + '-'
+                elif World.mapGrid[room].hasExit(WEST):
+                    roomLine += '-' + marker + ' '
+                elif World.mapGrid[room].hasExit(EAST):
+                    roomLine += ' ' + marker + '-'
+                else:
+                    roomLine += ' ' + marker + ' '
+                if World.mapGrid[room].hasExit(SW):
+                    exitLine += '/'
+                else:
+                    exitLine += ' '
+                if World.mapGrid[room].hasExit(SOUTH):
+                    exitLine += '|'
+                else:
+                    exitLine += ' '
+                if World.mapGrid[room].hasExit(SE):
+                    exitLine += '\\'
+                else:
+                    exitLine += ' '
+            else:
+                if y==0:
+                    roomLine += '  '
+                    exitLine += '  '
+                    continue
+                if y == (World.width - 1):
+                    roomLine += '  '
+                    exitLine += '  '
+                    continue
+                
+                roomLine = roomLine + '   '
+                exitLine += '   '
+                            
+        player.sendLine(roomLine)
+        player.sendLine(exitLine)
+        roomLine = "{0}".format(WHITE)
+        exitLine = "{0}".format(WHITE)
+        
+                
+    player.statLine()
     
     
 def breakCombat(player):
