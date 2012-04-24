@@ -119,8 +119,11 @@ def gossip( player, msg):
     player.status = playing
     """
     for client in character.players.AllPlayers.values(): 
-        if client.status is PLAYING:
-            sendToPlayer( client, "{0}{1} gossips: {2}".format(MAGENTA, player.name, msg) )     
-        elif client.status is PURGATORY:
-            sendToPlayer( client, "{0}{1} gossips (purgatory): {2}".format(MAGENTA, player.name, msg) )     
+        if client.status is PLAYING or client.status is PURGATORY:
+            if player.status is PURGATORY:
+                sendToPlayer( client, "{0}{1} gossips (purgatory): {2}".format(MAGENTA, player.name, msg) )     
+            else:
+                sendToPlayer( client, "{0}{1} gossips: {2}".format(MAGENTA, player.name, msg) )     
+        
+            
     

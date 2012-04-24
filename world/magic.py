@@ -14,11 +14,12 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
+from utils.defines import DURATIONSPELL, ROOMDURATIONSPELL, ROOMSPELL
+from utils.defines import DIRECTEFFECT
 
 class Magic:
     """
-    The magic class.  Base class for spells, room effects, and weapons, potions, etc
+    The magic class.  
     """
     
     def __init__(self):
@@ -28,4 +29,20 @@ class Magic:
         self.preText = ""
         self.postText = ""
         self.effectText = {}
+        
+        
+
+    def executeSpell(self):
+        """
+        Execute the spell's effects.
+        """
+        
+        
+        
+    def applyMagic(self):
+        """
+        Apply magic effects to player.
+        """
+        
+        
         

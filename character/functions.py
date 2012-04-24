@@ -20,13 +20,22 @@ import random
 
 from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
 import world.maps 
+from character.classes import Classes
+import combat.functions
+
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN, BLUE
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
 from utils.defines import PURGATORY, PLAYING
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
 from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
-from character.classes import Classes
-import combat.functions
+from utils.defines import HP, MAXHP, POWER, MAXPOWER
+from utils.defines import BLIND, HELD, STEALTH, VISION
+from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
+from utils.defines import BONUSDAMAGE, DAMAGEABSORB
+from utils.defines import KILLS, DEATHS, SNEAKING
+from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
+from utils.defines import MOVING
+
 
 def movePlayer(player, direction):
     """
@@ -37,14 +46,14 @@ def movePlayer(player, direction):
     if player.status == PURGATORY:
         return
         
-    player.resting = False
+    player.stats[RESTING]= False
              
-    if player.moving is True:
+    if player.stats[MOVING] is True:
         sendToPlayer( player, "You are already moving, slow down!" )
         return
     
-    if player.held:
-        player.moving is False
+    if player.stats[HELD]:
+        player.stats[MOVING] = False
         sendToPlayer( player, "You cannot move!" )           
         
     curRoom = world.maps.World.mapGrid[player.room]
@@ -63,7 +72,7 @@ def movePlayer(player, direction):
             sendToRoomNotPlayer( player, "{0} ran into the {1} wall!".format(player, DIRS[direction]) )     
             return
     else:
-        player.moving = True
+        player.stats[MOVING] = True
         reactor.callLater(.5, move, player, direction)
   
   
@@ -85,7 +94,7 @@ def move(player, direction):
     player.room = newRoom.id
     sendToRoomNotPlayer( player, "{0} entered from the {1}.".format(player, DIRS[OPPOSITEDIRS[direction]]) ) 
     displayRoom(player, player.room)
-    player.moving = False
+    player.stats[MOVING] = False
     
 
     
@@ -95,11 +104,11 @@ def displayRoom(player, room):
     """
     curRoom = world.maps.World.mapGrid[room]
     
-    if player.blind:
+    if player.stats[BLIND]:
         sendToPlayer( player, "{0}You are blind.".format(WHITE) )
         return
         
-    if player.vision < curRoom.light:
+    if player.stats[VISION] < curRoom.light:
         sendToPlayer( player, "{0}You cannot see anything, it's too dark.".format(WHITE) )
         return
      
@@ -144,10 +153,10 @@ def applyClassAttributes(player, classid):
     to the player.
     """  
     
-    player.attacks                    = Classes[classid].attacks
-    player.attkSkill                  = Classes[classid].attkSkill
-    player.maxDamage                  = Classes[classid].maxDamage
-    player.minDamage                  = Classes[classid].minDamage
+    player.stats[ATTACKS]             = Classes[classid].attacks
+    player.stats[ATTKSKILL]           = Classes[classid].attkSkill
+    player.stats[MAXDAMAGE]           = Classes[classid].maxDamage
+    player.stats[MINDAMAGE]           = Classes[classid].minDamage
     player.weaponText[YOUHIT]         = Classes[classid].weaponText[YOUHIT]
     player.weaponText[YOUMISS]        = Classes[classid].weaponText[YOUMISS]
     player.weaponText[VICTIMHIT]      = Classes[classid].weaponText[VICTIMHIT]
@@ -155,10 +164,10 @@ def applyClassAttributes(player, classid):
     player.weaponText[ROOMHIT]        = Classes[classid].weaponText[ROOMHIT]
     player.weaponText[ROOMMISS]       = Classes[classid].weaponText[ROOMMISS]
     player.powerDesc                  = Classes[classid].powerDesc
-    player.maxhp                      = Classes[classid].maxhp
-    player.hp                         = Classes[classid].maxhp
-    player.stealth                    = Classes[classid].stealth
-    player.critical                   = Classes[classid].critical
+    player.stats[MAXHP]               = Classes[classid].maxhp
+    player.stats[HP]                  = Classes[classid].maxhp
+    player.stats[STEALTH]             = Classes[classid].stealth
+    player.stats[CRITICAL]            = Classes[classid].critical
     player.classid                    = classid
     player.playerclass                = Classes[classid].name
     
@@ -171,5 +180,5 @@ def rest(player):
     combat.functions.endCombat(player)
     sendToPlayer( player, "You stop to rest." )
     sendToRoomNotPlayer( player, "{0} stops to rest.".format(player.name) )
-    player.resting = True
+    player.stats[RESTING] = True
     player.statLine()

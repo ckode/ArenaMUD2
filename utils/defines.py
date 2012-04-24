@@ -65,6 +65,38 @@ GETCLASS = 2
 PURGATORY = 10
 
 
+# Magic types
+BUFF               = 0
+DIRECTEFFECT       = 1
+DURATIONSPELL      = 2
+ROOMSPELL          = 3
+ROOMDURATIONSPELL  = 4
+
+
+# Magic stat effects
+HP                = 0
+MAXHP             = 1
+POWER             = 2
+MAXPOWER          = 3
+BLIND             = 4
+HELD              = 5
+STEALTH           = 6
+VISION            = 7
+ATTACKS           = 8
+ATTKSKILL         = 9
+CRITICAL          = 10
+BONUSDAMAGE       = 11
+DAMAGEABSORB      = 12
+KILLS             = 13
+DEATHS            = 14
+SNEAKING          = 15
+MAXDAMAGE         = 16
+MINDAMAGE         = 17
+RESTING           = 18
+MOVING            = 19
+
+
+
 # weaponText text identifiers
 YOUHIT     = 0
 YOUMISS    = 1

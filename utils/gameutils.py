@@ -18,6 +18,7 @@ from character.players import AllPlayers
 
 from utils.defines import PLAYING
 from utils.defines import CYAN, YELLOW
+from utils.defines import HP, MAXHP, POWER, MAXPOWER, RESTING
 
 import character.communicate
 
@@ -27,16 +28,22 @@ def restHealing():
     """
     
     healRate = 15
+    powerRate = 10
     for player in AllPlayers.values():
         # If player isn't playing.  No need to heal
         if player.status is not PLAYING:
             continue
-        if player.resting:
-            if (player.hp + healRate) > player.maxhp:
-                player.hp = player.maxhp
+        if player.stats[RESTING]:
+            if (player.stats[HP] + healRate) > player.stats[MAXHP]:
+                player.stats[HP] = player.stats[MAXHP]
             else:
-                player.hp += healRate
+                player.stats[HP] += healRate
                 
+            if (player.stats[POWER] + powerRate) > player.stats[MAXPOWER]:
+                player.stats[POWER] = player.stats[MAXPOWER]
+            else:
+                player.stats[POWER] += powerRate        
+
             player.statLine()
             
             
@@ -47,14 +54,22 @@ def naturalHealing():
     """
     
     healRate = 5
+    powerRate = 5
     for player in AllPlayers.values():
         # If player isn't playing.  No need to heal
         if player.status is not PLAYING:
             continue        
-        if (player.hp + healRate) > player.maxhp:
-            player.hp = player.maxhp
+        if (player.stats[HP] + healRate) > player.stats[MAXHP]:
+            player.stats[HP] = player.stats[MAXHP]
         else:
-            player.hp += healRate
+            player.stats[HP] += healRate
+            
+        if player.status is not PLAYING:
+            continue        
+        if (player.stats[POWER] + healRate) > player.stats[MAXPOWER]:
+            player.stats[POWER] = player.stats[MAXPOWER]
+        else:
+            player.stats[POWER] += powerRate            
             
         player.statLine()
         

@@ -20,6 +20,8 @@ import os
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
 from utils.defines import ROOMHIT, ROOMMISS
 
+
+
 class PlayerClass:
     """
     ArenaMUD Player Classes

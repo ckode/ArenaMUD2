@@ -20,9 +20,17 @@ import world.maps
 from character.players import AllPlayers
 import character.communicate
 import character.functions
+import utils.gameutils
+
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS, PURGATORY
 from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED
-import utils.gameutils
+from utils.defines import HP, MAXHP, POWER, MAXPOWER
+from utils.defines import BLIND, HELD, STEALTH, VISION
+from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
+from utils.defines import DAMAGEABSORB, BONUSDAMAGE
+from utils.defines import KILLS, DEATHS, SNEAKING
+from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
+
 
 
 
@@ -56,19 +64,20 @@ def doAttack(player, victim):
     """
 
     victim.resting = False
-    for attk in range(0, player.attacks):
+    for attk in range(0, player.stats[ATTACKS]):
         attackroll = random.randint(1, 100)
-        if player.attkSkill >= attackroll:
-            dmg = random.randint(player.minDamage, player.maxDamage)
+        if player.stats[ATTKSKILL] >= attackroll:
+            dmg = random.randint(player.stats[MINDAMAGE], player.stats[MAXDAMAGE])
             crit = criticalRoll(player, dmg)
             if crit:
                 dmg = crit
-                crit = True              
+                crit = True 
+            dmg = dmg + ( player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB] )
             displayDamage(player, victim, dmg, crit)
-            victim.hp = victim.hp - dmg
-            if victim.hp < 1:
-                player.kills += 1
-                victim.deaths += 1
+            victim.stats[HP] = victim.stats[HP] - dmg
+            if victim.stats[HP] < 1:
+                player.stats[KILLS] += 1
+                victim.stats[DEATHS] += 1
                 clearAttacksPlayerDead(victim)
                 playerKilled(victim)
                 return
@@ -86,8 +95,8 @@ def criticalRoll(player, damage):
     new damage value based on crit.
     """
     critroll = random.randint(1, 100)
-    if (100 - player.critical) < critroll:
-        damage = player.maxDamage + random.randint(player.minDamage, player.maxDamage)
+    if (100 - player.stats[CRITICAL]) < critroll:
+        damage = player.stats[MAXDAMAGE] + random.randint(player.stats[MINDAMAGE], player.stats[MAXDAMAGE])
         return damage
     return False
 
@@ -167,8 +176,8 @@ def attack(player, vicName):
             character.communicate.sendToPlayer( player, "Why would you want to attack yourself?" )
         else:
             player.attacking = victims[0]
-            player.resting = False
-            player.attacking.resting = False
+            player.stats[RESTING] = False
+            player.attacking.stats[RESTING] = False
             character.communicate.sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
             character.communicate.sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
             character.communicate.sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )

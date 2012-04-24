@@ -28,9 +28,16 @@ import logger.gamelogger
 import utils.parser
 import character.communicate
 import character.functions 
+
 from utils.defines import BLUE, WHITE 
 from utils.defines import DELETELEFT, FIRSTCOL
 from utils.defines import PLAYING, LOGIN, PURGATORY
+from utils.defines import HP, MAXHP, POWER, MAXPOWER
+from utils.defines import BLIND, HELD, STEALTH, VISION
+from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
+from utils.defines import BONUSDAMAGE, DAMAGEABSORB
+from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
+from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 
 
 # Python imports
@@ -59,31 +66,33 @@ class Player(StatefulTelnetProtocol):
         self.playerclass = ""
         self.classid = 0
 
-        # Combat
-        self.attacks = 0
-        self.attkSkill = 0
-        self.critical = 0
-        self.maxDamage = 0
-        self.minDamage = 0
+        self.stats = { HP:              0,
+                       MAXHP:           0,
+                       POWER:           0,
+                       MAXPOWER:        0,
+                       BLIND:           False,
+                       HELD:            False,
+                       VISION:          3,
+                       STEALTH:         0,
+                       SNEAKING:        False,
+                       ATTACKS:         0,
+                       ATTKSKILL:       0,
+                       MAXDAMAGE:       0,
+                       MINDAMAGE:       0,
+                       BONUSDAMAGE:     0,
+                       DAMAGEABSORB:    0,
+                       CRITICAL:        0,
+                       KILLS:           0,
+                       DEATHS:          0,
+                       MOVING:          False
+                     }
+
         self.weaponText = {}
-        self.maxPower = 100
-        self.power = 100
         self.powerDesc = ""
-        self.hp = 0
-        self.maxhp = 0
-        self.steath = 0
-
-        self.sneaking = False
-        self.resting = False
-        self.moving = False
-        self.held = False
-        self.blind = False
-        self.vision = 3
-
         self.attacking = None
+        self.spells = {}
+
         
-        self.kills = 0
-        self.deaths = 0
 
 
 
@@ -168,8 +177,8 @@ class Player(StatefulTelnetProtocol):
             self.transport.write( "{0}%>".format(WHITE) )
             return
         
-        statline = "[HP={0}/{1}={2}]: ".format(self.hp, self.powerDesc, self.power) 
-        if self.resting:
+        statline = "[HP={0}/{1}={2}]: ".format(self.stats[HP], self.powerDesc, self.stats[POWER]) 
+        if self.stats[RESTING]:
             statline = "{0}{1} ".format(statline, "(resting) ")
         self.transport.write(DELETELEFT)
         self.transport.write(FIRSTCOL)
@@ -183,13 +192,16 @@ class Player(StatefulTelnetProtocol):
         """
 
         character.functions.applyClassAttributes( self, self.classid )
-        self.hp = self.maxhp
-        self.power = self.maxPower
-        self.sneaking = False
-        self.resting = False
-        self.moving = False
-        self.held = False
-        self.blind = False
+        self.stats[HP] = self.stats[MAXHP]
+        self.stats[POWER] = self.stats[MAXPOWER]
+        self.stats[SNEAKING] = False
+        self.stats[RESTING] = False
+        self.stats[MOVING] = False
+        self.stats[HELD] = False
+        self.stats[BLIND] = False
+        self.stats[BONUSDAMAGE] = 0
+        self.stats[DAMAGEABSORB] = 0
+        self.spells.clear()
         self.attacking = None
 
 

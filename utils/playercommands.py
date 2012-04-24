@@ -20,6 +20,7 @@ from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
 from utils.defines import PLAYING, PURGATORY
+from utils.defines import BLIND, KILLS, DEATHS
 
 import character.communicate    
 import character.functions
@@ -140,9 +141,14 @@ def look(player, target):
     """
     Player looks at something.
     """
+    
+    if player.stats[BLIND]:
+        sendToPlayer( player, "You are blind." )
+        return
+    
     curRoom = world.maps.World.mapGrid[player.room]
-
     targetList = curRoom.findInRoom(player, target)
+    
     if targetList and not DIRLOOKUP.has_key(target):
         if len(targetList) > 1:
             character.communicate.sendToPlayer( player, "What do you want to look at?" )
@@ -195,19 +201,19 @@ def who(player):
     for user in character.players.AllPlayers.values():
         if user.status is PLAYING or user.status is PURGATORY:
             try:
-                ratio = "%.2f" % ( float(user.kills) / float(user.deaths) )
+                ratio = "%.2f" % ( float(user.stats[KILLS]) / float(user.stats[DEATHS]) )
             except:
-               if user.kills == 0:
-                  ratio = "%.2f" % float(0.00)
-               else:
-                  ratio = "%.2f" % (user.kills)
+                if user.stats[KILLS] == 0:
+                    ratio = "%.2f" % float(0.00)
+                else:
+                    ratio = "%.2f" % (user.stats[KILLS])
  
             if user.status is PURGATORY:
                 playercolor = LRED
             else:
                 playercolor = LMAGENTA
           
-            sendToPlayer(player, "{0} => {1}{2}{3} {4}              {5}   {6}   {7}".format(LCYAN, playercolor, user.name.ljust(15, ' '), LCYAN, user.playerclass.ljust(15,' '), str(user.kills).rjust(5, ' '), str(user.deaths).rjust(6, ' '), str(ratio).rjust(9, ' ') ) )
+            sendToPlayer(player, "{0} => {1}{2}{3} {4}              {5}   {6}   {7}".format(LCYAN, playercolor, user.name.ljust(15, ' '), LCYAN, user.playerclass.ljust(15,' '), str(user.stats[KILLS]).rjust(5, ' '), str(user.stats[DEATHS]).rjust(6, ' '), str(ratio).rjust(9, ' ') ) )
  
     sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN) )
     
