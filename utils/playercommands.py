@@ -14,7 +14,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import WHITE, RED, BROWN, YELLOW
+from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
 import character.communicate    
 import character.functions
@@ -24,7 +24,7 @@ from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 
 
-def showMap( player ):
+def showLevel( player ):
     """
     Display current z-axis level of the map.
     """
@@ -43,11 +43,11 @@ def showMap( player ):
             room = "{0}{1}{2}".format(x, y, z)
             if World.mapGrid[room]:
                 if room == player.room:
-                    r = r + "|{0}You{1}".format(RED, WHITE)
+                    r = r + "|{0}You{1}".format(BLUE, WHITE)
                 else:
-                    r = r + "|   "
+                    r = r + "|{3}{0}{1}{2}{4}".format(x, y, z, RED, WHITE)
             else:
-                r = r + "|###"
+                r = r + "|{0}{1}{2}".format(x, y, z)
             if y == (World.width - 1):
                 r = r + "|"
         player.sendLine(r) 
@@ -56,7 +56,7 @@ def showMap( player ):
     player.sendLine(d)  
     player.statLine()
 
-def showLevel( player ):
+def showMap( player ):
     """
     version of showMap that shows doors.
     """
