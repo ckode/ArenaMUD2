@@ -20,8 +20,9 @@ import world.maps
 from character.players import AllPlayers
 import character.communicate
 import character.functions
-from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
+from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS, PURGATORY
 from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED
+import utils.gameutils
 
 
 
@@ -66,6 +67,8 @@ def doAttack(player, victim):
             displayDamage(player, victim, dmg, crit)
             victim.hp = victim.hp - dmg
             if victim.hp < 1:
+                player.kills += 1
+                victim.deaths += 1
                 clearAttacksPlayerDead(victim)
                 playerKilled(victim)
                 return
@@ -179,10 +182,12 @@ def playerKilled(player):
     """
 
     character.communicate.sendToRoomNotPlayer( player, "{0} drops to the ground.".format(player.name) )
+    character.communicate.sendToPlayer( player, "You drop to the ground.".format(player.name) )
     del world.maps.World.mapGrid[player.room].players[player.name]
-    character.communicate.tellWorld( player, "You have died.", "{0} was killed.".format(player.name) )
+    character.communicate.tellWorld( player, "You are dead.", "{0} was killed.".format(player.name) )
     endCombat( player )
-    character.functions.spawnPlayer( player )
+    player.status = PURGATORY
+    utils.gameutils.purgatoryHelpMsg(player)
 
 
 

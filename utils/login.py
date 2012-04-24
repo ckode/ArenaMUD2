@@ -14,11 +14,13 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import LOGIN, PLAYING, GETCLASS
-from utils.defines import BLUE, WHITE
+from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
+from utils.defines import BLUE, WHITE, YELLOW, CYAN
+import utils.gameutils
 import character.functions
 from character.classes import Classes
 import logger.gamelogger
+
 
 
 
@@ -90,13 +92,13 @@ def getClass(player, line):
         AllPlayers[player.name] = player
         character.functions.applyClassAttributes(player, choice)
         
-        player.status = PLAYING
+        player.status = PURGATORY
     
         from character.communicate import tellWorld, sendToRoomNotPlayer
         from world.maps import World
     
-        tellWorld( player, "You have entered the battlefield!", "{0} has entered the battlefield!".format(player) )
-        character.functions.spawnPlayer( player )
+        tellWorld( player, "Welcome!", "{0} has joined!".format(player.name) )
+        utils.gameutils.purgatoryHelpMsg(player)
    
     else:
         player.sendLine("Invalid choice, please try again.")

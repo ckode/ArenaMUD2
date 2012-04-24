@@ -81,6 +81,9 @@ class Player(StatefulTelnetProtocol):
         self.vision = 3
 
         self.attacking = None
+        
+        self.kills = 0
+        self.deaths = 0
 
 
 
@@ -119,11 +122,13 @@ class Player(StatefulTelnetProtocol):
         # Remove from AllPlayers before disconnecting
         if AllPlayers.has_key(self.name):
             # replace del with function to do full cleanup.
-            character.communicate.tellWorld(self, None, "{0}{1} has quit!!!".format(BLUE, self.name) )
+            character.communicate.tellWorld(self, None, "{0}{1} has logged off.".format(BLUE, self.name) )
             self.sendLine("Goodbye!")
             logger.gamelogger.logger.log.info( "{0} just logged off.".format(self.name) )
+            if self.status is PLAYING:
+                del world.maps.World.mapGrid[self.room].players[self.name]            
             del AllPlayers[self.name]
-            del world.maps.World.mapGrid[self.room].players[self.name]
+            
 
         self.transport.loseConnection()
 
@@ -138,8 +143,10 @@ class Player(StatefulTelnetProtocol):
             logger.gamelogger.logger.log.info( "{0} just hung up!!!".format(self.name) )
             # replace del with function to do full cleanup.
             character.communicate.tellWorld(self, None, "{0}{1} just hung up!!!".format(BLUE, self.name) )
+            if self.status is PLAYING:
+                del world.maps.World.mapGrid[self.room].players[self.name]
             del AllPlayers[self.name]
-            del world.maps.World.mapGrid[self.room].players[self.name]
+            
 
 
     def lineReceived(self, line):
@@ -157,6 +164,10 @@ class Player(StatefulTelnetProtocol):
         Displays players statline.
         """
 
+        if self.status is PURGATORY:
+            self.transport.write( "{0}%>".format(WHITE) )
+            return
+        
         statline = "[HP={0}/{1}={2}]: ".format(self.hp, self.powerDesc, self.power) 
         if self.resting:
             statline = "{0}{1} ".format(statline, "(resting) ")

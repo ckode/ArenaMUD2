@@ -19,7 +19,7 @@ import world.maps
 
 from utils.defines import WHITE, LBLUE, LGREEN, MAGENTA
 from utils.defines import DELETELEFT, FIRSTCOL
-from utils.defines import PLAYING
+from utils.defines import PLAYING, PURGATORY
 
 
 
@@ -108,7 +108,7 @@ def tellWorld( player, playerMsg, OtherPlayersMsg ):
         sendToPlayer( player, "{1}{0}{2}".format(playerMsg, LBLUE, WHITE) )    
         
     for client in character.players.AllPlayers.values(): 
-        if client is not player and client.status is PLAYING:
+        if client is not player and (client.status is PLAYING or client.status is PURGATORY):
             sendToPlayer( client, "{1}{0}{2}".format(OtherPlayersMsg, LBLUE, WHITE) )    
     
     
@@ -121,4 +121,6 @@ def gossip( player, msg):
     for client in character.players.AllPlayers.values(): 
         if client.status is PLAYING:
             sendToPlayer( client, "{0}{1} gossips: {2}".format(MAGENTA, player.name, msg) )     
+        elif client.status is PURGATORY:
+            sendToPlayer( client, "{0}{1} gossips (purgatory): {2}".format(MAGENTA, player.name, msg) )     
     

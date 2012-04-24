@@ -19,11 +19,13 @@ import re
 import world.maps
 from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
-from utils.defines import LOGIN, PLAYING, GETCLASS
+from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
+from utils.defines import CYAN, WHITE, YELLOW
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap, showLevel, breakCombat, look
+
+import utils.gameutils
 import character.functions
-#from character.functions import movePlayer, displayRoom, rest
 import character.communicate
 
 #from combat.functions import attack
@@ -43,6 +45,9 @@ def statusMatrix(player, line):
         return 
     elif player.status is GETCLASS:
         getClass(player, line)
+        return
+    elif player.status is PURGATORY:
+        PurgatoryParser(player, line)
         return
 
 
@@ -70,7 +75,8 @@ commands = { '/quit':            "",
              'rest':             "",
              'gossip':           "",
              'level':            showLevel,
-             'look':             ""
+             'look':             "",
+             'who':              ""
            }
 
 def GameParser(player, line):
@@ -166,13 +172,53 @@ def GameParser(player, line):
             elif each == "look" and len(cmd) > 1:
                 look(player, line[(len(cmd[0]) + 1):])
                 return
+            elif each == "who" and len(cmd) is 1:
+                utils.playercommands.who(player)
+                return               
+            
             
     from character.communicate import say
     say( player, line )
  
     
-        
- 
-            
 
+# Purgatory command list.
+PurgatoryCommands = { '/quit':            "",
+                      'gossip':           "",
+                      'spawn':            "",
+                      'who':              ""
+               }        
+ 
+def PurgatoryParser(player, line):
+    """
+    Parse commands for players in
+    the purgatory state.
+    """
     
+    cmd = line.split()
+    
+    if len(cmd) == 0:
+        player.statLine()
+        return    
+    
+    cmdstr = re.compile(re.escape(cmd[0].lower()))
+                         
+           
+    for each in PurgatoryCommands.keys():
+        if cmdstr.match(each): 
+            if each == "/quit" and len(cmd[0]) > 1:
+                player.disconnectClient()
+                return     
+            elif each == "gossip" and len(cmd) > 1 and len(cmd[0]) > 2:
+                character.communicate.gossip(player, line[(len(cmd[0]) + 1):])
+                return                
+            elif each == "spawn":
+                if len(cmd[0]) > 2 and len(cmd) == 1:
+                    character.functions.spawnPlayer(player)
+                    return
+                continue                
+            elif each == "who" and len(cmd) is 1:
+                utils.playercommands.who(player)
+                return               
+
+    utils.gameutils.purgatoryHelpMsg(player)

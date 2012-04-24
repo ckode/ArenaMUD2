@@ -15,13 +15,17 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE
+from utils.defines import LMAGENTA, LCYAN, LRED, LGREEN
+from utils.defines import DIRS, NORTH, NE, EAST, SE
+from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
+from utils.defines import PLAYING, PURGATORY
+
 import character.communicate    
 import character.functions
 import combat.functions
 import world.maps
-from utils.defines import DIRS, NORTH, NE, EAST, SE
-from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
+
 
 
 def showLevel( player ):
@@ -63,6 +67,7 @@ def showMap( player ):
 
     from world.maps import World
 
+    first = True
     z = int(player.room[2:])
     roomLine = "{0}".format(WHITE)
     exitLine = "{0}".format(WHITE)
@@ -117,8 +122,13 @@ def showMap( player ):
                 roomLine = roomLine + '   '
                 exitLine += '   '
 
-        player.sendLine(roomLine)
-        player.sendLine(exitLine)
+        # Don't print first line (they are blank)
+        if first:
+            first = False
+        else:
+            player.sendLine(roomLine)
+            player.sendLine(exitLine)
+            
         roomLine = "{0}".format(WHITE)
         exitLine = "{0}".format(WHITE)
 
@@ -170,3 +180,35 @@ def breakCombat(player):
         character.communicate.sendToRoomNotPlayer( player, "{0}{1} breaks off combat.".format(BROWN, player.name) )
     combat.functions.endCombat( player ) 
     player.statLine()
+    
+    
+def who(player):
+    """
+    Display players connected and their stats.
+    """
+    
+    sendToPlayer = character.communicate.sendToPlayer
+    
+    sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= {1}Whos Online{0} =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN, LMAGENTA) )
+    sendToPlayer( player, "{0}    Warrior         Class                        Kills   Deaths   K/D Ratio".format(LGREEN) )
+
+    for user in character.players.AllPlayers.values():
+        if user.status is PLAYING or user.status is PURGATORY:
+            try:
+                ratio = "%.2f" % ( float(user.kills) / float(user.deaths) )
+            except:
+               if user.kills == 0:
+                  ratio = "%.2f" % float(0.00)
+               else:
+                  ratio = "%.2f" % (user.kills)
+ 
+            if user.status is PURGATORY:
+                playercolor = LRED
+            else:
+                playercolor = LMAGENTA
+          
+            sendToPlayer(player, "{0} => {1}{2}{3} {4}              {5}   {6}   {7}".format(LCYAN, playercolor, user.name.ljust(15, ' '), LCYAN, user.playerclass.ljust(15,' '), str(user.kills).rjust(5, ' '), str(user.deaths).rjust(6, ' '), str(ratio).rjust(9, ' ') ) )
+ 
+    sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN) )
+    
+    

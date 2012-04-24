@@ -16,6 +16,10 @@
 
 from character.players import AllPlayers
 
+from utils.defines import PLAYING
+from utils.defines import CYAN, YELLOW
+
+import character.communicate
 
 def restHealing():
     """
@@ -24,6 +28,9 @@ def restHealing():
     
     healRate = 15
     for player in AllPlayers.values():
+        # If player isn't playing.  No need to heal
+        if player.status is not PLAYING:
+            continue
         if player.resting:
             if (player.hp + healRate) > player.maxhp:
                 player.hp = player.maxhp
@@ -41,9 +48,16 @@ def naturalHealing():
     
     healRate = 5
     for player in AllPlayers.values():
+        # If player isn't playing.  No need to heal
+        if player.status is not PLAYING:
+            continue        
         if (player.hp + healRate) > player.maxhp:
             player.hp = player.maxhp
         else:
             player.hp += healRate
             
         player.statLine()
+        
+        
+def purgatoryHelpMsg(player):
+    character.communicate.sendToPlayer( player, "{0}Command had no effect. Type '{1}spawn{0}' to spawn or type '{1}help{0}' for help.".format(CYAN, YELLOW) )

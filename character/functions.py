@@ -22,7 +22,7 @@ from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
 import world.maps 
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN, BLUE
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
-from utils.defines import PURGATORY
+from utils.defines import PURGATORY, PLAYING
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
 from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
 from character.classes import Classes
@@ -131,7 +131,9 @@ def spawnPlayer( player ):
     player.room = room
     player.resetStats()
     world.maps.World.mapGrid[room].players[player.name] = player
+    player.status = PLAYING
     sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
+    tellWorld( player, None, "{0} has entered the arena!".format(player.name) )
     displayRoom(player, player.room)
     
     
