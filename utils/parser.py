@@ -136,7 +136,7 @@ def GameParser(player, line):
             elif (each == "nw" and len(cmd) == 1 and len(cmd[0]) == 2):
                 character.functions.movePlayer(player, NW)
                 return
-            elif (each == "northwest" and len(cmd) == 1 and len(cmd[0]) != 2):
+            elif (each == "northwest" and len(cmd) == 1 and len(cmd[0]) > 5 ):
                 character.functions.movePlayer(player, NW)
                 return
             elif each == "up" and len(cmd) == 1 and len(cmd[0]) != 2:

@@ -23,12 +23,12 @@ class Item:
     """
     Item class
     """
-    
+
     def __init__(self):
         """
         Initialize item object
         """
-        
+
         self.id = None
         self.name = ""
         # Action is usually a spell
@@ -36,27 +36,27 @@ class Item:
         self.useText = None
         self.actionText = None
         self.desc = ""
-    
+
     def __repr__(self):
         """
-	String representation.
-	"""
-	return self.name
+        String representation.
+        """
+        return self.name
 
 
     def displayDescription(self, player):
-    	"""
-	Displays a discription.
-	"""
+        """
+        Displays a discription.
+        """
 
-	character.functions.sendToPlayer( player, self.desc )
-	
-        
+        character.functions.sendToPlayer( player, self.desc )
+
+
 def loadItems():
     """
     Load items from the database.
     """
-    
+
     from logger.gamelogger import logger    
     try:
         conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
@@ -68,16 +68,16 @@ def loadItems():
                                  actiontext,
                                  description FROM items;""")    
         results = cursor.fetchall()
-        
+
     except:
         logger.log.critical( "Database errors using: ArenaMUD2.db" )
-        
-        
+
+
     items = {}
     logger.log.debug("Loading items.")
     for row in results:
         itemid = row[0]
-        
+
         items[itemid]                           = Item()
         items[itemid].id                        = itemid
         items[itemid].name                      = str(row[1])

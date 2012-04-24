@@ -72,7 +72,7 @@ class Room:
         """
         
         exits = ""     
-        for x in range(NORTH, DOWN):
+        for x in range(NORTH, DOWN + 1):
             if self.dirs[x]:
                 if exits == "":
                     exits += DIRS[x]

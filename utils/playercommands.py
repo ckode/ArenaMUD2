@@ -28,15 +28,15 @@ def showMap( player ):
     """
     Display current z-axis level of the map.
     """
-    
+
     from world.maps import World
-   
+
     z = int(player.room[2:])
     r = "{0}".format(WHITE)
     d = "|---" * 10 + "|"
- 
+
     player.sendLine( "{0}".format(World.levelnames[z]).center(40, " ")    )
-    
+
     for x in range(World.height):
         player.sendLine(d)
         for y in range(World.width):
@@ -52,30 +52,36 @@ def showMap( player ):
                 r = r + "|"
         player.sendLine(r) 
         r = "{0}".format(WHITE)
-        
+
     player.sendLine(d)  
     player.statLine()
-    
+
 def showLevel( player ):
     """
     version of showMap that shows doors.
     """
-    
+
     from world.maps import World
-   
+
     z = int(player.room[2:])
     roomLine = "{0}".format(WHITE)
     exitLine = "{0}".format(WHITE)
     marker = ''
-     
+
     player.sendLine("{0}{1}{2}".format(YELLOW, (World.levelnames[z]).center(27, " "), WHITE))
-    
+
     for x in range(World.height):
         for y in range(World.width):
             room = "{0}{1}{2}".format(x, y, z)
             if World.mapGrid[room]:
                 if room == player.room:
                     marker = "{0}X{1}".format(RED, WHITE)
+                elif World.mapGrid[room].hasExit(UP) and World.mapGrid[room].hasExit(DOWN):
+                    marker = "B"
+                elif World.mapGrid[room].hasExit(UP):
+                    marker = "U"
+                elif World.mapGrid[room].hasExit(DOWN):
+                    marker = "D"
                 else:
                     marker = '#'
                 if World.mapGrid[room].hasExit(EAST) and World.mapGrid[room].hasExit(WEST):
@@ -107,59 +113,59 @@ def showLevel( player ):
                     roomLine += '  '
                     exitLine += '  '
                     continue
-                
+
                 roomLine = roomLine + '   '
                 exitLine += '   '
-                            
+
         player.sendLine(roomLine)
         player.sendLine(exitLine)
         roomLine = "{0}".format(WHITE)
         exitLine = "{0}".format(WHITE)
-        
-                
+
+
     player.statLine()
-  
+
 
 def look(player, target):
-	"""
-	Player looks at something.
-	"""
-	curRoom = world.maps.World.mapGrid[player.room]
-	
-	targetList = curRoom.findInRoom(player, target)
-	if targetList and not DIRLOOKUP.has_key(target):
-		if len(targetList) > 1:
-			character.communicate.sendToPlayer( player, "What do you want to attack?" )
-			for name in targetList:
-				character.communicate.sendToPlayer( player, " - {0}".format(name) )
-		else:
-		        character.communicate.sendToRoomNotPlayer( player, "{0} looks {1} up and down.".format(player.name, targetList[0].name) )
-			targetList[0].displayDescription(player)
-	else:
+    """
+    Player looks at something.
+    """
+    curRoom = world.maps.World.mapGrid[player.room]
 
-		if DIRLOOKUP.has_key(target) and curRoom.hasExit(DIRLOOKUP[target]):
-			lookdir = DIRLOOKUP[target]
-			door = curRoom.dirs[lookdir]
-			roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
-                        otherRoom = world.maps.World.mapGrid[roomid]
-			character.communicate.sendToRoomNotPlayer( player, "{0} looks {1}".format(player.name, DIRS[lookdir]) )
-			character.functions.displayRoom( player, roomid )
-			if lookdir == UP:
-				character.communicate.sendToRoom( roomid, "{0} peeks in from below.".format(player.name) )
-			elif lookdir == DOWN:
-				character.communicate.sendToRoom( roomid, "{0} peeks in from above.".format(player.name) )
-			else:
-				character.communicate.sendToRoom( roomid, "{0} peeks in from the {1}.".format(player.name, DIRS[OPPOSITEDIRS[lookdir]]) )
+    targetList = curRoom.findInRoom(player, target)
+    if targetList and not DIRLOOKUP.has_key(target):
+        if len(targetList) > 1:
+            character.communicate.sendToPlayer( player, "What do you want to look at?" )
+            for name in targetList:
+                character.communicate.sendToPlayer( player, " - {0}".format(name) )
+        else:
+            character.communicate.sendToRoomNotPlayer( player, "{0} looks {1} up and down.".format(player.name, targetList[0].name) )
+            targetList[0].displayDescription(player)
+    else:
 
-		else:
-			character.communicate.sendToPlayer( player, "You do not see {0} here.".format(target) )
+        if DIRLOOKUP.has_key(target) and curRoom.hasExit(DIRLOOKUP[target]):
+            lookdir = DIRLOOKUP[target]
+            door = curRoom.dirs[lookdir]
+            roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
+            otherRoom = world.maps.World.mapGrid[roomid]
+            character.communicate.sendToRoomNotPlayer( player, "{0} looks {1}".format(player.name, DIRS[lookdir]) )
+            character.functions.displayRoom( player, roomid )
+            if lookdir == UP:
+                character.communicate.sendToRoom( roomid, "{0} peeks in from below.".format(player.name) )
+            elif lookdir == DOWN:
+                character.communicate.sendToRoom( roomid, "{0} peeks in from above.".format(player.name) )
+            else:
+                character.communicate.sendToRoom( roomid, "{0} peeks in from the {1}.".format(player.name, DIRS[OPPOSITEDIRS[lookdir]]) )
+
+        else:
+            character.communicate.sendToPlayer( player, "You do not see {0} here.".format(target) )
 
 
 def breakCombat(player):
     """
     Break off combat if engaged.
     """
-    
+
     if player.attacking:
         character.communicate.sendToRoomNotPlayer( player, "{0}{1} breaks off combat.".format(BROWN, player.name) )
     combat.functions.endCombat( player ) 
