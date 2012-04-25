@@ -69,7 +69,7 @@ class Player(StatefulTelnetProtocol):
         self.stats = { HP:              0,
                        MAXHP:           0,
                        POWER:           0,
-                       MAXPOWER:        0,
+                       MAXPOWER:        100,
                        BLIND:           False,
                        HELD:            False,
                        VISION:          3,

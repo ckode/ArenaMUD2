@@ -79,7 +79,7 @@ def askClass(player):
 def getClass(player, line):
     
 
-    if line == "":
+    if line == "" or not line.isdigit():
         player.sendLine("Invalid choice, please try again.")
         askClass(player)
         return         
