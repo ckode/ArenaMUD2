@@ -27,7 +27,7 @@ from twisted.internet.task import LoopingCall
 from config.gameconfig import GameConfig
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
-from utils.gameutils import restHealing, naturalHealing
+from utils.gameutils import restHealing, naturalHealing, doRoomSpells
 import character.players
 import logger.gamelogger
 import character.classes
@@ -52,6 +52,10 @@ class SonzoFactory(ServerFactory):
         
     def FifteenSecondLoop(self):
         naturalHealing()
+
+        
+    def TwoSecondLoop(self):
+        doRoomSpells()
         
 
 #============================================
@@ -68,10 +72,14 @@ def startup():
     logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion")
     
     # 4 Second Loop
+    TwoSecondLoop = LoopingCall(factory.TwoSecondLoop)
+    TwoSecondLoop.start(2)    
+    
+    # 4 Second Loop
     FourSecondLoop = LoopingCall(factory.FourSecondLoop)
     FourSecondLoop.start(4)
     
-    # 4 Second Loop
+    # 15 Second Loop
     FifteenSecondLoop = LoopingCall(factory.FifteenSecondLoop)
     FifteenSecondLoop.start(15)
     

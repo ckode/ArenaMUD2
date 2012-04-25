@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from character.players import AllPlayers
+import world.maps
 
 from utils.defines import PLAYING
 from utils.defines import CYAN, YELLOW
@@ -73,6 +74,21 @@ def naturalHealing():
             
         player.statLine()
         
-        
+
+def doRoomSpells():
+    """
+    Execute rooms spells
+    """
+    from world.maps import World
+    
+    for rid in World.roomsList:
+        room = World.mapGrid[rid]
+        if room.spell:
+            if room.spell.preText:
+                character.communicate.sendToRoom(room.id, room.spell.preText)
+            for player in room.players.values():
+                room.spell.applyMagic(player, None)
+                
+    
 def purgatoryHelpMsg(player):
     character.communicate.sendToPlayer( player, "{0}Command had no effect. Type '{1}spawn{0}' to spawn or type '{1}help{0}' for help.".format(CYAN, YELLOW) )

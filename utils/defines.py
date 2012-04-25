@@ -96,6 +96,10 @@ RESTING           = 18
 MOVING            = 19
 
 
+# Spell text identifiers
+YOU        = 0
+VICTIM     = 1
+ROOM       = 2
 
 # weaponText text identifiers
 YOUHIT     = 0

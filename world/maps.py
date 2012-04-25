@@ -16,18 +16,21 @@
 
 import sqlite3
 import os
+from copy import deepcopy
 
 import world.doors
 import world.rooms
 import world.items
+import world.magic
 import logger.gamelogger
 from utils.defines import WHITE
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import PURGATORY
-
+from utils.defines import ROOMSPELL, ROOMDURATIONSPELL 
 
 World = None
+ROOMSPELLS = [ ROOMSPELL, ROOMDURATIONSPELL ]
 
 class GameMap:
     """
@@ -44,6 +47,7 @@ class GameMap:
         """
 
         self.ItemsList = world.items.loadItems()
+        self.MagicList = world.magic.loadMagic()
         
         from logger.gamelogger import logger
         
@@ -90,6 +94,7 @@ class GameMap:
         logger.log.debug("{0} doors loaded.".format(len(self.doors)))
        
         logger.log.debug("Loading rooms.")
+        global ROOMSPELLS
         # Load rooms into grid. 
         for row in r_results:
             rid = str(row[0]).zfill(3)
@@ -109,8 +114,11 @@ class GameMap:
             self.mapGrid[rid].dirs[NW]      = row[9]
             self.mapGrid[rid].dirs[UP]      = row[10]            
             self.mapGrid[rid].dirs[DOWN]    = row[11]
-            self.mapGrid[rid].spell         = row[12]
-            self.mapGrid[rid].light         = row[13]    
+            if row[12] in self.MagicList.keys():
+                if self.MagicList[row[12]].sType in ROOMSPELLS:
+                    self.mapGrid[rid].spell = deepcopy(self.MagicList[row[12]])
+    
+            self.mapGrid[rid].light         = row[13]
             item                            = row[14]
             if item is not None:
                 self.mapGrid[rid].items[self.ItemsList[item].name] = self.ItemsList[item]
