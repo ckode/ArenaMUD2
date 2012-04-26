@@ -58,6 +58,7 @@ class Magic:
         self.stats = {}
         self.caster = None
         self.victim = None
+        self.cost = 0
         
         
 
@@ -171,6 +172,7 @@ def loadMagic():
                                  texteffect1,
                                  texteffect2,
                                  texteffect3,
+                                 cost,
                                  stats FROM magic;""")
         
     results = cursor.fetchall()
@@ -196,7 +198,8 @@ def loadMagic():
         spells[sid].textEffect[YOU]           = str(row[8])
         spells[sid].textEffect[VICTIM]        = str(row[9])
         spells[sid].textEffect[ROOM]          = str(row[10])
-        stattext                              = str(row[11])
+        spells[sid].cost                      = row[11]
+        stattext                              = str(row[12])
         
         for each in stattext.split("|"):
             stat, value = each.split(":")

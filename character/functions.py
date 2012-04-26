@@ -166,6 +166,8 @@ def applyClassAttributes(player, classid):
     player.powerDesc                  = Classes[classid].powerDesc
     player.stats[MAXHP]               = Classes[classid].maxhp
     player.stats[HP]                  = Classes[classid].maxhp
+    player.stats[MAXPOWER]            = Classes[classid].maxpower
+    player.stats[POWER]               = Classes[classid].maxpower
     player.stats[STEALTH]             = Classes[classid].stealth
     player.stats[CRITICAL]            = Classes[classid].critical
     player.classid                    = classid

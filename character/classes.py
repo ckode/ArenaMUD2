@@ -41,6 +41,7 @@ class PlayerClass:
         self.weaponText = {}
         self.powerDesc = ""
         self.maxhp = 0
+        self.maxpower = 0
         self.stealth = 0
         self.critical = 0
         
@@ -73,6 +74,7 @@ def loadClasses():
                                  weapontextroomhit,
                                  weapontextroommiss,
                                  critical,
+                                 maxpower,
                                  classdesc FROM classes;""")
         results = cursor.fetchall()
 
@@ -101,6 +103,7 @@ def loadClasses():
         classes[x].weaponText[ROOMHIT]       = str(row[12])
         classes[x].weaponText[ROOMMISS]      = str(row[13])
         classes[x].critical                  = row[14]
+        classes[x].maxpower                  = row[15]
         classes[x].desc                      = str(row[15])
         x += 1
 
