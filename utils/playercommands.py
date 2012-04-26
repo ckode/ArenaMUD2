@@ -124,11 +124,8 @@ def showMap( player ):
                 exitLine += '   '
 
         # Don't print first line (they are blank)
-        if first:
-            first = False
-        else:
-            player.sendLine(roomLine)
-            player.sendLine(exitLine)
+        player.sendLine(roomLine)
+        player.sendLine(exitLine)
             
         roomLine = "{0}".format(WHITE)
         exitLine = "{0}".format(WHITE)
