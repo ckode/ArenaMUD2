@@ -15,8 +15,10 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sqlite3
 import os
+import random
 
 import character.communicate
+import utils.gameutils
 import combat.functions
 import logger.gamelogger
 
@@ -126,20 +128,34 @@ class Magic:
         Apply magic effects to player.
         """
         
+        def getRandomValue(value1, value2):
+            """
+            Get random value between two numbers.
+            This is required because it could be 
+            negative numbers.
+            """
+            
+            if value1 > value2:
+                return random.randint(value2, value1)
+            else:
+                return random.randint(value1, value2)
+        
         self.victim = victim
         self.caster = caster
         
         if self.duration is 0:
             for stat, value in self.stats.items():
+                values = value.split("!")
+                dmg = getRandomValue(int(values[0]), int(values[1]))
                 if stat in DirectEffects:      
-                    valuetext = str(value).replace("-", "")
-                    ptext = self.textEffect[YOU].format(valuetext)
-                    if value < 1:
+                    value = abs(dmg)
+                    ptext = self.textEffect[YOU].format(value)
+                    if dmg < 1:
                         COLOR = RED
                     else:
                         COLOR = BLUE
                     character.communicate.sendToPlayer( self.victim, "{0}{1}".format(COLOR, ptext) )
-                    victim.stats[stat] += value
+                    utils.gameutils.healPlayer(victim, stat, dmg)
                     if victim.stats[HP] < 1:
                         if self.caster:
                             self.caster.stats[KILLS] += 1
@@ -147,7 +163,7 @@ class Magic:
                         combat.functions.playerKilled(self.victim)
                     elif victim.stats[POWER] < 0:
                         victim.stats[POWER] = 0                    
-        
+                    victim.statLine()
         
         
 def loadMagic():
@@ -203,7 +219,7 @@ def loadMagic():
         
         for each in stattext.split("|"):
             stat, value = each.split(":")
-            spells[sid].stats[int(stat)] = int(value)
+            spells[sid].stats[int(stat)] = value
         
         
     return spells

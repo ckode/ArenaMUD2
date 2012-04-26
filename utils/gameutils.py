@@ -35,15 +35,8 @@ def restHealing():
         if player.status is not PLAYING:
             continue
         if player.stats[RESTING]:
-            if (player.stats[HP] + healRate) > player.stats[MAXHP]:
-                player.stats[HP] = player.stats[MAXHP]
-            else:
-                player.stats[HP] += healRate
-                
-            if (player.stats[POWER] + powerRate) > player.stats[MAXPOWER]:
-                player.stats[POWER] = player.stats[MAXPOWER]
-            else:
-                player.stats[POWER] += powerRate        
+            healPlayer(player, HP, healRate)
+            healPlayer(player, POWER, healRate)         
 
             player.statLine()
             
@@ -60,20 +53,37 @@ def naturalHealing():
         # If player isn't playing.  No need to heal
         if player.status is not PLAYING:
             continue        
-        if (player.stats[HP] + healRate) > player.stats[MAXHP]:
-            player.stats[HP] = player.stats[MAXHP]
-        else:
-            player.stats[HP] += healRate
-            
-        if player.status is not PLAYING:
-            continue        
-        if (player.stats[POWER] + healRate) > player.stats[MAXPOWER]:
-            player.stats[POWER] = player.stats[MAXPOWER]
-        else:
-            player.stats[POWER] += powerRate            
+        
+        healPlayer(player, HP, healRate)
+        healPlayer(player, POWER, healRate)        
             
         player.statLine()
         
+        
+        
+def healPlayer(player, STAT, value):
+    """
+    Add value to players STAT unless
+    above max STAT.  (HP, and POWER)
+    """
+    
+    STAT = int(STAT)
+    if STAT is HP:
+        maxvalue = player.stats[MAXHP]
+    elif STAT is POWER:
+        maxvalue = player.stats[MAXPOWER]
+    else:
+        return
+    
+    if value > 0:
+        if (player.stats[STAT] + value) > maxvalue:
+            player.stats[STAT] = maxvalue
+        else:
+            player.stats[STAT] += value    
+    else:
+        player.stats[STAT] += value
+
+    
 
 def doRoomSpells():
     """
