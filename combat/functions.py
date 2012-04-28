@@ -72,7 +72,8 @@ def doAttack(player, victim):
             if crit:
                 dmg = crit
                 crit = True 
-            dmg = dmg + ( player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB] )
+                
+            dmg += damageAdjustment(player, victim)
             displayDamage(player, victim, dmg, crit)
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
@@ -209,3 +210,14 @@ def clearAttacksPlayerDead(victim):
     for player in AllPlayers.values():
         if player.attacking == victim:
             endCombat( player )
+            
+            
+            
+            
+def damageAdjustment(player, victim):
+    """
+    Returns adjusted damage totals based on
+    DAMAGEABSORB and BONUSDAMAGE stats.
+    """
+      
+    return player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB]

@@ -98,7 +98,20 @@ def doRoomSpells():
                 character.communicate.sendToRoom(room.id, room.spell.preText)
             for player in room.players.values():
                 room.spell.applyMagic(player, None)
-                
+
+
+def doDurationEffectSpells():
+    """
+    Apply duration effects of spells.
+    """
+    for player in AllPlayers.values():
+        # If player isn't playing.  No need to heal
+        if player.status is not PLAYING:
+            continue  
+        for spell in player.spells.values():
+            spell.durationEffect()
+            
+            
     
 def purgatoryHelpMsg(player):
     character.communicate.sendToPlayer( player, "{0}Command had no effect. Type '{1}spawn{0}' to spawn or type '{1}help{0}' for help.".format(CYAN, YELLOW) )

@@ -71,6 +71,7 @@ DIRECTEFFECT       = 1
 DURATIONSPELL      = 2
 ROOMSPELL          = 3
 ROOMDURATIONSPELL  = 4
+DISSPELL           = 5
 
 
 # Magic stat effects

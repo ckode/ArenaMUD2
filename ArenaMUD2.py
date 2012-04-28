@@ -27,7 +27,7 @@ from twisted.internet.task import LoopingCall
 from config.gameconfig import GameConfig
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
-from utils.gameutils import restHealing, naturalHealing, doRoomSpells
+from utils.gameutils import restHealing, naturalHealing, doRoomSpells, doDurationEffectSpells
 import character.players
 import logger.gamelogger
 import character.classes
@@ -56,6 +56,7 @@ class SonzoFactory(ServerFactory):
         
     def TwoSecondLoop(self):
         doRoomSpells()
+        doDurationEffectSpells()
         
 
 #============================================

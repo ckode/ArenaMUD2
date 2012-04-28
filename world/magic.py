@@ -24,7 +24,7 @@ import logger.gamelogger
 
 # Spell types
 from utils.defines import DURATIONSPELL, ROOMDURATIONSPELL, ROOMSPELL
-from utils.defines import BUFF, DIRECTEFFECT
+from utils.defines import BUFF, DIRECTEFFECT, DISSPELL
 # Spell text effects
 from utils.defines import YOU, ROOM, VICTIM
 # Spell effects stats
@@ -49,6 +49,7 @@ class Magic:
     """
     
     def __init__(self):
+        self.id = None
         self.sType = None
         self.sClass = None
         self.name = ""
@@ -64,22 +65,23 @@ class Magic:
         
         
 
-    def durationEffect(self,):
+    def durationEffect(self):
         """
         Execute the spell's effects.
         """
 
         global DirectEffects
         
+        print "Doing duration effect."
+        
         self.duration -= 1
         if self.duration < 0:
-            character.communicate.sendToPlayer( self.victim, "{0}{1}".format(BLUE, self.postText) )
             self.removeDurationEffects()
-            return False
+            return
                 
         for stat, value in self.stats.items():
             if stat in DirectEffects:
-                valuetext = str(value).replace("-", "")
+                valuetext = abs(value)
                 ptext = self.textEffect[YOU].format(valuetext)
                 if value < 1:
                     COLOR = RED
@@ -94,8 +96,7 @@ class Magic:
                     combat.functions.playerKilled(self.victim)
                 elif victim.stats[POWER] < 0:
                     victim.stats[POWER] = 0
-                    
-        return True
+                
 
                 
         
@@ -105,22 +106,36 @@ class Magic:
         Remove duration spell effects.
         """
         
+        character.communicate.sendToPlayer( self.victim, "{0}{1}".format(BLUE, self.postText) )
         for stat, value in self.stats.items():
-            if stat not in DirectEffects:
-                valuetext = str(value).replace("-", "")
-                ptext = self.textEffect[YOU].format(valuetext)
-                if value < 1:
-                    COLOR = RED
-                else:
-                    COLOR = BLUE                
-                character.communicate.sendToPlayer( self.victim, "{0}{1}".format(COLOR, ptext) )
-                if stat in self.victim.stats.keys():
-                    self.victim.stats[stat] -= value
-                else:
-                    from logger.gamelogger import logger
-                    logger.log.error( "Spell stat does not exist in player: {0}".format(stat) )
-               
-                    
+            if stat in self.victim.stats.keys():
+                self.victim.stats[stat] -= int(value)
+            else:
+                from logger.gamelogger import logger
+                logger.log.error( "Spell stat does not exist in player: {0}".format(stat) )
+         
+        del self.victim.spells[self.id]      
+        
+
+
+    def applyDurationEffects(self):
+        """
+        Apply duration spell effects.
+        """
+        
+        character.communicate.sendToPlayer( self.victim, "{0}{1}".format(BLUE, self.preText) )
+        if self.id in self.victim.spells.keys():
+            self.victim.spells[self.id] = self
+            return
+        for stat, value in self.stats.items():
+            if stat in self.victim.stats.keys():
+                self.victim.stats[stat] += int(value)
+            else:
+                from logger.gamelogger import logger
+                logger.log.error( "Spell stat does not exist in player: {0}".format(stat) )
+         
+        self.victim.spells[self.id] = self
+        
                     
                     
     def applyMagic(self, victim, caster):
@@ -164,6 +179,18 @@ class Magic:
                     elif victim.stats[POWER] < 0:
                         victim.stats[POWER] = 0                    
                     victim.statLine()
+                elif stat is DISSPELL:
+                    # Call DISSPELL
+                    pass
+                
+        elif self.sType is BUFF:
+            print "Applying buff"
+            self.applyDurationEffects()
+                    
+
+                
+                
+                
         
         
 def loadMagic():
@@ -204,6 +231,7 @@ def loadMagic():
         sid                                   = row[0]
         
         spells[sid]                           = Magic()
+        spells[sid].id                        = sid
         spells[sid].name                      = str(row[1])  
         spells[sid].sType                     = row[2]
         spells[sid].sClass                    = str(row[3])
@@ -223,3 +251,11 @@ def loadMagic():
         
         
     return spells
+
+
+def addNamesToText(spell):
+    """
+    Adds the attackers.
+    """
+    
+    pass

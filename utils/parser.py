@@ -15,6 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import re
+from copy import deepcopy
 
 import world.maps
 from utils.login import getUsername, getClass
@@ -76,7 +77,8 @@ commands = { '/quit':            "",
              'gossip':           "",
              'level':            showLevel,
              'look':             "",
-             'who':              ""
+             'who':              "",
+             'powr':             ""
            }
 
 def GameParser(player, line):
@@ -174,7 +176,11 @@ def GameParser(player, line):
                 return
             elif each == "who" and len(cmd) is 1:
                 utils.playercommands.who(player)
-                return               
+                return     
+            elif each == "powr" and len(cmd) is 1:
+                spell = deepcopy(world.maps.World.MagicList[3])
+                spell.applyMagic(player, None)
+                return                 
             
             
     from character.communicate import say
