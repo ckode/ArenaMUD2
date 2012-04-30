@@ -48,7 +48,7 @@ class GameMap:
         """
 
         self.ItemsList = world.items.loadItems()
-        self.MagicList = world.magic.loadMagic()
+        self.MagicList, self.CastableSpells = world.magic.loadMagic()
         
         from logger.gamelogger import logger
         

@@ -66,12 +66,12 @@ PURGATORY = 10
 
 
 # Magic types
-BUFF               = 0
-DIRECTEFFECT       = 1
-DURATIONSPELL      = 2
-ROOMSPELL          = 3
-ROOMDURATIONSPELL  = 4
-DISSPELL           = 5
+PLAYERBUFF             = 0
+PLAYERDIRECTEFFECT     = 1
+DURATIONSPELL          = 2
+ROOMSPELL              = 3
+ROOMDURATIONSPELL      = 4
+PLAYERDISSPELL         = 5
 
 
 # Magic stat effects
@@ -95,6 +95,7 @@ MAXDAMAGE         = 16
 MINDAMAGE         = 17
 RESTING           = 18
 MOVING            = 19
+KILLSTREAK        = 20
 
 
 # Spell text identifiers

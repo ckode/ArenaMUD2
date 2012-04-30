@@ -21,10 +21,11 @@ import character.communicate
 import utils.gameutils
 import combat.functions
 import logger.gamelogger
+import world.maps
 
 # Spell types
 from utils.defines import DURATIONSPELL, ROOMDURATIONSPELL, ROOMSPELL
-from utils.defines import BUFF, DIRECTEFFECT, DISSPELL
+from utils.defines import PLAYERBUFF, PLAYERDIRECTEFFECT, PLAYERDISSPELL, PLAYERDISSPELL
 # Spell text effects
 from utils.defines import YOU, ROOM, VICTIM
 # Spell effects stats
@@ -35,12 +36,13 @@ from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 from utils.defines import DEATHS, KILLS
 # Colors
-from utils.defines import BLUE, RED
+from utils.defines import BLUE, RED, LBLUE
 
 
 # Stats that can be changed and not undone with spell completes (heal, damage)
 DirectEffects = [HP, POWER]
 ROOMSPELLS = [ ROOMDURATIONSPELL, ROOMSPELL ]
+CASTABLE = [ PLAYERBUFF, PLAYERDIRECTEFFECT, PLAYERDISSPELL ]
 
 
 class Magic:
@@ -72,7 +74,6 @@ class Magic:
 
         global DirectEffects
         
-        print "Doing duration effect."
         
         self.duration -= 1
         if self.duration < 0:
@@ -158,6 +159,10 @@ class Magic:
         self.victim = victim
         self.caster = caster
         
+        # Deduct power/mana costs to cast spell.
+        if caster:
+            caster.stats[POWER] -= self.cost
+            
         if self.duration is 0:
             for stat, value in self.stats.items():
                 values = value.split("!")
@@ -183,15 +188,49 @@ class Magic:
                     # Call DISSPELL
                     pass
                 
-        elif self.sType is BUFF:
-            print "Applying buff"
+        elif self.sType is PLAYERBUFF:
             self.applyDurationEffects()
+        
+        
                     
 
-                
-                
-                
+    def castSpell(self, player, cmd):
+        """
+        Try to cast the spell.
+        """
         
+        if len(cmd) is 2:
+            vicName = cmd[1]
+            victims = world.maps.World[player.room].findPlayerInRoom(player, vicName)
+            if not victims:
+                character.communicate.sendToPlayer( player, "You do not see {0} here.".format(vicName) )
+            elif len(victims) > 1:
+                character.communicate.sendToPlayer( player, "Who do you want to cast on?" )
+                for name in victims:
+                    character.communicate.sendToPlayer( player, " - {0}".format(name) )            
+            else:
+                self.applyMagic(victims[0], player)
+                self.displaySpellText(victim[0], player)
+                
+        else:
+            self.applyMagic(player, player)
+            self.displaySpellText(player, None)
+                
+
+
+
+    def displaySpellText(self, player, victim):
+        """
+        Tell the room about casting the spell.
+        """
+          
+        if victim:
+            character.communicate.sendToPlayer(player, "{0}You cast {1} on {2}".format(LBLUE, self.name, victim.name))
+            character.communicate.sendToPlayer(victim, "{0}{1} casts {2} on you!".format(LBLUE, player.name, self.name))
+            character.communicate.sendToRoomNotPlayerOrVictim(player, victim, "{0}{0} casts {2} on {3}".format(LBLUE, player.name, self.name, victim.name))
+        else:
+            character.communicate.sendToPlayer(player, "{0}You cast {1} on yourself.".format(LBLUE, self.name))
+            character.communicate.sendToRoomNotPlayer(player, "{0}{1} casts {2} on {1}!".format(LBLUE, player.name, self.name))
         
 def loadMagic():
     """
@@ -225,6 +264,8 @@ def loadMagic():
 
 
     spells = {}
+    castable = {}
+    
     x = 1
     #logger.log.debug("Loading classes.")
     for row in results:
@@ -249,8 +290,10 @@ def loadMagic():
             stat, value = each.split(":")
             spells[sid].stats[int(stat)] = value
         
+        if spells[sid].sType in CASTABLE:
+            castable[spells[sid].memonic] = spells[sid]
         
-    return spells
+    return spells, castable
 
 
 def addNamesToText(spell):

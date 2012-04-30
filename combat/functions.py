@@ -28,7 +28,7 @@ from utils.defines import HP, MAXHP, POWER, MAXPOWER
 from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import DAMAGEABSORB, BONUSDAMAGE
-from utils.defines import KILLS, DEATHS, SNEAKING
+from utils.defines import KILLS, DEATHS, SNEAKING, KILLSTREAK
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 
 
@@ -78,6 +78,7 @@ def doAttack(player, victim):
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
                 player.stats[KILLS] += 1
+                player.stats[KILLSTREAK] += 1
                 victim.stats[DEATHS] += 1
                 clearAttacksPlayerDead(victim)
                 playerKilled(victim)
@@ -195,6 +196,7 @@ def playerKilled(player):
     character.communicate.sendToPlayer( player, "You drop to the ground.".format(player.name) )
     del world.maps.World.mapGrid[player.room].players[player.name]
     character.communicate.tellWorld( player, "You are dead.", "{0} was killed.".format(player.name) )
+    player.stats[KILLSTREAK] = 0
     endCombat( player )
     player.status = PURGATORY
     utils.gameutils.purgatoryHelpMsg(player)

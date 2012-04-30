@@ -29,7 +29,7 @@ import utils.parser
 import character.communicate
 import character.functions 
 
-from utils.defines import BLUE, WHITE 
+from utils.defines import BLUE, WHITE, YELLOW, LGREEN, LRED , LCYAN
 from utils.defines import DELETELEFT, FIRSTCOL
 from utils.defines import PLAYING, LOGIN, PURGATORY
 from utils.defines import HP, MAXHP, POWER, MAXPOWER
@@ -38,6 +38,7 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
+from utils.defines import KILLSTREAK
 
 
 # Python imports
@@ -84,7 +85,8 @@ class Player(StatefulTelnetProtocol):
                        CRITICAL:        0,
                        KILLS:           0,
                        DEATHS:          0,
-                       MOVING:          False
+                       MOVING:          False,
+                       KILLSTREAK:      0
                      }
 
         self.weaponText = {}
@@ -209,4 +211,32 @@ class Player(StatefulTelnetProtocol):
         """
         Displays a description of the player.
         """
-        character.functions.sendToPlayer( player, "{0} is a {1}".format(self.name, self.playerclass) )
+                
+        
+        if self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 25):
+            HealthStr = "horribly"
+            hpcolor = LRED
+        elif self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 50):
+            HealthStr = "badly"
+            hpcolor = YELLOW
+        elif self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 75):
+            HealthStr = "somewhat"
+            hpcolor = LGREEN
+        elif self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 85):
+            HealthStr = "lightly"
+            hpcolor = WHITE
+        elif self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 95):
+            HealthStr = "barely"
+            hpcolor = WHITE
+        else:
+            HealthStr = "not"
+            hpcolor = WHITE
+            
+         # If player.hp is higher than maxhp, make it blue (only a buff can do this)
+        if self.stats[HP] > self.stats[MAXHP]:
+            hpcolor = BLUE
+      
+        character.functions.sendToPlayer(player, "%s<<=-=-=-=-=-=-=-= %s =-=-=-=-=-=-=-=>>" %(LCYAN, self.name))
+        character.functions.sendToPlayer(player, "%s%s is a %s" %(YELLOW, self.name, self.playerclass))
+        character.functions.sendToPlayer(player, "%s has %s kills and %s deaths" %(self.name, str(self.stats[KILLS]), str(self.stats[DEATHS])))
+        character.functions.sendToPlayer(player, "%s%s is %s wounded.%s" %(hpcolor, self.name, HealthStr, WHITE))        

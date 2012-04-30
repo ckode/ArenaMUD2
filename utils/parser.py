@@ -21,6 +21,7 @@ import world.maps
 from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
+from utils.defines import POWER
 from utils.defines import CYAN, WHITE, YELLOW
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap, showLevel, breakCombat, look
@@ -95,6 +96,11 @@ def GameParser(player, line):
     if player.status is not PLAYING:
         statusMatrix(player, line)
         return
+    
+    # If player in PURGATORY, use the PurgatoryParser()
+    if player.status is PURGATORY:
+        PurgatoryParser(player, line)
+        return
  
     # If just hit enter, display room
     if line == "":
@@ -102,7 +108,13 @@ def GameParser(player, line):
         character.functions.displayRoom(player, player.room)
         return      
     
+    
     cmd = line.split()
+    
+    # If casting a spell.
+#    if SpellParser(player, cmd):
+#        return
+    
     cmdstr = re.compile(re.escape(cmd[0].lower()))
                         
           
@@ -177,10 +189,7 @@ def GameParser(player, line):
             elif each == "who" and len(cmd) is 1:
                 utils.playercommands.who(player)
                 return     
-            elif each == "powr" and len(cmd) is 1:
-                spell = deepcopy(world.maps.World.MagicList[3])
-                spell.applyMagic(player, None)
-                return                 
+          
             
             
     from character.communicate import say
@@ -228,3 +237,22 @@ def PurgatoryParser(player, line):
                 return               
 
     utils.gameutils.purgatoryHelpMsg(player)
+
+
+def SpellParser(player, cmd):
+    """
+    Look for player casting spells.
+    """
+    
+    spellList = world.maps.World.CastableSpells
+    
+    if len(cmd[0]) is 4 and cmd[0] in spellList.keys():
+        if len(cmd) < 3:
+            if spellList[cmd[0]].sClass == player.playerclass:
+                if player.stats[POWER] > spellList[cmd[0]].cost:
+                    spell = deepcopy(spellList[cmd[0]])
+                    spell.castSpell(player, cmd)
+                    return True
+                
+                
+    return False
