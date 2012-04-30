@@ -179,12 +179,18 @@ class Player(StatefulTelnetProtocol):
             self.transport.write( "{0}%>".format(WHITE) )
             return
         
-        statline = "[HP={0}/{1}={2}]: ".format(self.stats[HP], self.powerDesc, self.stats[POWER]) 
+        hpcolor = utils.gameutils.getHealthColor(self)
+        statline = "[HP={0}{1}{2}/{3}]: ".format(hpcolor, self.stats[HP], WHITE, self.stats[MAXHP])
+
         if self.stats[RESTING]:
             statline = "{0}{1} ".format(statline, "(resting) ")
+
         self.transport.write(DELETELEFT)
         self.transport.write(FIRSTCOL)
-        self.transport.write( "{0}{1}".format(WHITE, statline) )        
+        self.transport.write("{0}{1}".format(WHITE, statline))
+
+
+     
 
 
 
@@ -211,7 +217,8 @@ class Player(StatefulTelnetProtocol):
         """
         Displays a description of the player.
         """
-                
+               
+        hpcolor = utils.gameutils.getHealthColor(player) 
         
         if self.stats[HP] < ((float(self.stats[MAXHP]) / 100) * 25):
             HealthStr = "horribly"

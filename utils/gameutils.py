@@ -18,7 +18,7 @@ from character.players import AllPlayers
 import world.maps
 
 from utils.defines import PLAYING
-from utils.defines import CYAN, YELLOW
+from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
 from utils.defines import HP, MAXHP, POWER, MAXPOWER, RESTING
 
 import character.communicate
@@ -114,4 +114,30 @@ def doDurationEffectSpells():
             
     
 def purgatoryHelpMsg(player):
-    character.communicate.sendToPlayer( player, "{0}Command had no effect. Type '{1}spawn{0}' to spawn or type '{1}help{0}' for help.".format(CYAN, YELLOW) )
+    character.communicate.sendToPlayer(player, "{0}Command had no effect. Type '{1}spawn{0}' to spawn or type '{1}help{0}' for help.".format(CYAN, YELLOW))
+    
+    
+def getHealthColor(player):
+    """
+    Returns the health color based on
+    how players heal precentage is.
+    """
+    
+    if player.stats[HP] < ((float(player.stats[MAXHP]) / 100) * 25):
+        hpcolor = LRED
+    elif player.stats[HP] < ((float(player.stats[MAXHP]) / 100) * 50):
+        hpcolor = YELLOW
+    elif player.stats[HP] < ((float(player.stats[MAXHP]) / 100) * 75):
+        hpcolor = LGREEN
+    elif player.stats[HP] < ((float(player.stats[MAXHP]) / 100) * 85):
+        hpcolor = WHITE
+    elif player.stats[HP] < ((float(player.stats[MAXHP]) / 100) * 95):
+        hpcolor = WHITE
+    else:
+        hpcolor = WHITE
+            
+    # If player.hp is higher than maxhp, make it blue (only a buff can do this)
+    if player.stats[HP] > player.stats[MAXHP]:
+        hpcolor = BLUE    
+        
+    return hpcolor
