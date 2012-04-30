@@ -14,7 +14,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE
+from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE, B_YELLOW, B_BLACK, B_BLUE
 from utils.defines import LMAGENTA, LCYAN, LRED, LGREEN
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
@@ -69,12 +69,12 @@ def showMap( player ):
     from world.maps import World
 
     z = int(player.room[2:])
-    roomLine = "{0}".format(WHITE)
-    exitLine = "{0}".format(WHITE)
+    roomLine = "  {0} {1}".format(B_BLUE, B_BLACK)
+    exitLine = "  {0} {1}".format(B_BLUE, B_BLACK)
     marker = ''
 
-    player.sendLine("{0}{1}{2}".format(YELLOW, (World.levelnames[z]).center(27, " "), WHITE))
-
+    player.sendLine("{0}{1}{2}".format(YELLOW, (World.levelnames[z]).center(26, " "), WHITE))
+    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 20, B_BLACK))
     for x in range(World.height):
         for y in range(World.width):
             room = "{0}{1}{2}".format(x, y, z)
@@ -108,20 +108,23 @@ def showMap( player ):
                 elif World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SE) and not World.mapGrid[room].hasExit(SOUTH):
                     exitLine += chr(8) + '/ \\'
                 else:
-                    exitLine += '  '
+                    exitLine += '  '       
                     
             else:
                 roomLine = roomLine + '  '
                 exitLine += '  '
 
-        # Don't print first line (they are blank)
+        roomLine += "{0}{1} {2}".format(chr(8), B_BLUE, B_BLACK)
+        exitLine += "{0}{1} {2}".format(chr(8), B_BLUE, B_BLACK)    
+
         player.sendLine(roomLine)
-        player.sendLine(exitLine)
+        if x is not (World.height - 1):
+            player.sendLine(exitLine)
             
-        roomLine = "{0}".format(WHITE)
-        exitLine = "{0}".format(WHITE)
+        roomLine = "  {0} {1}".format(B_BLUE, B_BLACK)
+        exitLine = chr(8) + "  {0} {1}".format(B_BLUE, B_BLACK)
 
-
+    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 20, B_BLACK)) 
     player.statLine()
 
 
