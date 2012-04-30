@@ -97,6 +97,8 @@ def showMap( player ):
                     exitLine += chr(8) + '/|\\'
                 elif World.mapGrid[room].hasExit(SW) and not World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SE):
                     exitLine += chr(8) + '/  '
+                elif World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SE):
+                    exitLine += chr(8) + '/| '
                 elif World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SW):
                     exitLine += '|'
                     if World.mapGrid[room].hasExit(SE):
