@@ -68,7 +68,6 @@ def showMap( player ):
 
     from world.maps import World
 
-    first = True
     z = int(player.room[2:])
     roomLine = "{0}".format(WHITE)
     exitLine = "{0}".format(WHITE)
@@ -89,39 +88,31 @@ def showMap( player ):
                 elif World.mapGrid[room].hasExit(DOWN):
                     marker = "D"
                 else:
-                    marker = '#'
-                if World.mapGrid[room].hasExit(EAST) and World.mapGrid[room].hasExit(WEST):
-                    roomLine += '-' + marker + '-'
-                elif World.mapGrid[room].hasExit(WEST):
-                    roomLine += '-' + marker + ' '
-                elif World.mapGrid[room].hasExit(EAST):
-                    roomLine += ' ' + marker + '-'
+                    marker = "#"
+                if World.mapGrid[room].hasExit(EAST):
+                    roomLine += marker + '-'
                 else:
-                    roomLine += ' ' + marker + ' '
-                if World.mapGrid[room].hasExit(SW):
-                    exitLine += '/'
-                else:
-                    exitLine += ' '
-                if World.mapGrid[room].hasExit(SOUTH):
+                    roomLine += marker + ' '
+                if World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SOUTH) and World.mapGrid[room].hasExit(SE):
+                    exitLine += chr(8) + '/|\\'
+                elif World.mapGrid[room].hasExit(SW) and not World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SE):
+                    exitLine += chr(8) + '/  '
+                elif World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SW):
                     exitLine += '|'
+                    if World.mapGrid[room].hasExit(SE):
+                        exitLine += '\\'
+                    else:
+                        exitLine += ' '
+                elif World.mapGrid[room].hasExit(SE) and not World.mapGrid[room].hasExit(SW) and not World.mapGrid[room].hasExit(SOUTH):
+                    exitLine += ' \\'
+                elif World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SE) and not World.mapGrid[room].hasExit(SOUTH):
+                    exitLine += chr(8) + '/ \\'
                 else:
-                    exitLine += ' '
-                if World.mapGrid[room].hasExit(SE):
-                    exitLine += '\\'
-                else:
-                    exitLine += ' '
+                    exitLine += '  '
+                    
             else:
-                if y==0:
-                    roomLine += '  '
-                    exitLine += '  '
-                    continue
-                if y == (World.width - 1):
-                    roomLine += '  '
-                    exitLine += '  '
-                    continue
-
-                roomLine = roomLine + '   '
-                exitLine += '   '
+                roomLine = roomLine + '  '
+                exitLine += '  '
 
         # Don't print first line (they are blank)
         player.sendLine(roomLine)
