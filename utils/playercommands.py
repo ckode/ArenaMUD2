@@ -74,7 +74,7 @@ def showMap( player ):
     marker = ''
 
     player.sendLine("{0}{1}{2}".format(YELLOW, (World.levelnames[z]).center(26, " "), WHITE))
-    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 20, B_BLACK))
+    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 21, B_BLACK))
     for x in range(World.height):
         for y in range(World.width):
             room = "{0}{1}{2}".format(x, y, z)
@@ -94,11 +94,11 @@ def showMap( player ):
                 else:
                     roomLine += marker + ' '
                 if World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SOUTH) and World.mapGrid[room].hasExit(SE):
-                    exitLine += chr(8) + '/|\\'
+                    exitLine = exitLine[:-1] + '/|\\'
                 elif World.mapGrid[room].hasExit(SW) and not World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SE):
-                    exitLine += chr(8) + '/  '
+                    exitLine = exitLine[:-1] + '/  '
                 elif World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SE):
-                    exitLine += chr(8) + '/| '
+                    exitLine = exitLine[:-1] + '/| '
                 elif World.mapGrid[room].hasExit(SOUTH) and not World.mapGrid[room].hasExit(SW):
                     exitLine += '|'
                     if World.mapGrid[room].hasExit(SE):
@@ -108,7 +108,7 @@ def showMap( player ):
                 elif World.mapGrid[room].hasExit(SE) and not World.mapGrid[room].hasExit(SW) and not World.mapGrid[room].hasExit(SOUTH):
                     exitLine += ' \\'
                 elif World.mapGrid[room].hasExit(SW) and World.mapGrid[room].hasExit(SE) and not World.mapGrid[room].hasExit(SOUTH):
-                    exitLine += chr(8) + '/ \\'
+                    exitLine = exitLine[:-1] + '/ \\'
                 else:
                     exitLine += '  '       
                     
@@ -116,17 +116,17 @@ def showMap( player ):
                 roomLine = roomLine + '  '
                 exitLine += '  '
 
-        roomLine += "{0}{1} {2}".format(chr(8), B_BLUE, B_BLACK)
-        exitLine += "{0}{1} {2}".format(chr(8), B_BLUE, B_BLACK)    
+        roomLine = roomLine + "{0} {1}".format(B_BLUE, B_BLACK)
+        exitLine = exitLine + "{0} {1}".format(B_BLUE, B_BLACK)    
 
         player.sendLine(roomLine)
         if x is not (World.height - 1):
             player.sendLine(exitLine)
             
         roomLine = "  {0} {1}".format(B_BLUE, B_BLACK)
-        exitLine = chr(8) + "  {0} {1}".format(B_BLUE, B_BLACK)
+        exitLine = "  {0} {1}".format(B_BLUE, B_BLACK)
 
-    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 20, B_BLACK)) 
+    player.sendLine("  {0}{1} {2}".format(B_BLUE, " " * 21, B_BLACK)) 
     player.statLine()
 
 
