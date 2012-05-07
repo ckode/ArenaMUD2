@@ -250,6 +250,9 @@ class PlayerSpells:
         Try to cast the spell.
         """
         
+        if player.spellsCasted.has_key(self.getAttr(MEMONIC)):
+            character.communicate.sendToPlayer(player, "You haven't recovered from your last attempt of {0}.".format(self.getAttr(SPELLNAME)))
+            return
         if len(cmd) is 2:
             vicName = cmd[1]
             victims = world.maps.World.mapGrid[player.room].findPlayerInRoom(player, vicName)
@@ -284,6 +287,7 @@ class PlayerSpells:
         
         # seed is an specific castings id. see utils.gameutils.resetCooldown() for further info.     
         seed = random.randint(0, 10000)
+        self.getAttr(CASTER).spellsCasted[self.getAttr(MEMONIC)] = seed
         reactor.callLater(self.getAttr(COOLDOWN), utils.gameutils.resetCooldown, player, self.getAttr(MEMONIC), seed)
   
   
