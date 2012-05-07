@@ -38,7 +38,7 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import KILLSTREAK
+from utils.defines import KILLSTREAK, STUN, HELD
 
 
 # Python imports
@@ -69,12 +69,12 @@ class Player(StatefulTelnetProtocol):
 
         self.stats = { HP:              0,
                        MAXHP:           0,
-                       POWER:           0,
-                       MAXPOWER:        100,
                        BLIND:           False,
                        HELD:            False,
                        VISION:          3,
                        STEALTH:         0,
+                       STUN:            False,
+                       HELD:            False,
                        SNEAKING:        False,
                        ATTACKS:         0,
                        ATTKSKILL:       0,
@@ -90,9 +90,9 @@ class Player(StatefulTelnetProtocol):
                      }
 
         self.weaponText = {}
-        self.powerDesc = ""
         self.attacking = None
         self.spells = {}
+        self.spellsCasted = {}
 
         
 
@@ -201,7 +201,6 @@ class Player(StatefulTelnetProtocol):
 
         character.functions.applyClassAttributes( self, self.classid )
         self.stats[HP] = self.stats[MAXHP]
-        self.stats[POWER] = self.stats[MAXPOWER]
         self.stats[SNEAKING] = False
         self.stats[RESTING] = False
         self.stats[MOVING] = False
@@ -210,9 +209,12 @@ class Player(StatefulTelnetProtocol):
         self.stats[BONUSDAMAGE] = 0
         self.stats[DAMAGEABSORB] = 0
         self.spells.clear()
+        self.spellsCasted.clear()
         self.attacking = None
 
 
+            
+            
     def displayDescription(self, player):
         """
         Displays a description of the player.

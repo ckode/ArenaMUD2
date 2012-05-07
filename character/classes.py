@@ -32,6 +32,7 @@ class PlayerClass:
         Initialize PlayerClass object.
         """
         
+        self.classid = 0
         self.name = ""       
         self.desc = ""
         self.attacks = 0
@@ -39,9 +40,7 @@ class PlayerClass:
         self.maxDamage = 0
         self.minDamage = 0
         self.weaponText = {}
-        self.powerDesc = ""
         self.maxhp = 0
-        self.maxpower = 0
         self.stealth = 0
         self.critical = 0
         
@@ -59,12 +58,12 @@ def loadClasses():
     try:
         conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
         cursor = conn.cursor()
-        cursor.execute("""SELECT name,
+        cursor.execute("""SELECT id,
+                                 name,
                                  attacks,
                                  attackskill,
                                  maxdamage,
                                  mindamage,
-                                 powerdesc,
                                  maxhp,
                                  stealth,
                                  weapontextyouhit,
@@ -74,8 +73,8 @@ def loadClasses():
                                  weapontextroomhit,
                                  weapontextroommiss,
                                  critical,
-                                 maxpower,
                                  classdesc FROM classes;""")
+        
         results = cursor.fetchall()
 
     except:
@@ -83,29 +82,29 @@ def loadClasses():
 
 
     classes = {}
-    x = 1
+
     #logger.log.debug("Loading classes.")
     for row in results:
-
-        classes[x]                           = PlayerClass()
-        classes[x].name                      = str(row[0])
-        classes[x].attacks                   = row[1]
-        classes[x].attkSkill                 = row[2]
-        classes[x].maxDamage                 = row[3]
-        classes[x].minDamage                 = row[4]
-        classes[x].powerDesc                 = str(row[5])
-        classes[x].maxhp                     = row[6]
-        classes[x].stealth                   = row[7]
-        classes[x].weaponText[YOUHIT]        = str(row[8])
-        classes[x].weaponText[YOUMISS]       = str(row[9])
-        classes[x].weaponText[VICTIMHIT]     = str(row[10])
-        classes[x].weaponText[VICTIMMISS]    = str(row[11])
-        classes[x].weaponText[ROOMHIT]       = str(row[12])
-        classes[x].weaponText[ROOMMISS]      = str(row[13])
-        classes[x].critical                  = row[14]
-        classes[x].maxpower                  = row[15]
-        classes[x].desc                      = str(row[15])
-        x += 1
+        cid                                    = row[0]
+    
+        classes[cid]                           = PlayerClass()
+        classes[cid].classid                   = cid
+        classes[cid].name                      = str(row[1])
+        classes[cid].attacks                   = row[2]
+        classes[cid].attkSkill                 = row[3]
+        classes[cid].maxDamage                 = row[4]
+        classes[cid].minDamage                 = row[5]
+        classes[cid].maxhp                     = row[6]
+        classes[cid].stealth                   = row[7]
+        classes[cid].weaponText[YOUHIT]        = str(row[8])
+        classes[cid].weaponText[YOUMISS]       = str(row[9])
+        classes[cid].weaponText[VICTIMHIT]     = str(row[10])
+        classes[cid].weaponText[VICTIMMISS]    = str(row[11])
+        classes[cid].weaponText[ROOMHIT]       = str(row[12])
+        classes[cid].weaponText[ROOMMISS]      = str(row[13])
+        classes[cid].critical                  = row[14]
+        classes[cid].desc                      = str(row[15])
+        
 
     #logger.log.debug("{0} classes loaded.".format(len(classes)))
     return classes    

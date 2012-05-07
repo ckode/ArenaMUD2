@@ -28,7 +28,7 @@ from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
 from utils.defines import PURGATORY, PLAYING
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
 from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
-from utils.defines import HP, MAXHP, POWER, MAXPOWER
+from utils.defines import HP, MAXHP
 from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
@@ -163,14 +163,11 @@ def applyClassAttributes(player, classid):
     player.weaponText[VICTIMMISS]     = Classes[classid].weaponText[VICTIMMISS]
     player.weaponText[ROOMHIT]        = Classes[classid].weaponText[ROOMHIT]
     player.weaponText[ROOMMISS]       = Classes[classid].weaponText[ROOMMISS]
-    player.powerDesc                  = Classes[classid].powerDesc
     player.stats[MAXHP]               = Classes[classid].maxhp
     player.stats[HP]                  = Classes[classid].maxhp
-    player.stats[MAXPOWER]            = Classes[classid].maxpower
-    player.stats[POWER]               = Classes[classid].maxpower
     player.stats[STEALTH]             = Classes[classid].stealth
     player.stats[CRITICAL]            = Classes[classid].critical
-    player.classid                    = classid
+    player.classid                    = Classes[classid].classid
     player.playerclass                = Classes[classid].name
     
 

@@ -28,10 +28,10 @@ from utils.defines import WHITE
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import PURGATORY
-from utils.defines import ROOMSPELL, ROOMDURATIONSPELL 
+from utils.defines import ROOMSPELL
 
 World = None
-ROOMSPELLS = [ ROOMSPELL, ROOMDURATIONSPELL ]
+ROOMSPELLS = [ ROOMSPELL ]
 
 class GameMap:
     """
@@ -48,7 +48,8 @@ class GameMap:
         """
 
         self.ItemsList = world.items.loadItems()
-        self.MagicList, self.CastableSpells = world.magic.loadMagic()
+        #self.MagicList, self.CastableSpells = world.magic.loadMagic()
+        self.CastableSpells = world.magic.loadPlayerSpells()
         
         from logger.gamelogger import logger
         
@@ -115,9 +116,9 @@ class GameMap:
             self.mapGrid[rid].dirs[NW]      = row[9]
             self.mapGrid[rid].dirs[UP]      = row[10]            
             self.mapGrid[rid].dirs[DOWN]    = row[11]
-            if row[12] in self.MagicList.keys():
-                if self.MagicList[row[12]].sType in ROOMSPELLS:
-                    self.mapGrid[rid].spell = deepcopy(self.MagicList[row[12]])
+            #if row[12] in self.MagicList.keys():
+            #    if self.MagicList[row[12]].sType in ROOMSPELLS:
+            #        self.mapGrid[rid].spell = deepcopy(self.MagicList[row[12]])
     
             self.mapGrid[rid].light         = row[13]
             item                            = row[14]

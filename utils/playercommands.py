@@ -185,7 +185,7 @@ def who(player):
     """
     Display players connected and their stats.
     """
-    
+        
     sendToPlayer = character.communicate.sendToPlayer
     
     sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= {1}Whos Online{0} =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN, LMAGENTA) )

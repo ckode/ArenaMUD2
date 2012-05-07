@@ -20,8 +20,8 @@ from copy import deepcopy
 import world.maps
 from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
-from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
-from utils.defines import POWER
+from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY, STUN
+from utils.defines import SCLASS, TARGET
 from utils.defines import CYAN, WHITE, YELLOW
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap, showLevel, breakCombat, look
@@ -97,11 +97,10 @@ def GameParser(player, line):
         statusMatrix(player, line)
         return
     
-    # If player in PURGATORY, use the PurgatoryParser()
-    if player.status is PURGATORY:
-        PurgatoryParser(player, line)
+    if player.stats[STUN] is 1:
+        character.communicate.sendToPlayer(player, "You are stun!")
         return
- 
+    
     # If just hit enter, display room
     if line == "":
         #world.maps.World.mapGrid[player.room].displayRoom(player)
@@ -112,8 +111,8 @@ def GameParser(player, line):
     cmd = line.split()
     
     # If casting a spell.
-#    if SpellParser(player, cmd):
-#        return
+    if SpellParser(player, cmd):
+        return
     
     cmdstr = re.compile(re.escape(cmd[0].lower()))
                         
@@ -247,12 +246,12 @@ def SpellParser(player, cmd):
     spellList = world.maps.World.CastableSpells
     
     if len(cmd[0]) is 4 and cmd[0] in spellList.keys():
-        if len(cmd) < 3:
-            if spellList[cmd[0]].sClass == player.playerclass:
-                if player.stats[POWER] > spellList[cmd[0]].cost:
-                    spell = deepcopy(spellList[cmd[0]])
-                    spell.castSpell(player, cmd)
-                    return True
-                
+        if len(cmd) is spellList[cmd[0]].getAttr(TARGET) or spellList[cmd[0]].getAttr(TARGET) is 3 and len(cmd) < 3:
+            if spellList[cmd[0]].getAttr(SCLASS) is player.classid:
+                spell = deepcopy(spellList[cmd[0]])
+                spell.castSpell(player, cmd)
+                return True
+            else:
+                pass
                 
     return False

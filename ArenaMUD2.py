@@ -56,7 +56,7 @@ class SonzoFactory(ServerFactory):
         
     def TwoSecondLoop(self):
 #        doRoomSpells()
-#        doDurationEffectSpells()
+        doDurationEffectSpells()
         pass
 
 #============================================

@@ -29,15 +29,12 @@ def restHealing():
     """
     
     healRate = 15
-    powerRate = 10
     for player in AllPlayers.values():
         # If player isn't playing.  No need to heal
         if player.status is not PLAYING:
             continue
         if player.stats[RESTING]:
-            healPlayer(player, HP, healRate)
-            healPlayer(player, POWER, healRate)         
-
+            healPlayer(player, HP, healRate)       
             player.statLine()
             
             
@@ -48,15 +45,12 @@ def naturalHealing():
     """
     
     healRate = 5
-    powerRate = 5
     for player in AllPlayers.values():
         # If player isn't playing.  No need to heal
         if player.status is not PLAYING:
             continue        
         
-        healPlayer(player, HP, healRate)
-        healPlayer(player, POWER, healRate)        
-            
+        healPlayer(player, HP, healRate)     
         player.statLine()
         
         
@@ -70,8 +64,6 @@ def healPlayer(player, STAT, value):
     STAT = int(STAT)
     if STAT is HP:
         maxvalue = player.stats[MAXHP]
-    elif STAT is POWER:
-        maxvalue = player.stats[MAXPOWER]
     else:
         return
     
@@ -141,3 +133,17 @@ def getHealthColor(player):
         hpcolor = BLUE    
         
     return hpcolor
+
+
+
+def resetCooldown(player, spellid, seed):
+    """
+    Reset cooldown for a spell that has been casted.
+    """
+    
+    if player:
+        if player.spellsCasted.has_key(spellid):
+            # seed is to ensure cooldown is removing for the correct casting as
+            # the caster could have died and recasted the spell
+            if player.spellsCasted[spellid] is seed:
+                del player.spellsCasted[spellid]
