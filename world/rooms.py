@@ -178,3 +178,11 @@ class Room:
                     foundList.append(target)
     
         return foundList
+    
+    
+    
+    def playersInRoom(self):
+        """
+        Return all players in room.
+        """
+        return self.players

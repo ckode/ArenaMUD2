@@ -200,17 +200,18 @@ class Player(StatefulTelnetProtocol):
         """
 
         character.functions.applyClassAttributes( self, self.classid )
-        self.stats[HP] = self.stats[MAXHP]
         self.stats[SNEAKING] = False
         self.stats[RESTING] = False
         self.stats[MOVING] = False
         self.stats[HELD] = False
+        self.stats[STUN] = False
         self.stats[BLIND] = False
         self.stats[BONUSDAMAGE] = 0
         self.stats[DAMAGEABSORB] = 0
         self.spells.clear()
         self.spellsCasted.clear()
         self.attacking = None
+        character.functions.applyClassAttributes(self, self.classid)
 
 
             

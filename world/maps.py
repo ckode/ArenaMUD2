@@ -23,6 +23,7 @@ import world.doors
 import world.rooms
 import world.items
 import world.magic
+import combat.functions
 import logger.gamelogger
 from utils.defines import WHITE
 from utils.defines import DIRS, NORTH, NE, EAST, SE

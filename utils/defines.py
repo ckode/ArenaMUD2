@@ -72,8 +72,10 @@ DIRECTDAMAGE     = 2
 HEAL             = 3
 DURATIONDAMAGE   = 4
 DURATIONHEAL     = 5
-ROOMSPELL        = 6
-DISSPELL         = 7
+AREADAMGE        = 6
+AREADURATION     = 7
+ROOMSPELL        = 8
+DISSPELL         = 9
 
 
 SPELLID         = 0
@@ -89,7 +91,7 @@ CASTER          = 9
 SPELLVICTIM     = 10
 COOLDOWN        = 11
 DURATION        = 12
-MEMONIC         = 13
+MNEMONIC         = 13
 SPELLEFFECTS    = 14
 
 

@@ -24,10 +24,13 @@ import utils.gameutils
 import combat.functions
 import logger.gamelogger
 import world.maps
+from copy import deepcopy
 
 # Spell types
 from utils.defines import DURATIONDAMAGE, ROOMSPELL, HEAL, DURATIONHEAL
 from utils.defines import BUFF, DEBUFF, DIRECTDAMAGE, DISSPELL
+from utils.defines import AREADAMGE, AREADURATION
+
 # Spell text effects
 from utils.defines import YOU, ROOM, VICTIM
 # Spell effects stats
@@ -36,13 +39,13 @@ from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import DEATHS, KILLS
+from utils.defines import DEATHS, KILLS, STUN
 
 # Define magic stats
 from utils.defines import SPELLID, STYPE, SCLASS, SPELLNAME
 from utils.defines import TARGET, GESTURE, S_END_TEXT, TEXTEFFECTS
 from utils.defines import DURATIONEFFECT, CASTER, SPELLVICTIM, COOLDOWN
-from utils.defines import DURATION, MEMONIC, SPELLEFFECTS
+from utils.defines import DURATION, MNEMONIC, SPELLEFFECTS
 
 # Colors
 from utils.defines import BLUE, RED, LBLUE
@@ -53,6 +56,8 @@ DirectEffects = [HP]
 ROOMSPELLS = [ ROOMSPELL ]
 CASTABLE = [ BUFF, DEBUFF, DIRECTDAMAGE, HEAL, DISSPELL, DURATIONDAMAGE, DURATIONHEAL ]
 DAMAGESPELLS = [ DEBUFF, DIRECTDAMAGE, DISSPELL, DURATIONDAMAGE ]
+BREAKSCOMBAT = [ STUN ]
+AREASPELL = [ AREADAMGE, AREADURATION ]
 
 
 class PlayerSpells:
@@ -75,7 +80,7 @@ class PlayerSpells:
                         SPELLVICTIM: None,
                         COOLDOWN: 0,
                         DURATION: 0,
-                        MEMONIC: "",
+                        MNEMONIC: "",
                         SPELLEFFECTS: {}
                       } 
  
@@ -108,13 +113,7 @@ class PlayerSpells:
         """
         Execute the spell's effects.
         """
-
-        #***********************************************************
-        # Note, this functions has been updated for new PlayerSpells
-        #***********************************************************
-        global DirectEffects
-        
-        
+                
         caster = self.getAttr(CASTER)
         victim = self.getAttr(SPELLVICTIM)
         
@@ -148,9 +147,6 @@ class PlayerSpells:
         """
         Remove duration spell effects.
         """
-        #***********************************************************
-        # Note, this functions has been updated for new PlayerSpells
-        #***********************************************************
 
         victim = self.getAttr(SPELLVICTIM)
         character.communicate.sendToPlayer(victim, "{0}{1}".format(BLUE, self.getAttr(S_END_TEXT)))
@@ -169,13 +165,9 @@ class PlayerSpells:
         """
         Apply duration spell effects.
         """
-        #***********************************************************
-        # Note, this functions has been updated for new PlayerSpells
-        #***********************************************************
         
         victim = self.getAttr(SPELLVICTIM)
         
-        #character.communicate.sendToPlayer(self.victim, "{0}{1}".format(BLUE, self.getAttr[GESTURE]))
         if self.getAttr(SPELLID) in victim.spells.keys():
             victim.spells[self.getAttr(SPELLID)] = self
             return
@@ -183,6 +175,7 @@ class PlayerSpells:
             victim.spells[self.getAttr(SPELLID)] = self
             for stat, value in self.getAttr(SPELLEFFECTS).items():
                 if stat in victim.stats.keys():
+                    self.breaksCombat(stat)
                     victim.stats[stat] += int(value[0])
                 else:
                     from logger.gamelogger import logger
@@ -197,9 +190,6 @@ class PlayerSpells:
         Apply magic effects to player.
         """
         
-        #***********************************************************
-        # Note, this functions has been updated for new PlayerSpells
-        #***********************************************************
         def getRandomValue(value1, value2):
             """
             Get random value between two numbers.
@@ -215,11 +205,15 @@ class PlayerSpells:
         victim = self.getAttr(SPELLVICTIM)
         caster = self.getAttr(CASTER)
         
-            
+        combat.functions.endCombat(caster)    
         if self.getAttr(DURATION) is 0:
             for stat, value in self.getAttr[SPELLEFFECTS].items():
                 values = value.split("!")
-                dmg = getRandomValue(int(values[0]), int(values[1]))
+                
+                if len(values) > 1:
+                    dmg = getRandomValue(int(values[0]), int(values[1]))
+                else:
+                    dmg = value
                 if stat in DirectEffects:      
                     value = abs(dmg)
                     ptext = self.getAttr[SPELLEFFECTS][YOU].format(value)
@@ -250,9 +244,10 @@ class PlayerSpells:
         Try to cast the spell.
         """
         
-        if player.spellsCasted.has_key(self.getAttr(MEMONIC)):
+        if player.spellsCasted.has_key(self.getAttr(MNEMONIC)):
             character.communicate.sendToPlayer(player, "You haven't recovered from your last attempt of {0}.".format(self.getAttr(SPELLNAME)))
             return
+        
         if len(cmd) is 2:
             vicName = cmd[1]
             victims = world.maps.World.mapGrid[player.room].findPlayerInRoom(player, vicName)
@@ -270,45 +265,90 @@ class PlayerSpells:
                 self.setAttr(SPELLVICTIM, victims[0])
                 
                 if self.getAttr(STYPE) in DAMAGESPELLS and player is victims[0]:
-                    character.communicate.sendToPlayer(player, "Are you a  masochist?")
+                    character.communicate.sendToPlayer(player, "Are you a masochist?")
                     return    
                 
-                self.applyMagic()
                 self.displaySpellText()
-                
+                self.applyMagic()
+                              
         else:
             self.setAttr(CASTER, player) 
+            if self.getAttr(STYPE) in AREASPELL:
+                self.applyToRoom()
+                return
+                
             self.setAttr(SPELLVICTIM, player)
             if self.getAttr(STYPE) in DAMAGESPELLS:
-                character.communicate.sendToPlayer(player, "Are you a  masochist?")
-                return            
-            self.applyMagic()
+                character.communicate.sendToPlayer(player, "Are you a masochist?")
+                return   
+            
             self.displaySpellText()
+            self.applyMagic()
         
         # seed is an specific castings id. see utils.gameutils.resetCooldown() for further info.     
         seed = random.randint(0, 10000)
-        self.getAttr(CASTER).spellsCasted[self.getAttr(MEMONIC)] = seed
-        reactor.callLater(self.getAttr(COOLDOWN), utils.gameutils.resetCooldown, player, self.getAttr(MEMONIC), seed)
-  
-  
-  
-  
+        self.getAttr(CASTER).spellsCasted[self.getAttr(MNEMONIC)] = seed
+        reactor.callLater(self.getAttr(COOLDOWN), utils.gameutils.resetCooldown, player, self.getAttr(MNEMONIC), seed)
+        
+        
+    def displayAreaSpellText(self):
+        """
+        Display area spell text.
+        """
+        
+        if "{0}" in self.getAttr*TEXTEFFECTS[YOU]:
+            pass
             
-
     def displaySpellText(self):
         """
         Tell the room about casting the spell.
         """
-          
+        
         victim = self.getAttr(SPELLVICTIM)
         caster = self.getAttr(CASTER)
-        if victim is not caster:
-            character.communicate.sendToPlayer(caster, "{0}You cast {1} on {2}".format(LBLUE, self.getAttr(SPELLNAME), victim.name))
-            character.communicate.sendToPlayer(victim, "{0}{1} casts {2} on you!".format(LBLUE, caster.name, self.getAttr(SPELLNAME)))
-            character.communicate.sendToRoomNotPlayerOrVictim(caster, victim, "{0}{0} casts {2} on {3}".format(LBLUE, caster.name, self.getAttr(SPELLNAME), victim.name))
+        ptext = self.getAttr(TEXTEFFECTS)[YOU].format(victim.name)
+        vtext = self.getAttr(TEXTEFFECTS)[VICTIM].format(caster.name)
+        
+        # If casting on self, don't name himself twice (text most fit this)
+        if "{1}" in self.getAttr(TEXTEFFECTS)[ROOM]:
+            rtext = self.getAttr(TEXTEFFECTS)[ROOM].format(caster.name, victim.name)
         else:
-            character.communicate.sendToPlayer(caster, "{0}You cast {1} on yourself.".format(LBLUE, self.name))
-            character.communicate.sendToRoomNotPlayer(caster, "{0}{1} casts {2} on {1}!".format(LBLUE, caster.name, self.getAttr(SPELLNAME)))
+            rtext = self.getAttr(TEXTEFFECTS)[ROOM].format(caster.name)
+        
+        if victim is not caster:
+            character.communicate.sendToPlayer(caster, "{0}{1}".format(LBLUE, ptext))
+            character.communicate.sendToPlayer(victim, "{0}{1}".format(LBLUE, vtext))
+            character.communicate.sendToRoomNotPlayerOrVictim(caster, victim, "{0}{1}".format(LBLUE, rtext))
+        else:
+            character.communicate.sendToPlayer(caster, "{0}{1}".format(LBLUE, ptext))
+            character.communicate.sendToRoomNotPlayer(caster, "{0}{1}".format(LBLUE, rtext))
+        
+        
+        
+    def breaksCombat(self, stat):
+        """
+        Checks to see if spell breaks combat.
+        """
+
+        if stat in BREAKSCOMBAT:
+            combat.functions.endCombat(self.getAttr(SPELLVICTIM))
+            
+            
+    def applyToRoom(self, adsf):
+        """
+        Apply spell to everyone in the room.
+        """
+        
+        caster = self.getAttr(CASTER)
+        
+        for _victim in world.maps.World.mapGrid[caster.room].playerInRoom().values():
+            newspell = deepcopy(self)
+            newspell.setAttr(CASTER, caster)
+            if _victim is not caster:
+                newspell.setAttr(SPELLVICTIM, _victim)        
+                newspell.applyMagic()
+            
+            
         
 def loadPlayerSpells():
     """
@@ -318,11 +358,6 @@ def loadPlayerSpells():
     
     from logger.gamelogger import logger
     
-    #=============================================
-    # Updated, but not fixed.
-    # TODO: Create new table and sql query.
-    # TODO: Ensure data assignments match class
-    #=============================================
 	
     #try:
     conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
@@ -332,7 +367,7 @@ def loadPlayerSpells():
                                  stype,
                                  sclass,
                                  duration,
-                                 memonic,
+                                 mnemonic,
                                  target,
                                  gesture,
                                  posttext,
@@ -354,30 +389,30 @@ def loadPlayerSpells():
     #logger.log.debug("Loading classes.")
     for row in results:
         sid                                      = row[0]
-        memonic                                  = str(row[5])
+        mnemonic                                  = str(row[5])
         
-        spells[memonic]                              = PlayerSpells()
-        spells[memonic].setAttr(SPELLID, sid)
-        spells[memonic].setAttr(SPELLNAME, str(row[1]))
-        spells[memonic].setAttr(STYPE, row[2])
-        spells[memonic].setAttr(SCLASS, row[3])
-        spells[memonic].setAttr(DURATION, row[4])
-        spells[memonic].setAttr(MEMONIC, memonic)
-        spells[memonic].setAttr(TARGET, row[6])
-        spells[memonic].setAttr(GESTURE, str(row[7]))
-        spells[memonic].setAttr(S_END_TEXT, str(row[8]))
-        spells[memonic].setAttr(COOLDOWN, row[9])
+        spells[mnemonic]                              = PlayerSpells()
+        spells[mnemonic].setAttr(SPELLID, sid)
+        spells[mnemonic].setAttr(SPELLNAME, str(row[1]))
+        spells[mnemonic].setAttr(STYPE, row[2])
+        spells[mnemonic].setAttr(SCLASS, row[3])
+        spells[mnemonic].setAttr(DURATION, row[4])
+        spells[mnemonic].setAttr(MNEMONIC, mnemonic)
+        spells[mnemonic].setAttr(TARGET, row[6])
+        spells[mnemonic].setAttr(GESTURE, str(row[7]))
+        spells[mnemonic].setAttr(S_END_TEXT, str(row[8]))
+        spells[mnemonic].setAttr(COOLDOWN, row[9])
         
-        spells[memonic].attrib[TEXTEFFECTS][YOU]    = str(row[10])
-        spells[memonic].attrib[TEXTEFFECTS][VICTIM] = str(row[11])
-        spells[memonic].attrib[TEXTEFFECTS][ROOM]   = str(row[12])
+        spells[mnemonic].attrib[TEXTEFFECTS][YOU]    = str(row[10])
+        spells[mnemonic].attrib[TEXTEFFECTS][VICTIM] = str(row[11])
+        spells[mnemonic].attrib[TEXTEFFECTS][ROOM]   = str(row[12])
 
         stattext                                    = str(row[13])
         
         for each in stattext.split("|"):
             stat, value = each.split(":")
             value = value.split("!")
-            spells[memonic].attrib[SPELLEFFECTS][int(stat)] = value
+            spells[mnemonic].attrib[SPELLEFFECTS][int(stat)] = value
         
         
     return spells

@@ -41,14 +41,13 @@ def getUsername(player, line):
     Check for username or new and work.
     """
     
-    
-    if line == "":
+    if line == "" or len(line.split()) > 1 or len(line) > 15:
         player.sendLine("Invalid name, please try again.")
         askUsername(player)
         return  
     
     from character.players import AllPlayers                    
-    player.name = line.capitalize()
+    player.name = line[:1].upper() + line[1:]
     if player.name in AllPlayers.keys():
         player.sendLine("Name already exists, please try again.")
         askUsername(player)
