@@ -296,7 +296,7 @@ class PlayerSpells:
         Display area spell text.
         """
         
-        if "{0}" in self.getAttr*TEXTEFFECTS[YOU]:
+        if "{0}" in self.getAttr.TEXTEFFECTS[YOU]:
             pass
             
     def displaySpellText(self):
