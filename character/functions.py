@@ -138,7 +138,6 @@ def spawnPlayer( player ):
     room = "544"
     
     player.room = room
-    player.resetStats()
     world.maps.World.mapGrid[room].players[player.name] = player
     player.status = PLAYING
     sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )

@@ -215,10 +215,12 @@ class PlayerSpells:
             if self.getAttr(SPELLID) in _victim.spells.keys():
                 _victim.spells[self.getAttr(SPELLID)] = deepcopy(self)
                 _victim.spells[self.getAttr(SPELLID)].setAttr(SPELLVICTIM, _victim)
+                _victim.spells[self.getAttr(SPELLID)].setAttr(CASTER, caster)
 
             else:
                 _victim.spells[self.getAttr(SPELLID)] = deepcopy(self)
                 _victim.spells[self.getAttr(SPELLID)].setAttr(SPELLVICTIM, _victim)
+                _victim.spells[self.getAttr(SPELLID)].setAttr(CASTER, caster)
                 for stat, value in self.getAttr(SPELLEFFECTS).items():              
                     if len(value) > 1:
                         dmg = utils.gameutils.getRandomValue(int(value[0]), int(value[1]))
@@ -353,14 +355,14 @@ class PlayerSpells:
         else:         
             if self.getAttr(STYPE) in AREASPELLS:
                 self.applyAreaMagic()
-                return
                 
-            self.setAttr(SPELLVICTIM, player)
-            if self.getAttr(STYPE) in DAMAGESPELLS:
-                character.communicate.sendToPlayer(player, "Are you a masochist?")   
-                return
-            else:
-                self.applyMagic()
+            else:    
+                self.setAttr(SPELLVICTIM, player)
+                if self.getAttr(STYPE) in DAMAGESPELLS:
+                    character.communicate.sendToPlayer(player, "Are you a masochist?")   
+                    return
+                else:
+                    self.applyMagic()
         
         # seed is an specific castings id. see utils.gameutils.resetCooldown() for further info.     
         seed = random.randint(0, 10000)

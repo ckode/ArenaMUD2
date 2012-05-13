@@ -135,15 +135,6 @@ class GameMap:
             
         logger.log.debug("{0} level names loaded.".format(len(self.levelnames)))
         
-    def getExit(self, direction):
-        """
-        Returns exit directions.
-        """
-                            
-        x = roomid[0]
-        y = roomid[1]
-        z = roomid[2]
-            
             
 
             

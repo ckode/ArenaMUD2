@@ -87,7 +87,8 @@ class Player(StatefulTelnetProtocol):
                        KILLS:           0,
                        DEATHS:          0,
                        MOVING:          False,
-                       KILLSTREAK:      0
+                       KILLSTREAK:      0,
+                       RESTING:         False,
                      }
 
         self.weaponText = {}

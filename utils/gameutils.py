@@ -14,13 +14,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import random
+
 from character.players import AllPlayers
 import world.maps
 
 from utils.defines import PLAYING
 from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
-from utils.defines import HP, MAXHP, POWER, MAXPOWER, RESTING
-
+from utils.defines import HP, MAXHP, RESTING
+from utils.defines import SPELLNAME
 import character.communicate
 
 def restHealing():
@@ -146,6 +148,7 @@ def resetCooldown(player, spellid, seed):
             # seed is to ensure cooldown is removing for the correct casting as
             # the caster could have died and recasted the spell
             if player.spellsCasted[spellid] is seed:
+                character.communicate.sendToPlayer(player,  "{0}{1} has recharged.".format(YELLOW, world.maps.World.CastableSpells[spellid].getAttr(SPELLNAME)))
                 del player.spellsCasted[spellid]
                 
                 

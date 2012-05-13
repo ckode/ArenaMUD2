@@ -83,6 +83,7 @@ def doAttack(player, victim):
                 crit = True 
                 
             dmg += damageAdjustment(player, victim)
+            vampiricHealTouch(player, dmg)
             displayDamage(player, victim, dmg, crit)
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
@@ -209,6 +210,7 @@ def playerKilled(player):
     endCombat( player )
     player.status = PURGATORY
     utils.gameutils.purgatoryHelpMsg(player)
+    player.resetStats()
 
 
 
@@ -232,3 +234,16 @@ def damageAdjustment(player, victim):
     """
       
     return player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB]
+
+def vampiricHealTouch(player, damage):
+    """
+    Take victim damage and gives it back
+    to attacker. (for Necros)
+    """
+    
+    newhp = player.getAttr(HP) + abs(damage / 2)
+    
+    if newhp > player.getAttr(MAXHP):
+        newhp = player.getAttr(MAXHP)
+        
+    player.setAttr(HP, newhp)

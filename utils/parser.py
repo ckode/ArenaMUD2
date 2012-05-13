@@ -18,6 +18,8 @@ import re
 from copy import deepcopy
 
 import world.maps
+import world.magic
+
 from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY, STUN
@@ -79,7 +81,7 @@ commands = { '/quit':            "",
              'level':            showLevel,
              'look':             "",
              'who':              "",
-             'powr':             ""
+             'reloadspells':     ""
            }
 
 def GameParser(player, line):
@@ -187,7 +189,10 @@ def GameParser(player, line):
                 return
             elif each == "who" and len(cmd) is 1:
                 utils.playercommands.who(player)
-                return     
+                return  
+            elif each == "reloadspells" and len(cmd) is 1:
+                world.maps.World.CastableSpells = world.magic.loadPlayerSpells()
+                return
           
             
             
