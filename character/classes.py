@@ -43,6 +43,7 @@ class PlayerClass:
         self.maxhp = 0
         self.stealth = 0
         self.critical = 0
+        self.dodge = 0
         
         
 
@@ -73,6 +74,7 @@ def loadClasses():
                                  weapontextroomhit,
                                  weapontextroommiss,
                                  critical,
+                                 dodge,
                                  classdesc FROM classes;""")
         
         results = cursor.fetchall()
@@ -103,7 +105,8 @@ def loadClasses():
         classes[cid].weaponText[ROOMHIT]       = str(row[12])
         classes[cid].weaponText[ROOMMISS]      = str(row[13])
         classes[cid].critical                  = row[14]
-        classes[cid].desc                      = str(row[15])
+        classes[cid].dodge                     = row[15]
+        classes[cid].desc                      = str(row[16])
         
 
     #logger.log.debug("{0} classes loaded.".format(len(classes)))

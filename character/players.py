@@ -38,7 +38,7 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import KILLSTREAK, STUN, HELD
+from utils.defines import KILLSTREAK, STUN, HELD, DODGE
 
 
 # Python imports
@@ -83,6 +83,7 @@ class Player(StatefulTelnetProtocol):
                        BONUSDAMAGE:     0,
                        DAMAGEABSORB:    0,
                        CRITICAL:        0,
+                       DODGE:           0,
                        KILLS:           0,
                        DEATHS:          0,
                        MOVING:          False,

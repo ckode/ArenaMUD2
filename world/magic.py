@@ -441,12 +441,6 @@ class PlayerSpells:
             combat.functions.endCombat(self.getAttr(SPELLVICTIM))
             
             
-    def applyToRoom(self):
-        """
-        Apply spell to everyone in the room.
-        """
-        
-        caster = self.getAttr(CASTER)
 
             
             

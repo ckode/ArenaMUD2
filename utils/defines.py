@@ -122,6 +122,7 @@ RESTING           = 18
 MOVING            = 19
 KILLSTREAK        = 20
 STUN              = 21
+DODGE             = 22
 
 
 

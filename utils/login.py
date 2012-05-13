@@ -41,7 +41,8 @@ def getUsername(player, line):
     Check for username or new and work.
     """
     
-    if line == "" or len(line.split()) > 1 or len(line) > 15:
+    # not blank, 15 characters or less and all characters are alpha or numberic
+    if line == "" or len(line) > 15 or not line.isalnum():
         player.sendLine("Invalid name, please try again.")
         askUsername(player)
         return  

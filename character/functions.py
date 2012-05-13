@@ -34,7 +34,7 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import MOVING
+from utils.defines import MOVING, DODGE
 
 
 def movePlayer(player, direction):
@@ -167,6 +167,7 @@ def applyClassAttributes(player, classid):
     player.stats[HP]                  = Classes[classid].maxhp
     player.stats[STEALTH]             = Classes[classid].stealth
     player.stats[CRITICAL]            = Classes[classid].critical
+    player.stats[DODGE]               = Classes[classid].dodge
     player.classid                    = Classes[classid].classid
     player.playerclass                = Classes[classid].name
     

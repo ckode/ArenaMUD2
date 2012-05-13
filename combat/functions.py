@@ -29,7 +29,7 @@ from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import DAMAGEABSORB, BONUSDAMAGE
 from utils.defines import KILLS, DEATHS, SNEAKING, KILLSTREAK
-from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
+from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING, DODGE
 
 
 
@@ -65,6 +65,15 @@ def doAttack(player, victim):
 
     victim.resting = False
     for attk in range(0, player.stats[ATTACKS]):
+        # Does the player dodge attacks?
+        if victim.getAttr(DODGE):
+            dodgeroll = random.randint(1, 100)
+            if dodgeroll < victim.getAttr(DODGE):
+                character.communicate.sendToPlayer( player, "You swing at {0}, but {0} dodges!".format(victim))
+                character.communicate.sendToPlayer( victim, "{0} swings at you, but you dodge!".format(player))
+                character.communicate.sendToRoomNotPlayerOrVictim( player, victim, "{0} swings at {1}, but {1} dodges!".format(player, victim))
+                continue
+        
         attackroll = random.randint(1, 100)
         if player.stats[ATTKSKILL] >= attackroll:
             dmg = random.randint(player.stats[MINDAMAGE], player.stats[MAXDAMAGE])
