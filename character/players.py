@@ -96,9 +96,29 @@ class Player(StatefulTelnetProtocol):
 
         
 
+    def getAttr(self, attribute):
+        """
+        Set players attribute value.
+        """
+        
+        if self.stats.has_key(attribute):
+            return self.stats[attribute]
+        else:
+            logger.gamelogger.logger.error("Error getting attribute: Invalid player attribute: {0}".format(attribute))
+            return None        
 
 
+    def setAttr(self, attribute, value):
+        """
+        Returns the specified player attribute.
+        """
 
+        if self.stats.has_key(attribute):
+            self.stats[attribute] = value
+        else:
+            logger.gamelogger.logger.error("Error setting attribute: Invalid player attribute: {0}".format(attribute))
+            
+            
     def __repr__(self):
         """
         Player->__call__()

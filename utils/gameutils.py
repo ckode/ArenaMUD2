@@ -147,3 +147,19 @@ def resetCooldown(player, spellid, seed):
             # the caster could have died and recasted the spell
             if player.spellsCasted[spellid] is seed:
                 del player.spellsCasted[spellid]
+                
+                
+                
+def getRandomValue(value1, value2):
+    """
+    Get random value between two numbers.
+    This is required because it could be 
+    negative numbers.
+    """
+    
+    value1 = int(value1)
+    value2 = int(value2)
+    if value1 > value2:
+        return random.randint(value2, value1)
+    else:
+        return random.randint(value1, value2)

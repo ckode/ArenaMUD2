@@ -244,7 +244,7 @@ def SpellParser(player, cmd):
     """
     
     spellList = world.maps.World.CastableSpells
-    
+        
     if len(cmd[0]) is 4 and cmd[0] in spellList.keys():
         if len(cmd) is spellList[cmd[0]].getAttr(TARGET) or spellList[cmd[0]].getAttr(TARGET) is 3 and len(cmd) < 3:
             if spellList[cmd[0]].getAttr(SCLASS) is player.classid:

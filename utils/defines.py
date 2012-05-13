@@ -66,17 +66,21 @@ PURGATORY = 10
 
 
 # Magic types
-BUFF             = 0
-DEBUFF           = 1
-DIRECTDAMAGE     = 2
-HEAL             = 3
-DURATIONDAMAGE   = 4
-DURATIONHEAL     = 5
-AREADAMGE        = 6
-AREADURATION     = 7
-ROOMSPELL        = 8
-DISSPELL         = 9
 
+DIRECTDAMAGE           = 0
+DIRECTHEAL             = 1
+DURATIONDAMAGE         = 2
+DURATIONHEAL           = 3
+
+AREADAMAGE             = 4
+AREAHEAL               = 5
+AREADURATIONDAMAGE     = 6
+AREADURATIONHEAL       = 7
+
+DISPELL                = 8
+AREADISSPELL           = 9
+
+ROOMSPELL              = 10
 
 SPELLID         = 0
 STYPE           = 1
@@ -91,7 +95,7 @@ CASTER          = 9
 SPELLVICTIM     = 10
 COOLDOWN        = 11
 DURATION        = 12
-MNEMONIC         = 13
+MNEMONIC        = 13
 SPELLEFFECTS    = 14
 
 
@@ -122,9 +126,10 @@ STUN              = 21
 
 
 # Spell text identifiers
-YOU        = 0
-VICTIM     = 1
-ROOM       = 2
+YOU              = 0
+VICTIM           = 1
+ROOM             = 2
+
 
 # weaponText text identifiers
 YOUHIT     = 0
