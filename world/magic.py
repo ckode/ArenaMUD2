@@ -324,6 +324,7 @@ class PlayerSpells:
         Try to cast the spell.
         """
         
+        player.setAttr(SNEAKING, False)
         self.setAttr(CASTER, player)
         
         if player.spellsCasted.has_key(self.getAttr(MNEMONIC)):

@@ -123,8 +123,7 @@ MOVING            = 19
 KILLSTREAK        = 20
 STUN              = 21
 DODGE             = 22
-
-
+BS_MULTIPLIER     = 23
 
 # Spell text identifiers
 YOU              = 0
@@ -133,12 +132,15 @@ ROOM             = 2
 
 
 # weaponText text identifiers
-YOUHIT     = 0
-YOUMISS    = 1
-VICTIMHIT  = 2
-VICTIMMISS = 3
-ROOMHIT    = 4
-ROOMMISS   = 5
+YOUHIT            = 0
+YOUMISS           = 1
+VICTIMHIT         = 2
+VICTIMMISS        = 3
+ROOMHIT           = 4
+ROOMMISS          = 5
+BS_HIT_YOU        = 6
+BS_HIT_VICTIM     = 7
+BS_HIT_ROOM       = 8
 
 #############ANSI defines################
 #          Foreground Colors

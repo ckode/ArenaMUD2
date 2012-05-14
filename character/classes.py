@@ -18,7 +18,8 @@ import sqlite3
 import os
 
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
-from utils.defines import ROOMHIT, ROOMMISS
+from utils.defines import ROOMHIT, ROOMMISS, BS_HIT_YOU, BS_HIT_VICTIM
+from utils.defines import BS_HIT_ROOM
 
 
 
@@ -73,8 +74,12 @@ def loadClasses():
                                  weapontextvictimmiss,
                                  weapontextroomhit,
                                  weapontextroommiss,
+                                 bs_hit_you,
+                                 bs_hit_victim,
+                                 bs_hit_room,                                 
                                  critical,
                                  dodge,
+                                 backstabmultiplier,
                                  classdesc FROM classes;""")
         
         results = cursor.fetchall()
@@ -104,9 +109,13 @@ def loadClasses():
         classes[cid].weaponText[VICTIMMISS]    = str(row[11])
         classes[cid].weaponText[ROOMHIT]       = str(row[12])
         classes[cid].weaponText[ROOMMISS]      = str(row[13])
-        classes[cid].critical                  = row[14]
-        classes[cid].dodge                     = row[15]
-        classes[cid].desc                      = str(row[16])
+        classes[cid].weaponText[BS_HIT_YOU]    = str(row[14])
+        classes[cid].weaponText[BS_HIT_VICTIM] = str(row[15])
+        classes[cid].weaponText[BS_HIT_ROOM]   = str(row[16])
+        classes[cid].critical                  = row[17]
+        classes[cid].dodge                     = row[18]
+        classes[cid].bsmultiplier              = row[19]
+        classes[cid].desc                      = str(row[20])
         
 
     #logger.log.debug("{0} classes loaded.".format(len(classes)))

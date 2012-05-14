@@ -21,7 +21,7 @@ import world.maps
 
 from utils.defines import PLAYING
 from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
-from utils.defines import HP, MAXHP, RESTING
+from utils.defines import HP, MAXHP, RESTING, STEALTH
 from utils.defines import SPELLNAME
 import character.communicate
 
@@ -166,3 +166,14 @@ def getRandomValue(value1, value2):
         return random.randint(value2, value1)
     else:
         return random.randint(value1, value2)
+    
+    
+def stealthRoll(player):
+    """
+    Determine if player successfully sneaks.
+    """
+    
+    if player.getAttr(STEALTH) > getRandomValue(1, 100):
+        return True
+    else:
+        return False

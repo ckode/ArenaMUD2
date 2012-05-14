@@ -81,6 +81,7 @@ commands = { '/quit':            "",
              'level':            showLevel,
              'look':             "",
              'who':              "",
+             'sneak':            "",
              'reloadspells':     ""
            }
 
@@ -190,6 +191,9 @@ def GameParser(player, line):
             elif each == "who" and len(cmd) is 1:
                 utils.playercommands.who(player)
                 return  
+            elif each == "sneak" and len(cmd) is 1 and len(cmd[0]) > 1:
+                utils.playercommands.Sneak(player)
+                return
             elif each == "reloadspells" and len(cmd) is 1:
                 world.maps.World.CastableSpells = world.magic.loadPlayerSpells()
                 return
@@ -197,6 +201,7 @@ def GameParser(player, line):
             
             
     from character.communicate import say
+    player.setAttr(SNEAKING, False)
     say( player, line )
  
     

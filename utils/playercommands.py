@@ -20,12 +20,13 @@ from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
 from utils.defines import PLAYING, PURGATORY
-from utils.defines import BLIND, KILLS, DEATHS
+from utils.defines import BLIND, KILLS, DEATHS, SNEAKING
 
 import character.communicate    
 import character.functions
 import combat.functions
 import world.maps
+import utils.gameutils
 
 
 
@@ -211,3 +212,18 @@ def who(player):
     sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN) )
     
     
+    
+def Sneak(player):
+    """
+    Command to set player sneaking.
+    """
+    
+    if len(world.maps.World.mapGrid[player.room].players) > 1:
+        character.communicate.sendToPlayer(player, "You cannot sneak right now!")
+        return
+    if utils.gameutils.stealthRoll(player):
+        character.communicate.sendToPlayer(player, "Attempting to sneak.")
+        player.setAttr(SNEAKING, True)
+    else:
+        character.communicate.sendToPlayer(player, "You don't think your sneaking.")
+        player.setAttr(SNEAKING, False)

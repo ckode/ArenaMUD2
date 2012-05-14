@@ -30,7 +30,8 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import DAMAGEABSORB, BONUSDAMAGE
 from utils.defines import KILLS, DEATHS, SNEAKING, KILLSTREAK
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING, DODGE
-
+from utils.defines import BS_HIT_ROOM, BS_HIT_VICTIM, BS_HIT_YOU
+from utils.defines import BS_MULTIPLIER
 
 
 
@@ -64,7 +65,14 @@ def doAttack(player, victim):
     """
 
     victim.resting = False
-    for attk in range(0, player.stats[ATTACKS]):
+    crit = False
+    
+    if player.getAttr(SNEAKING):
+        attacks = 1
+    else:
+        attacks = player.stats[ATTACKS]
+    
+    for attk in range(0, attacks):
         # Does the player dodge attacks?
         if victim.getAttr(DODGE):
             dodgeroll = random.randint(1, 100)
@@ -72,12 +80,17 @@ def doAttack(player, victim):
                 character.communicate.sendToPlayer( player, "You swing at {0}, but {0} dodges!".format(victim))
                 character.communicate.sendToPlayer( victim, "{0} swings at you, but you dodge!".format(player))
                 character.communicate.sendToRoomNotPlayerOrVictim( player, victim, "{0} swings at {1}, but {1} dodges!".format(player, victim))
+                player.setAttr(SNEAKING, False)
                 continue
         
         attackroll = random.randint(1, 100)
         if player.stats[ATTKSKILL] >= attackroll:
             dmg = random.randint(player.stats[MINDAMAGE], player.stats[MAXDAMAGE])
-            crit = criticalRoll(player, dmg)
+            if not player.getAttr(SNEAKING):
+                crit = criticalRoll(player, dmg)
+            else:
+                dmg = dmg * player.getAttr(BS_MULTIPLIER)
+                
             if crit:
                 dmg = crit
                 crit = True 
@@ -85,6 +98,7 @@ def doAttack(player, victim):
             dmg += damageAdjustment(player, victim)
             vampiricHealTouch(player, dmg)
             displayDamage(player, victim, dmg, crit)
+            player.setAttr(SNEAKING, False)
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
                 player.stats[KILLS] += 1
@@ -97,6 +111,7 @@ def doAttack(player, victim):
             
         else:
             displayDamage(player, victim, None, False)
+            player.setAttr(SNEAKING, False)
             
 
     
@@ -134,13 +149,18 @@ def displayDamage(player, victim, dmg, crit):
         return newtext
         
     if dmg:
-        ptext = RED + player.weaponText[YOUHIT].format(victim.name, str(dmg)) 
-        vtext = RED + player.weaponText[VICTIMHIT].format(player.name, str(dmg))
-        rtext = RED + player.weaponText[ROOMHIT].format(player.name, victim.name, str(dmg))
-        if crit:
-            ptext = updateForCritical(ptext)
-            vtext = updateForCritical(vtext)
-            rtext = updateForCritical(rtext)
+        if player.getAttr(SNEAKING):
+            ptext = RED + player.weaponText[BS_HIT_YOU].format(victim.name, str(dmg)) 
+            vtext = RED + player.weaponText[BS_HIT_VICTIM].format(player.name, str(dmg))
+            rtext = RED + player.weaponText[BS_HIT_ROOM].format(player.name, victim.name, str(dmg))            
+        else:
+            ptext = RED + player.weaponText[YOUHIT].format(victim.name, str(dmg)) 
+            vtext = RED + player.weaponText[VICTIMHIT].format(player.name, str(dmg))
+            rtext = RED + player.weaponText[ROOMHIT].format(player.name, victim.name, str(dmg))
+            if crit:
+                ptext = updateForCritical(ptext)
+                vtext = updateForCritical(vtext)
+                rtext = updateForCritical(rtext)
     else:
         ptext = WHITE + player.weaponText[YOUMISS].format(victim.name)
         vtext = WHITE + player.weaponText[VICTIMMISS].format(player.name)
@@ -191,8 +211,10 @@ def attack(player, vicName):
             player.stats[RESTING] = False
             player.attacking.stats[RESTING] = False
             character.communicate.sendToPlayer( player, "{0}*Combat Engaged*".format(BROWN) )
-            character.communicate.sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
-            character.communicate.sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )
+            if not player.getAttr(SNEAKING):    
+                character.communicate.sendToPlayer( player.attacking, "{0}{1} moves to attack you!".format(BROWN, player.name) )
+                character.communicate.sendToRoomNotPlayerOrVictim( player, player.attacking, "{0}{1} moves to attack {2}!".format(BROWN, player.name, player.attacking) )
+                
             player.factory.combatQueue.addAttack(player.name)
 
 

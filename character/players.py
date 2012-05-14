@@ -39,6 +39,7 @@ from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 from utils.defines import KILLSTREAK, STUN, HELD, DODGE
+from utils.defines import BS_MULTIPLIER
 
 
 # Python imports
@@ -89,6 +90,7 @@ class Player(StatefulTelnetProtocol):
                        MOVING:          False,
                        KILLSTREAK:      0,
                        RESTING:         False,
+                       BS_MULTIPLIER:   0
                      }
 
         self.weaponText = {}
