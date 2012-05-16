@@ -23,7 +23,7 @@ import character.functions
 import utils.gameutils
 
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS, PURGATORY
-from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED
+from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED, BLUE, LRED
 from utils.defines import HP, MAXHP, POWER, MAXPOWER
 from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
@@ -96,8 +96,8 @@ def doAttack(player, victim):
                 crit = True 
                 
             dmg += damageAdjustment(player, victim)
-            vampiricHealTouch(player, dmg)
             displayDamage(player, victim, dmg, crit)
+            vampiricHealTouch(player, victim, dmg)
             player.setAttr(SNEAKING, False)
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
@@ -257,15 +257,25 @@ def damageAdjustment(player, victim):
       
     return player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB]
 
-def vampiricHealTouch(player, damage):
+def vampiricHealTouch(player, victim, damage):
     """
     Take victim damage and gives it back
     to attacker. (for Necros)
     """
     
-    newhp = player.getAttr(HP) + abs(damage / 2)
+    if player.classid is 4:
+        newhp = player.getAttr(HP) + abs(damage / 2)
     
-    if newhp > player.getAttr(MAXHP):
-        newhp = player.getAttr(MAXHP)
+        character.communicate.sendToPlayer(player, "{0}You absorb {1} hit points from the damage!".format(BLUE, abs(damage / 2)))
+        character.communicate.sendToRoomNotPlayer(player, "{0}{1} absorbs {2} hit points from the damage!".format(BLUE, player.name, abs(damage / 2)))
+        if newhp > player.getAttr(MAXHP):
+            newhp = player.getAttr(MAXHP)
         
-    player.setAttr(HP, newhp)
+        player.setAttr(HP, newhp)
+        
+        
+    if victim.classid is 2 and player.classid is not 2:
+        newhp = player.getAttr(HP) - abs(damage / 4)
+        character.communicate.sendToPlayer(player, "{0}You take {1} shock damage!".format(LRED, abs(damage / 4)))
+        character.communicate.sendToRoomNotPlayer(player, "{0}{1} takes {2} shock damage!".format(LRED, player.name, abs(damage / 4)))
+        player.setAttr(HP, newhp)
