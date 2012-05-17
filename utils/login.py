@@ -15,7 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
-from utils.defines import BLUE, WHITE, YELLOW, CYAN
+from utils.defines import BLUE, WHITE, YELLOW, CYAN, LRED, SERVERVERSION
 import utils.gameutils
 import character.functions
 from character.classes import Classes
@@ -30,8 +30,8 @@ def askUsername(player):
     
     Ask user for a username.
     """
-    player.sendLine("Welcome to ArenaMUD2.")
-    player.transport.write("Enter your login or type 'new': ")
+    player.sendLine("{0}Welcome to ArenaMUD2 version {1}".format(LRED, SERVERVERSION))
+    player.transport.write("{0}Enter your login or type 'new':{1} ".format(YELLOW, WHITE))
     
     
 def getUsername(player, line):

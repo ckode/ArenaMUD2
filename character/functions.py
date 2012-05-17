@@ -26,6 +26,8 @@ import utils.gameutils
 
 from utils.defines import WHITE, LCYAN, LMAGENTA, GREEN, BLUE, LRED
 from utils.defines import DIRS, OPPOSITEDIRS, DOWN, UP
+from utils.defines import NORTH, NE, EAST, SE
+from utils.defines import SOUTH, SW, WEST, NW
 from utils.defines import PURGATORY, PLAYING
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT
 from utils.defines import VICTIMMISS, ROOMHIT, ROOMMISS
@@ -115,7 +117,10 @@ def move(player, direction):
     elif not player.getAttr(SNEAKING):
         sendToRoomNotPlayer(player, "{0} entered from the {1}.".format(player, DIRS[OPPOSITEDIRS[direction]])) 
     
-    displayRoom(player, player.room)
+    if player.admin is True:
+        adminDisplayRoom( player, player.room )
+    else:
+        displayRoom(player, player.room)
     player.stats[MOVING] = False
     
 
@@ -147,8 +152,38 @@ def displayRoom(player, room):
             
     sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, curRoom.getExits(), WHITE) )
         
+def adminDisplayRoom(player, room):
+    """
+    Displays helpful info about rooms and doors for correcting mistakes in maps
+    """
+    curRoom = world.maps.World.mapGrid[room]
+    exitstr = ''
+    
+    sendToPlayer( player, "{0}{1} - (Room #: {2})".format(LCYAN, curRoom.name, room) )
+    
+    items = curRoom.getItems()
+    if items:
+        sendToPlayer( player, "{0}You notice: {1}".format(LMAGENTA, items) )
         
+    playersinroom = curRoom.whosInRoom(player)
+    if playersinroom is not None:
+        sendToPlayer( player, "{0}Also here:{1} {2}".format(GREEN, LMAGENTA, playersinroom) )
         
+    for x in range(NORTH, DOWN + 1):
+        if curRoom.dirs[x]:
+            if exitstr == '':
+                exitstr += DIRS[x] + '(' + str(curRoom.dirs[x]) + ')'
+            else:
+                exitstr += ", {0}({1})".format(DIRS[x], curRoom.dirs[x])
+                
+    if exitstr == "":
+        exitstr = "NONE."
+    else:
+        exitstr += "."
+            
+    sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, exitstr, WHITE) )
+
+                
 def spawnPlayer( player ):
     """
     Spawn the player in the map.
@@ -164,7 +199,11 @@ def spawnPlayer( player ):
     player.status = PLAYING
     sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
     tellWorld( player, None, "{0} has entered the arena!".format(player.name) )
-    displayRoom(player, player.room)
+    
+    if player.admin is True:
+        adminDisplayRoom(player, room)
+    else:
+        displayRoom(player, player.room)
     
     
     

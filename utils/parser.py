@@ -23,7 +23,7 @@ import world.magic
 from utils.login import getUsername, getClass
 from utils.text import cleanPlayerInput
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY, STUN
-from utils.defines import SCLASS, TARGET
+from utils.defines import SCLASS, TARGET, SNEAKING
 from utils.defines import CYAN, WHITE, YELLOW
 from utils.defines import NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW, UP, DOWN
 from utils.playercommands import showMap, showLevel, breakCombat, look
@@ -82,7 +82,8 @@ commands = { '/quit':            "",
              'look':             "",
              'who':              "",
              'sneak':            "",
-             'reloadspells':     ""
+             'reloadspells':     "",
+             'admin':            ""
            }
 
 def GameParser(player, line):
@@ -107,7 +108,10 @@ def GameParser(player, line):
     # If just hit enter, display room
     if line == "":
         #world.maps.World.mapGrid[player.room].displayRoom(player)
-        character.functions.displayRoom(player, player.room)
+        if player.admin is True:
+            character.functions.adminDisplayRoom(player, player.room)
+        else:
+            character.functions.displayRoom(player, player.room)
         return      
     
     
@@ -197,7 +201,9 @@ def GameParser(player, line):
             elif each == "reloadspells" and len(cmd) is 1:
                 world.maps.World.CastableSpells = world.magic.loadPlayerSpells()
                 return
-          
+            elif each == "admin" and len(cmd) > 1 and len(cmd[0]) > 2:
+                utils.playercommands.requestAdmin(player, line[(len(cmd[0]) + 1):])
+                return          
             
             
     from character.communicate import say

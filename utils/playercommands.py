@@ -15,7 +15,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE, B_YELLOW, B_BLACK, B_BLUE
-from utils.defines import LMAGENTA, LCYAN, LRED, LGREEN
+from utils.defines import LMAGENTA, LCYAN, LRED, LGREEN, B_RED
 from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
@@ -159,7 +159,10 @@ def look(player, target):
             roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
             otherRoom = world.maps.World.mapGrid[roomid]
             character.communicate.sendToRoomNotPlayer( player, "{0} looks {1}".format(player.name, DIRS[lookdir]) )
-            character.functions.displayRoom( player, roomid )
+            if player.admin is True:
+                character.functions.adminDisplayRoom( player, roomid )
+            else:
+                character.functions.displayRoom( player, roomid )
             if lookdir == UP:
                 character.communicate.sendToRoom( roomid, "{0} peeks in from below.".format(player.name) )
             elif lookdir == DOWN:
@@ -206,10 +209,16 @@ def who(player):
                 playercolor = LRED
             else:
                 playercolor = LMAGENTA
+                
+            if user.admin is True:
+                adminToken = B_RED + YELLOW + 'A' + B_BLACK + LCYAN
+            else:
+                adminToken = LCYAN + ' '
           
-            sendToPlayer(player, "{0} => {1}{2}{3} {4}              {5}   {6}   {7}".format(LCYAN, playercolor, user.name.ljust(15, ' '), LCYAN, user.playerclass.ljust(15,' '), str(user.stats[KILLS]).rjust(5, ' '), str(user.stats[DEATHS]).rjust(6, ' '), str(ratio).rjust(9, ' ') ) )
+            sendToPlayer(player, "{0}=> {1}{2}{3} {4}              {5}   {6}   {7}".format(adminToken, playercolor, user.name.ljust(15, ' '), LCYAN, user.playerclass.ljust(15,' '), str(user.stats[KILLS]).rjust(5, ' '), str(user.stats[DEATHS]).rjust(6, ' '), str(ratio).rjust(9, ' ') ) )
  
     sendToPlayer( player, "{0}<<=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN) )
+    player.statLine()
     
     
     
@@ -227,3 +236,20 @@ def Sneak(player):
     else:
         character.communicate.sendToPlayer(player, "You don't think your sneaking.")
         player.setAttr(SNEAKING, False)
+        
+def requestAdmin(player, passwd):
+    """
+    Player is requesting admin access. Do they know the password?
+    """
+    #Hashed password so fools can't read it.
+    adminPasswd = '8638913afff86ad99e86c9913a0a96dd95b28a000a7a830a81025621'
+    
+    import hashlib
+    userPasswd = hashlib.sha224(passwd).hexdigest()
+    
+    if userPasswd == adminPasswd:
+        player.setAdmin(True)
+    else:
+        player.setAdmin(False)
+        
+    player.statLine()

@@ -32,6 +32,7 @@ import character.players
 import logger.gamelogger
 import character.classes
 from world.items import loadItems
+from utils.defines import SERVERVERSION
 
 
 
@@ -70,7 +71,7 @@ def startup():
 
     factory.protocol = lambda: TelnetTransport(character.players.Player)
     reactor.listenTCP(GameConfig.port, factory)
-    logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: NoDamnVersion")
+    logger.gamelogger.logger.log.info("Starting ArenaMUD2 Version: {0}".format(SERVERVERSION))
     
     # 4 Second Loop
     TwoSecondLoop = LoopingCall(factory.TwoSecondLoop)

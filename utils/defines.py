@@ -14,6 +14,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+# Server Version, should be maybe the commit number? something
+# besides NoDamnVersion anyhow.
+SERVERVERSION      = '0.5.7'
 
 # Directions
 NORTH              = 1
