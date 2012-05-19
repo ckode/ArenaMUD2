@@ -127,6 +127,7 @@ KILLSTREAK        = 20
 STUN              = 21
 DODGE             = 22
 BS_MULTIPLIER     = 23
+ADMIN             = 24
 
 # Spell text identifiers
 YOU              = 0

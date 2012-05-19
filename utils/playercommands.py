@@ -20,7 +20,7 @@ from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
 from utils.defines import PLAYING, PURGATORY
-from utils.defines import BLIND, KILLS, DEATHS, SNEAKING
+from utils.defines import BLIND, KILLS, DEATHS, SNEAKING, ADMIN
 
 import character.communicate    
 import character.functions
@@ -159,10 +159,7 @@ def look(player, target):
             roomid = world.maps.World.doors[door].getExitRoom(curRoom.id)
             otherRoom = world.maps.World.mapGrid[roomid]
             character.communicate.sendToRoomNotPlayer( player, "{0} looks {1}".format(player.name, DIRS[lookdir]) )
-            if player.admin is True:
-                character.functions.adminDisplayRoom( player, roomid )
-            else:
-                character.functions.displayRoom( player, roomid )
+            character.functions.displayRoom( player, roomid )
             if lookdir == UP:
                 character.communicate.sendToRoom( roomid, "{0} peeks in from below.".format(player.name) )
             elif lookdir == DOWN:
@@ -210,7 +207,7 @@ def who(player):
             else:
                 playercolor = LMAGENTA
                 
-            if user.admin is True:
+            if user.getAtrr(ADMIN) is True:
                 adminToken = B_RED + YELLOW + 'A' + B_BLACK + LCYAN
             else:
                 adminToken = LCYAN + ' '
@@ -248,8 +245,8 @@ def requestAdmin(player, passwd):
     userPasswd = hashlib.sha224(passwd).hexdigest()
     
     if userPasswd == adminPasswd:
-        player.setAdmin(True)
+        player.setAttr(ADMIN, True)
     else:
-        player.setAdmin(False)
+        player.setAttr(ADMIN, False)
         
     player.statLine()

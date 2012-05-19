@@ -39,7 +39,7 @@ from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 from utils.defines import KILLSTREAK, STUN, HELD, DODGE
-from utils.defines import BS_MULTIPLIER
+from utils.defines import BS_MULTIPLIER, ADMIN
 
 
 # Python imports
@@ -67,7 +67,6 @@ class Player(StatefulTelnetProtocol):
         self.name = "Unknown"
         self.playerclass = ""
         self.classid = 0
-        self.admin = False
 
         self.stats = { HP:              0,
                        MAXHP:           0,
@@ -92,7 +91,8 @@ class Player(StatefulTelnetProtocol):
                        KILLSTREAK:      0,
                        RESTING:         False,
                        BS_MULTIPLIER:   0,
-                       SNEAKING:        False
+                       SNEAKING:        False,
+                       ADMIN:           False
                      }
 
         self.weaponText = {}
@@ -123,16 +123,7 @@ class Player(StatefulTelnetProtocol):
             self.stats[attribute] = value
         else:
             logger.gamelogger.logger.error("Error setting attribute: Invalid player attribute: {0}".format(attribute))
-            
-    def setAdmin(self, value):
-        """
-        Set the players admin flag to allow use of admin commands
-        """
-        if value == True:
-            self.admin = True
-        else:
-            self.admin = False
-            
+                        
             
     def __repr__(self):
         """

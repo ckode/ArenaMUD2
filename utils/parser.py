@@ -108,10 +108,7 @@ def GameParser(player, line):
     # If just hit enter, display room
     if line == "":
         #world.maps.World.mapGrid[player.room].displayRoom(player)
-        if player.admin is True:
-            character.functions.adminDisplayRoom(player, player.room)
-        else:
-            character.functions.displayRoom(player, player.room)
+        character.functions.displayRoom(player, player.room)
         return      
     
     

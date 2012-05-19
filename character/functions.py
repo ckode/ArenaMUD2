@@ -38,7 +38,7 @@ from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import MOVING, DODGE, BS_MULTIPLIER
+from utils.defines import MOVING, DODGE, BS_MULTIPLIER, ADMIN
 
 
 def movePlayer(player, direction):
@@ -117,10 +117,7 @@ def move(player, direction):
     elif not player.getAttr(SNEAKING):
         sendToRoomNotPlayer(player, "{0} entered from the {1}.".format(player, DIRS[OPPOSITEDIRS[direction]])) 
     
-    if player.admin is True:
-        adminDisplayRoom( player, player.room )
-    else:
-        displayRoom(player, player.room)
+    displayRoom(player, player.room)
     player.stats[MOVING] = False
     
 
@@ -129,6 +126,11 @@ def displayRoom(player, room):
     """
     Display the room
     """
+    
+    if player.getAttr(ADMIN) is True:
+        adminDisplayRoom(player, room)
+        return
+        
     curRoom = world.maps.World.mapGrid[room]
     
     if player.stats[BLIND]:
@@ -200,10 +202,7 @@ def spawnPlayer( player ):
     sendToRoomNotPlayer( player, "{0}{1} appears in a flash!{2}".format(BLUE, player, WHITE) )
     tellWorld( player, None, "{0} has entered the arena!".format(player.name) )
     
-    if player.admin is True:
-        adminDisplayRoom(player, room)
-    else:
-        displayRoom(player, player.room)
+    displayRoom(player, player.room)
     
     
     
