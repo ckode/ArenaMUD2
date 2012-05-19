@@ -16,12 +16,16 @@
 
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
 from utils.defines import BLUE, WHITE, YELLOW, CYAN, LRED, SERVERVERSION
+from utils.defines import PLAYERID, TOTALKILLS, TOTALDEATHS, ADMIN, HIGHKILLSTREAK
+from utils.defines import PLAYERVISITS, PLAYERLASTVISIT, PLAYERCREATED, PLAYERPASSWD
+
 import utils.gameutils
 import character.functions
 from character.classes import Classes
 import logger.gamelogger
 
-
+# Python imports
+import sqlite3
 
 
 def askUsername(player):
@@ -103,6 +107,55 @@ def getClass(player, line):
     else:
         player.sendLine("Invalid choice, please try again.")
         askClass(player)
-        return            
+        return
+    
+
+
+    
+def loadPlayer(player, name):
+    """
+    Loads player from the database.  If not exist, 
+    return False.
+    """
         
+    from logger.gamelogger import logger
+        
+    sql = """SELECT id,
+                    name,
+                    passwd,
+                    totalkills,
+                    totaldeaths,
+                    highestkillstreak,
+                    visits,
+                    adminlevel,
+                    created,
+                    lastvisit FROM players where name = {0} COLLATE NOCASE;""".format(name)
+            
+    try:
+        conn = sqlite3.connect(os.path.join("data", "players.db"), detect_types=sqlite3.PARSE_DECLTYPE)
+        cursor = conn.cursor()
+        cursor.execute(sql)
+            
+        results = cursor.fetchall()
+    
+    except:
+        logger.log.critical("Database errors using: players.db")
+        
+    
+    if len(results) is 0:
+        return False
+    
+    else:
+        player.setAttr(PLAYERID, row[0])
+        player.name = str(row[1])
+        player.setAttr(PLAYERPASSWD, str(row[2]))
+        player.setAttr(TOTALKILLS, row[3])
+        player.setAttr(TOTALDEATHS, row[4])
+        player.setAttr(HIGHKILLSTREAK, row[5])
+        player.setAttr(PLAYERVISITS, row[6])
+        player.setAttr(ADMIN, row[7])
+        player.setAttr(PLAYERCREATED, row[8])
+        player.setAttr(PLAYERLASTVISIT, row[9])
+                       
+    
     

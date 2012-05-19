@@ -128,6 +128,14 @@ STUN              = 21
 DODGE             = 22
 BS_MULTIPLIER     = 23
 ADMIN             = 24
+PLAYERID          = 25
+PLAYERVISITS      = 26
+PLAYERLASTVISIT   = 27
+PLAYERCREATED     = 28
+TOTALKILLS        = 29
+TOTALDEATHS       = 30
+HIGHKILLSTREAK    = 31
+PLAYERPASSWD      = 32
 
 # Spell text identifiers
 YOU              = 0

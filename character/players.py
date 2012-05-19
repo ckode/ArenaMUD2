@@ -39,11 +39,14 @@ from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING, MOVING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 from utils.defines import KILLSTREAK, STUN, HELD, DODGE
-from utils.defines import BS_MULTIPLIER, ADMIN
+from utils.defines import BS_MULTIPLIER, ADMIN, PLAYERPASSWD
+from utils.defines import PLAYERCREATED, PLAYERID, PLAYERLASTVISIT
+from utils.defines import TOTALDEATHS, TOTALKILLS, HIGHKILLSTREAK
+from utils.defines import PLAYERPASSWD, PLAYERVISITS
 
 
 # Python imports
-
+import sqlite3
 
 
 #===========================================
@@ -68,7 +71,19 @@ class Player(StatefulTelnetProtocol):
         self.playerclass = ""
         self.classid = 0
 
-        self.stats = { HP:              0,
+                       # Database saved attributes TODO: Add other stuff like name to this dict{}
+        self.stats = { PLAYERID:        0,
+                       PLAYERPASSWD:    None,
+                       PLAYERVISITS:    0,
+                       PLAYERLASTVISIT: None,
+                       PLAYERCREATED:   None,
+                       TOTALKILLS:      0,
+                       TOTALDEATHS:     0,
+                       HIGHKILLSTREAK:  0,   
+                       ADMIN:           False,
+                       
+                       # None database attributes
+                       HP:              0,
                        MAXHP:           0,
                        BLIND:           False,
                        HELD:            False,
@@ -91,8 +106,7 @@ class Player(StatefulTelnetProtocol):
                        KILLSTREAK:      0,
                        RESTING:         False,
                        BS_MULTIPLIER:   0,
-                       SNEAKING:        False,
-                       ADMIN:           False
+                       SNEAKING:        False
                      }
 
         self.weaponText = {}
@@ -275,4 +289,44 @@ class Player(StatefulTelnetProtocol):
         character.functions.sendToPlayer(player, "%s<<=-=-=-=-=-=-=-= %s =-=-=-=-=-=-=-=>>" %(LCYAN, self.name))
         character.functions.sendToPlayer(player, "%s%s is a %s" %(YELLOW, self.name, self.playerclass))
         character.functions.sendToPlayer(player, "%s has %s kills and %s deaths" %(self.name, str(self.stats[KILLS]), str(self.stats[DEATHS])))
-        character.functions.sendToPlayer(player, "%s%s is %s wounded.%s" %(hpcolor, self.name, HealthStr, WHITE))        
+        character.functions.sendToPlayer(player, "%s%s is %s wounded.%s" %(hpcolor, self.name, HealthStr, WHITE))
+        
+    
+    def loadPlayer(self, name):
+        """
+        Loads player from the database.
+        """
+        
+        from logger.gamelogger import logger
+        
+        sql = """SELECT id,
+                        name,
+                        passwd,
+                        totalkills,
+                        totaldeaths,
+                        highestkillstreak,
+                        visits,
+                        adminlevel,
+                        created,
+                        lastvisit FROM players where name = {0} COLLATE NOCASE;""".format(name)
+            
+        try:
+            conn = sqlite3.connect(os.path.join("data", "players.db"))
+            cursor = conn.cursor()
+            cursor.execute("""SELECT id,
+                                     name,
+                                     passwd,
+                                     totalkills,
+                                     totaldeaths,
+                                     highestkillstreak,
+                                     visits,
+                                     adminlevel,
+                                     created,
+                                     lastvisit FROM players;""")
+            
+            results = cursor.fetchall()
+    
+        except:
+            logger.log.critical("Database errors using: players.db")
+            
+        
