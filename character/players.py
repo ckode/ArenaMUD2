@@ -291,6 +291,9 @@ class Player(StatefulTelnetProtocol):
         character.functions.sendToPlayer(player, "%s has %s kills and %s deaths" %(self.name, str(self.stats[KILLS]), str(self.stats[DEATHS])))
         character.functions.sendToPlayer(player, "%s%s is %s wounded.%s" %(hpcolor, self.name, HealthStr, WHITE))
         
+        
+        
+        
     
     def loadPlayer(self, name):
         """
@@ -313,20 +316,48 @@ class Player(StatefulTelnetProtocol):
         try:
             conn = sqlite3.connect(os.path.join("data", "players.db"))
             cursor = conn.cursor()
-            cursor.execute("""SELECT id,
-                                     name,
-                                     passwd,
-                                     totalkills,
-                                     totaldeaths,
-                                     highestkillstreak,
-                                     visits,
-                                     adminlevel,
-                                     created,
-                                     lastvisit FROM players;""")
+            cursor.execute(sql)
             
             results = cursor.fetchall()
     
-        except:
-            logger.log.critical("Database errors using: players.db")
+        except sqlite3.Error, e:
+            logger.log.critical("Error using Player.loadPlayer(): {0}".format(e.args[0]))
             
         
+      
+        
+        
+    def savePlayer(self):
+        """
+        Save player to the database.
+        """
+               
+        sql = """INSERT INTO players (name, 
+                                      passwd, 
+                                      totalkiss, 
+                                      totaldeaths, 
+                                      visits, 
+                                      adminlevel, 
+                                      lastvisit) VALUES ({0}, 
+                                                         {1}, 
+                                                         {2}, 
+                                                         {3}, 
+                                                         {4}, 
+                                                         {5}, 
+                                                         {6}, 
+                                                         {7});""".format(self.name,
+                                                                         self.getAttr(PLAYERPASSWD),
+                                                                         self.getAttr(TOTALKILLS),
+                                                                         self.getAttr(TOTALDEATHS),
+                                                                         self.getAttr(PLAYERVISITS),
+                                                                         self.getAttr(PLAYERLASTVISIT))
+                                                                                                            
+        try:
+            conn = sqlite3.connect(os.path.join("data", "players.db"))
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            
+            results = cursor.fetchall()
+    
+        except sqlite3.Error, e:
+            logger.log.critical("Error using Player.savePlayer(): {0}".format(e.args[0]))

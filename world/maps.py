@@ -82,8 +82,9 @@ class GameMap:
             cursor.execute("SELECT * FROM maplevelnames;")
             n_results = cursor.fetchall()
             
-        except:
-            logger.log.critical( "Database errors using: {0}".format(mapdb) )
+        except sqlite3.Error, e:
+            logger.log.critical("Error using GameMap.__init__(): {0}".format(e.args[0]))
+
                 
         
         logger.log.debug("Loading doors.")    

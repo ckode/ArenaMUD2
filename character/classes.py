@@ -17,6 +17,8 @@
 import sqlite3
 import os
 
+
+
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS
 from utils.defines import ROOMHIT, ROOMMISS, BS_HIT_YOU, BS_HIT_VICTIM
 from utils.defines import BS_HIT_ROOM
@@ -55,7 +57,9 @@ def loadClasses():
     and returns a dicts of class objects.
     """
     
-    from logger.gamelogger import logger
+    import logger.gamelogger
+    logger = logger.gamelogger.logger
+
 	
     try:
         conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
@@ -84,13 +88,14 @@ def loadClasses():
         
         results = cursor.fetchall()
 
-    except:
-        logger.log.critical( "Database errors using: ArenaMUD2.db" )
+    except sqlite3.Error, e:
+        logger.log.critical("Error using loadClasses(): {0}".format(e.args[0]))
+        return False
 
 
     classes = {}
 
-    #logger.log.debug("Loading classes.")
+    logger.log.debug("Loading classes.")
     for row in results:
         cid                                    = row[0]
     
@@ -118,7 +123,8 @@ def loadClasses():
         classes[cid].desc                      = str(row[20])
         
 
-    #logger.log.debug("{0} classes loaded.".format(len(classes)))
+    logger.log.debug("{0} classes loaded.".format(len(classes)))
     return classes    
     
-Classes = loadClasses()
+
+Classes = None

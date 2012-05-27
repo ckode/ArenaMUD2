@@ -45,10 +45,10 @@ class Config():
         
         self.configFile          = "ArenaMUD2.cfg"
           
-        self.loadConfig(self.configFile)
+        self.loadConfig()
         
         
-    def loadConfig(self, cfg):
+    def loadConfig(self):
         """
         Load configuration file from disk
         """
@@ -56,7 +56,7 @@ class Config():
         # Load the config file
         config = ConfigParser()
         try:
-            config.readfp(open(cfg))
+            config.readfp(open(self.configFile))
         except IOError as (errno, strerror):
             print "I/O error opening {0}: {1}".format(cfg, strerror) 
             sys.exit(1)
@@ -81,6 +81,8 @@ class Config():
 
 
 # Initialize game config and game logging
-GameConfig = Config()
-logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
-world.maps.World = world.maps.GameMap(GameConfig.maps[0])
+GameConfig = None
+#GameConfig = Config()
+#print "assigning logger"
+#logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
+#world.maps.World = world.maps.GameMap(GameConfig.maps[0])

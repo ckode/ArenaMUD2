@@ -207,7 +207,7 @@ def who(player):
             else:
                 playercolor = LMAGENTA
                 
-            if user.getAtrr(ADMIN) is True:
+            if user.getAttr(ADMIN) is True:
                 adminToken = B_RED + YELLOW + 'A' + B_BLACK + LCYAN
             else:
                 adminToken = LCYAN + ' '

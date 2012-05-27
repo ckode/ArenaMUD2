@@ -22,9 +22,13 @@ from twisted.conch.telnet import TelnetTransport
 from twisted.internet.task import LoopingCall
 
 # Python imports
+import sys
 
 # ArenaMUD2 imports
-from config.gameconfig import GameConfig
+import config.gameconfig
+import world.maps
+
+#from config.gameconfig import GameConfig
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
 from utils.gameutils import restHealing, naturalHealing, doRoomSpells, doDurationEffectSpells
@@ -65,6 +69,15 @@ class SonzoFactory(ServerFactory):
 #============================================
 def startup():
     """main()"""
+    
+    config.gameconfig.GameConfig = config.gameconfig.Config()
+    GameConfig = config.gameconfig.GameConfig
+    logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
+    world.maps.World = world.maps.GameMap(GameConfig.maps[0])
+    character.classes.Classes = character.classes.loadClasses()
+    
+    if character.classes.Classes is False or logger.gamelogger.logger is False:
+        sys.exit(1)
     
     #Create server factory
     factory = SonzoFactory()

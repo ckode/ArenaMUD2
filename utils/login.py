@@ -21,7 +21,7 @@ from utils.defines import PLAYERVISITS, PLAYERLASTVISIT, PLAYERCREATED, PLAYERPA
 
 import utils.gameutils
 import character.functions
-from character.classes import Classes
+import character.classes
 import logger.gamelogger
 
 # Python imports
@@ -72,8 +72,8 @@ def askClass(player):
     Ask user for a username.
     """
     player.sendLine("Choose your class.")
-    for each in Classes.keys():
-        player.sendLine(" - {0}) {1}".format(each, Classes[each].name))
+    for each in character.classes.Classes.keys():
+        player.sendLine(" - {0}) {1}".format(each, character.classes.Classes[each].name))
         
     player.transport.write("\r\nEnter your choice: ")
   
@@ -90,7 +90,7 @@ def getClass(player, line):
         
     choice = int(line)
     
-    if choice in Classes.keys():    
+    if choice in character.classes.Classes.keys():    
         from world.maps import World
         from character.players import AllPlayers        
         AllPlayers[player.name] = player

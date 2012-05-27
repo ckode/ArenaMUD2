@@ -457,10 +457,10 @@ def loadPlayerSpells():
     from logger.gamelogger import logger
     
 	
-    #try:
-    conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
-    cursor = conn.cursor()
-    cursor.execute("""SELECT sid,
+    try:
+        conn = sqlite3.connect(os.path.join("data", "ArenaMUD2.db"))
+        cursor = conn.cursor()
+        cursor.execute("""SELECT sid,
                                  name,
                                  stype,
                                  sclass,
@@ -476,10 +476,10 @@ def loadPlayerSpells():
                                  durationeffect,
                                  effects FROM playerspells;""")
         
-    results = cursor.fetchall()
+        results = cursor.fetchall()
 
-    #except:
-    #    logger.log.critical( "Database errors using: ArenaMUD2.db" )
+    except sqlite3.Error, e:
+        logger.log.critical("Error using loadPlayerSpells(): {0}".format(e.args[0]))
 
 
     spells = {}

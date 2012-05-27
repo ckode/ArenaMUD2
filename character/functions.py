@@ -20,7 +20,7 @@ import random
 
 from character.communicate import sendToPlayer, tellWorld, sendToRoomNotPlayer
 import world.maps 
-from character.classes import Classes
+import character.classes
 import combat.functions
 import utils.gameutils
 
@@ -154,6 +154,8 @@ def displayRoom(player, room):
             
     sendToPlayer( player, "{0}Obvious exits: {1}{2}".format(GREEN, curRoom.getExits(), WHITE) )
         
+        
+        
 def adminDisplayRoom(player, room):
     """
     Displays helpful info about rooms and doors for correcting mistakes in maps
@@ -211,6 +213,8 @@ def applyClassAttributes(player, classid):
     Apply choosen player class attributes
     to the player.
     """  
+
+    Classes = character.classes.Classes
     
     player.stats[ATTACKS]             = Classes[classid].attacks
     player.stats[ATTKSKILL]           = Classes[classid].attkSkill
