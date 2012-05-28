@@ -34,7 +34,9 @@ def askUsername(player):
     
     Ask user for a username.
     """
-    player.sendLine("{0}Welcome to ArenaMUD2 version {1}".format(LRED, SERVERVERSION))
+    from utils.gameutils import welcomeScreen
+    
+    player.transport.write(welcomeScreen)
     player.transport.write("{0}Enter your login or type 'new':{1} ".format(YELLOW, WHITE))
     
     

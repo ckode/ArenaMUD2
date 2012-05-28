@@ -26,12 +26,14 @@ import sys
 
 # ArenaMUD2 imports
 import config.gameconfig
+import utils.gameutils
 import world.maps
 
 #from config.gameconfig import GameConfig
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
-from utils.gameutils import restHealing, naturalHealing, doRoomSpells, doDurationEffectSpells
+from utils.gameutils import restHealing, naturalHealing, doRoomSpells
+from utils.gameutils import doDurationEffectSpells
 import character.players
 import logger.gamelogger
 import character.classes
@@ -75,6 +77,8 @@ def startup():
     logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
     world.maps.World = world.maps.GameMap(GameConfig.maps[0])
     character.classes.Classes = character.classes.loadClasses()
+    utils.gameutils.welcomeScreen = utils.gameutils.LoadAnsiScreens(GameConfig.motdPath)
+    
     
     if character.classes.Classes is False or logger.gamelogger.logger is False:
         sys.exit(1)

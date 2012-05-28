@@ -15,15 +15,21 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import random
+import time
+import os
 
 from character.players import AllPlayers
 import world.maps
 
-from utils.defines import PLAYING
+from utils.defines import PLAYING, SERVERVERSION, CLEARSCREEN
 from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
 from utils.defines import HP, MAXHP, RESTING, STEALTH
 from utils.defines import SPELLNAME
 import character.communicate
+import logger.gamelogger
+
+#global variable holds the motd file contents
+welcomeScreen = None
 
 def restHealing():
     """
@@ -177,3 +183,28 @@ def stealthRoll(player):
         return True
     else:
         return False
+    
+def LoadAnsiScreens(strFile):
+    """
+    Load the ansi title screen or some text if file doesnt exist
+    """
+    from logger.gamelogger import logger
+    
+    date = time.localtime()
+    year = date[0]
+    strPath = os.path.join("data", strFile)
+    
+    credits = ("{0}Welcome to ArenaMUD2 {1} - (C){2} SonzoSoft Software\n\rWritten By David C. Brown and Mark Richardson{3}\n\r".format(LRED, SERVERVERSION, year, WHITE))
+        
+    try:
+        f = open(strPath,'rb')
+    except IOError as e:
+        logger.log.info("Unable to open {0}, error: {1}\n".format(strPath, e))
+        return credits
+        
+    else:
+        logger.log.info("Loaded motd screen {0}.".format(strPath))
+        ansiScreen = f.read()
+        f.close()
+        ansiScreen += credits
+    return ansiScreen

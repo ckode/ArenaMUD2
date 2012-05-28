@@ -70,6 +70,7 @@ class Config():
             self.maxplayers         = config.getint("ArenaMUD2", "MaxPlayers")
             self.datadir            = "data/"      #config.get("ArenaMUD2", "DataDirectory")
             self.mapsdir            = "maps/"      #config.get("ArenaMUD2", "MapsDirectory")
+            self.motdPath           = config.get("ArenaMUD2", "MotdFile")
             self.maps               = config.get("ArenaMUD2", "MapList").split()
             self.logFile            = config.get("ArenaMUD2", "LogFile")         
             self.logLevel           = config.getint("ArenaMUD2", "LogLevel")
