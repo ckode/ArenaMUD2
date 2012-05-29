@@ -148,12 +148,13 @@ class PlayerSpells:
                 character.communicate.sendToPlayer(victim, "{0}{1}".format(LBLUE, ptext))
                 newvalue = victim.getAttr(stat) + dmg
                 victim.setAttr(stat, newvalue)
-                if victim.stats[HP] < 1:
+                if victim.getAttr(HP) < 1:
                     if caster:
-                        caster.stats[KILLS] += 1
-                    victim.stats[DEATHS] += 1
-                    combat.functions.playerKilled(victim)
-                        
+                        combat.functions.applyKillStats(victim, killer=caster)
+                    else:
+                        combat.function.applyKillStats(victim)
+                    
+                    combat.functions.playerKilled(victim)    
         
      
     def removeDurationEffects(self):
@@ -265,11 +266,13 @@ class PlayerSpells:
                     
                     self.displayAreaSpellText(value)
                     for _victim in world.maps.World.mapGrid[caster.room].playersInRoom().values():
-                        if _victim.stats[HP] < 1:
+                        if _victim.getAttr(HP) < 1:
                             if caster:
-                                caster.stats[KILLS] += 1
-                                _victim.stats[DEATHS] += 1
-                                combat.functions.playerKilled(_victim)                 
+                                combat.functions.applyKillStats(_victim, killer=caster)
+                            else:
+                                combat.function.applyKillStats(_victim)
+                                
+                        combat.functions.playerKilled(_victim)                 
                         _victim.statLine()
                     
                 elif stat is DISSPELL:
@@ -302,10 +305,12 @@ class PlayerSpells:
                     statvalue = _victim.getAttr(stat) + value
                     victim.setAttr(stat, statvalue)
                     self.displaySpellText(value)
-                    if victim.stats[HP] < 1:
+                    if victim.getAttr(HP) < 1:
                         if caster:
-                            caster.stats[KILLS] += 1
-                        victim.stats[DEATHS] += 1
+                            combat.functions.applyKillStats(victim, killer=caster)
+                        else:
+                            combat.function.applyKillStats(victim)
+                        
                         combat.functions.playerKilled(victim)                 
                     victim.statLine()
                     
