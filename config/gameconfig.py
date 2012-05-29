@@ -81,9 +81,4 @@ class Config():
 
 
 
-# Initialize game config and game logging
 GameConfig = None
-#GameConfig = Config()
-#print "assigning logger"
-#logger.gamelogger.logger = logger.gamelogger.GameLogger(GameConfig)
-#world.maps.World = world.maps.GameMap(GameConfig.maps[0])

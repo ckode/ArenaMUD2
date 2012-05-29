@@ -44,7 +44,7 @@ from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
-from utils.defines import DEATHS, KILLS, STUN
+from utils.defines import DEATHS, KILLS, STUN, SNEAKING
 
 # Define magic stats
 from utils.defines import SPELLID, STYPE, SCLASS, SPELLNAME

@@ -14,10 +14,16 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from twisted.conch.telnet import ECHO
+
 from utils.defines import LOGIN, PLAYING, GETCLASS, PURGATORY
 from utils.defines import BLUE, WHITE, YELLOW, CYAN, LRED, SERVERVERSION
 from utils.defines import PLAYERID, TOTALKILLS, TOTALDEATHS, ADMIN, HIGHKILLSTREAK
 from utils.defines import PLAYERVISITS, PLAYERLASTVISIT, PLAYERCREATED, PLAYERPASSWD
+from utils.defines import GETNEWPASSWORD, CREATEPLAYER, CONFIRMPASSWORD, GETPASSWORD
+from utils.defines import GETNEWUSERNAME
+
+#from utils.defines import ECHO, NOECHO
 
 import utils.gameutils
 import character.functions
@@ -34,9 +40,7 @@ def askUsername(player):
     
     Ask user for a username.
     """
-    from utils.gameutils import welcomeScreen
-    
-    player.transport.write(welcomeScreen)
+
     player.transport.write("{0}Enter your login or type 'new':{1} ".format(YELLOW, WHITE))
     
     
@@ -53,12 +57,55 @@ def getUsername(player, line):
         askUsername(player)
         return  
     
-    from character.players import AllPlayers                    
-    player.name = line[:1].upper() + line[1:]
-    if player.name in AllPlayers.keys():
-        player.sendLine("Name already exists, please try again.")
-        askUsername(player)
-        return          
+    if player.status is LOGIN:
+        # If "new", create new player. TODO: Setup the new character creation functionality 
+        if line.lower() == "new":
+            player.status = CREATEPLAYER
+            createPlayer(player)
+            return
+    
+    from character.players import AllPlayers               
+
+    # Check to see if the player's name is already connected.
+    for name in AllPlayers.keys():
+        if line.lower() in name.lower():
+            player.sendLine("User is already connected, please try again.")
+            askUsername(player)
+            return
+    
+    # See if player exists in database.
+    if player.status is LOGIN:
+        if utils.gameutils.userCheck(line):
+            player.name = line
+            player.loadPlayer()
+            player.status = GETPASSWORD
+            player.transport.write("Enter your password: ")
+            return
+        else:
+            player.sendLine("Username entered does not exist, please try again.")
+            askUsername(player)
+            return
+        
+    elif player.status is GETNEWUSERNAME:
+        # name can't be "new"
+        if line.lower() == "new":
+            player.sendLine("Invalid name, please try again.")
+            player.status = LOGIN
+            askUsername(player)
+            return  
+             
+        if not utils.gameutils.userCheck(line):
+            player.name = line[:1].upper() + line[1:]
+            player.status = GETNEWPASSWORD
+            # Disable local echo to not show passwords being typed.
+            #player.transport._dont(ECHO)
+            askPlayerPassword(player)
+            return
+        else:
+            character.communicate.sendToPlayer(player, "Username already exist, please try again.")
+            player.status = LOGIN
+            askUsername(player)
+            return
        
     logger.gamelogger.logger.log.info( "{0} just logged in.".format(player) )
     player.status = GETCLASS
@@ -83,7 +130,9 @@ def askClass(player):
   
     
 def getClass(player, line):
-    
+    """
+    Get's the player's choice of character class.
+    """    
 
     if line == "" or not line.isdigit():
         player.sendLine("Invalid choice, please try again.")
@@ -111,53 +160,84 @@ def getClass(player, line):
         askClass(player)
         return
     
-
-
     
-def loadPlayer(player, name):
+def getPasswd(player, line):
     """
-    Loads player from the database.  If not exist, 
-    return False.
+    Get new password from player.
     """
+      
+    status = player.status
+    
+    if line == "" and status is GETNEWPASSWORD:
+        character.communicate.sendToPlayer(player, "Blank passwords not allowed, please try again.")
+        player.transport.write("Enter your password: ")   
+        return
+    
+    if status == GETPASSWORD:
+        if player.getAttr(PLAYERPASSWD) == utils.gameutils.hashPassword(line):
+            player.savePlayer()
+            player.status = GETCLASS
+            askClass(player)
+        else:
+            character.communicate.sendToPlayer(player, "Password incorrect, please try again.")
+            player.transport.write("Enter your password: ")
+            return
         
-    from logger.gamelogger import logger
-        
-    sql = """SELECT id,
-                    name,
-                    passwd,
-                    totalkills,
-                    totaldeaths,
-                    highestkillstreak,
-                    visits,
-                    adminlevel,
-                    created,
-                    lastvisit FROM players where name = {0} COLLATE NOCASE;""".format(name)
+    if status is GETNEWPASSWORD:
+        player.newpasswd = utils.gameutils.hashPassword(line)
+        player.status = CONFIRMPASSWORD
+        askPlayerPassword(player)
+        return
+    
+    elif status is CONFIRMPASSWORD:
+        if player.newpasswd == utils.gameutils.hashPassword(line):
+            player.setAttr(PLAYERPASSWD, player.newpasswd)
+            # After passwords entered, reenable local echo.
+            #player.transport._do(ECHO)
             
-    try:
-        conn = sqlite3.connect(os.path.join("data", "players.db"), detect_types=sqlite3.PARSE_DECLTYPE)
-        cursor = conn.cursor()
-        cursor.execute(sql)
+            # If player is being created, ask for class next.
+            if player.getAttr(PLAYERID) is 0:
+                player.status = GETCLASS
+                player.createPlayer()
+                askClass(player)
+                return
+            # Otherwise just change their passwords.
+            else:
+                character.communicate.sendToPlayer("Password changed.")
+                player.status = PURGATORY
+                player.savePlayer()
+        else:
+            player.status = GETNEWPASSWORD
+            player.sendLine("Passwords did not match, please try again.")
+            askPlayerPassword(player)
+            return
+                
+        
             
-        results = cursor.fetchall()
+def askPlayerPassword(player):
+    """
+    Ask player for new password.
+    """
     
-    except:
-        logger.log.critical("Database errors using: players.db")
+    status = player.status
+    
+    if status is GETNEWPASSWORD:
+        player.transport.write("Enter new password: ")
+        return
+    elif status is CONFIRMPASSWORD:
+        player.transport.write("Confirm new password: ")
         
     
-    if len(results) is 0:
-        return False
     
-    else:
-        player.setAttr(PLAYERID, row[0])
-        player.name = str(row[1])
-        player.setAttr(PLAYERPASSWD, str(row[2]))
-        player.setAttr(TOTALKILLS, row[3])
-        player.setAttr(TOTALDEATHS, row[4])
-        player.setAttr(HIGHKILLSTREAK, row[5])
-        player.setAttr(PLAYERVISITS, row[6])
-        player.setAttr(ADMIN, row[7])
-        player.setAttr(PLAYERCREATED, row[8])
-        player.setAttr(PLAYERLASTVISIT, row[9])
-                       
+def createPlayer(player):
+    """
+    Create new player.
+    """
+    
+    status = player.status
+    
+    player.transport.write("Enter a new username: ")
+    player.status = GETNEWUSERNAME
+    return
     
     

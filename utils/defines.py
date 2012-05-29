@@ -61,11 +61,16 @@ DIRLOOKUP      = { "n":    1,
                  }
 
 #  Player status defines
-LOGIN = 0
-PLAYING = 1 
-GETCLASS = 2
+LOGIN                  = 0
+PLAYING                = 1 
+GETCLASS               = 2
+CREATEPLAYER           = 3
+GETNEWUSERNAME         = 4
+GETPASSWORD            = 5
+GETNEWPASSWORD         = 6
+CONFIRMPASSWORD        = 7
 
-PURGATORY = 10
+PURGATORY              = 10
 
 
 # Magic types
@@ -202,3 +207,6 @@ SAVECUR            = chr(27) + "s"
 RESTORECUR         = chr(27) + "u"
 DELETELEFT         = chr(27) + "[1K"
 CLEARSCREEN        = chr(27) + "[2J"
+
+NOECHO             = chr(131)
+ECHO               = chr(132)

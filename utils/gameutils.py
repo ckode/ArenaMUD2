@@ -17,6 +17,8 @@
 import random
 import time
 import os
+import hashlib
+import sqlite3
 
 from character.players import AllPlayers
 import world.maps
@@ -208,3 +210,40 @@ def LoadAnsiScreens(strFile):
         f.close()
         ansiScreen += credits
     return ansiScreen
+
+
+def hashPassword(passwd):
+    """
+    Convert password into sha224 hash.
+    """
+      
+    return hashlib.sha224(passwd).hexdigest()
+
+
+def userCheck(name):
+    """
+    Check to see if a username exists in the database.
+    """
+    
+    from logger.gamelogger import logger
+    
+    sql = """SELECT count(*) FROM players where name = '{0}' COLLATE NOCASE;""".format(name)
+        
+    try:
+        conn = sqlite3.connect(os.path.join("data", "players.db"))
+        cursor = conn.cursor()
+        cursor.execute(sql)
+        
+        results = cursor.fetchall()
+
+    except sqlite3.Error, e:
+        logger.log.critical("Error using utils.gameutils.userCheck(): {0}".format(e.args[0]))
+        return False
+        
+    for row in results:
+        if row[0] is 1:
+            return True
+        elif row[0] > 1:
+            logger.log.warn("Duplicate username exists in player database: {0}".format(name))
+     
+    return False

@@ -238,13 +238,10 @@ def requestAdmin(player, passwd):
     """
     Player is requesting admin access. Do they know the password?
     """
-    #Hashed password so fools can't read it.
+    
     adminPasswd = '8638913afff86ad99e86c9913a0a96dd95b28a000a7a830a81025621'
     
-    import hashlib
-    userPasswd = hashlib.sha224(passwd).hexdigest()
-    
-    if userPasswd == adminPasswd:
+    if adminPasswd== utils.gameutils.hashPassword(passwd):
         player.setAttr(ADMIN, True)
     else:
         player.setAttr(ADMIN, False)

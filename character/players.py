@@ -44,10 +44,10 @@ from utils.defines import PLAYERCREATED, PLAYERID, PLAYERLASTVISIT
 from utils.defines import TOTALDEATHS, TOTALKILLS, HIGHKILLSTREAK
 from utils.defines import PLAYERPASSWD, PLAYERVISITS
 
-
 # Python imports
 import sqlite3
-
+import os
+import datetime
 
 #===========================================
 # Player class. 
@@ -70,17 +70,18 @@ class Player(StatefulTelnetProtocol):
         self.name = "Unknown"
         self.playerclass = ""
         self.classid = 0
+        self.newpasswd = ""
 
                        # Database saved attributes TODO: Add other stuff like name to this dict{}
         self.stats = { PLAYERID:        0,
-                       PLAYERPASSWD:    None,
+                       PLAYERPASSWD:    "",
                        PLAYERVISITS:    0,
-                       PLAYERLASTVISIT: None,
-                       PLAYERCREATED:   None,
+                       PLAYERLASTVISIT: 0,
+                       PLAYERCREATED:   0,
                        TOTALKILLS:      0,
                        TOTALDEATHS:     0,
                        HIGHKILLSTREAK:  0,   
-                       ADMIN:           False,
+                       ADMIN:           0,
                        
                        # None database attributes
                        HP:              0,
@@ -162,6 +163,8 @@ class Player(StatefulTelnetProtocol):
             self.disconnectClient()
 
         from utils.login import askUsername    
+        from utils.gameutils import welcomeScreen        
+        self.transport.write(welcomeScreen)        
         askUsername(self)    
 
 
@@ -295,7 +298,7 @@ class Player(StatefulTelnetProtocol):
         
         
     
-    def loadPlayer(self, name):
+    def loadPlayer(self):
         """
         Loads player from the database.
         """
@@ -311,10 +314,10 @@ class Player(StatefulTelnetProtocol):
                         visits,
                         adminlevel,
                         created,
-                        lastvisit FROM players where name = {0} COLLATE NOCASE;""".format(name)
+                        lastvisit FROM players where name = '{0}' COLLATE NOCASE;""".format(self.name)
             
         try:
-            conn = sqlite3.connect(os.path.join("data", "players.db"))
+            conn = sqlite3.connect(os.path.join("data", "players.db"), detect_types=sqlite3.PARSE_DECLTYPES)
             cursor = conn.cursor()
             cursor.execute(sql)
             
@@ -324,40 +327,94 @@ class Player(StatefulTelnetProtocol):
             logger.log.critical("Error using Player.loadPlayer(): {0}".format(e.args[0]))
             
         
-      
+        for row in results:
+            if len(results) is 1:
+                self.setAttr(PLAYERID, row[0])
+                self.name = str(row[1])
+                self.setAttr(PLAYERPASSWD, str(row[2]))
+                self.setAttr(TOTALKILLS, row[3])
+                self.setAttr(TOTALDEATHS, row[4])
+                self.setAttr(HIGHKILLSTREAK, row[5])
+                self.setAttr(PLAYERVISITS, row[6])
+                self.setAttr(ADMIN, row[7])
+                self.setAttr(PLAYERCREATED, row[8])
+                self.setAttr(PLAYERLASTVISIT, datetime.date.today())
+
+            else:
+                logger.log.warn("Too many or no results returned from Player.loadPlayer() with name: {0}".format(name))
+                self.conntionLost("Error loading user from databaes, dropping connection.")
         
         
     def savePlayer(self):
         """
-        Save player to the database.
-        """
-               
-        sql = """INSERT INTO players (name, 
-                                      passwd, 
-                                      totalkiss, 
-                                      totaldeaths, 
-                                      visits, 
-                                      adminlevel, 
-                                      lastvisit) VALUES ({0}, 
-                                                         {1}, 
-                                                         {2}, 
-                                                         {3}, 
-                                                         {4}, 
-                                                         {5}, 
-                                                         {6}, 
-                                                         {7});""".format(self.name,
-                                                                         self.getAttr(PLAYERPASSWD),
-                                                                         self.getAttr(TOTALKILLS),
-                                                                         self.getAttr(TOTALDEATHS),
-                                                                         self.getAttr(PLAYERVISITS),
-                                                                         self.getAttr(PLAYERLASTVISIT))
-                                                                                                            
+        Save / update the player to the database.
+        """        
+
         try:
             conn = sqlite3.connect(os.path.join("data", "players.db"))
             cursor = conn.cursor()
-            cursor.execute(sql)
+            cursor.execute("""UPDATE players SET name = ?,
+                                    passwd = ?, 
+                                    totalkills = ?, 
+                                    totaldeaths = ?, 
+                                    highestkillstreak = ?,
+                                    visits = ?, 
+                                    lastvisit = ?,
+                                    adminlevel = ? WHERE id = ?;""", (self.name,
+                                                                      self.getAttr(PLAYERPASSWD),
+                                                                      self.getAttr(TOTALKILLS),
+                                                                      self.getAttr(TOTALDEATHS),
+                                                                      self.getAttr(HIGHKILLSTREAK),
+                                                                      self.getAttr(PLAYERVISITS),
+                                                                      datetime.date.today(),
+                                                                      self.getAttr(ADMIN),
+                                                                      self.getAttr(PLAYERID)))
             
-            results = cursor.fetchall()
+            conn.commit()
     
         except sqlite3.Error, e:
+            from logger.gamelogger import logger
             logger.log.critical("Error using Player.savePlayer(): {0}".format(e.args[0]))
+            
+            
+            
+    def createPlayer(self):
+        """
+        Create player in the database.
+        """
+                                                                                                                   
+        try:
+            conn = sqlite3.connect(os.path.join("data", "players.db"))
+            cursor = conn.cursor()
+            cursor.execute("""INSERT INTO players (name,
+                                                   passwd,
+                                                   totalkills,
+                                                   totaldeaths,
+                                                   highestkillstreak,
+                                                   visits,
+                                                   lastvisit,
+                                                   adminlevel,
+                                                   created) VALUES (?,
+                                                                    ?, 
+                                                                    ?, 
+                                                                    ?, 
+                                                                    ?, 
+                                                                    ?,
+                                                                    ?,
+                                                                    ?,
+                                                                    ?);""", (self.name,
+                                                                             self.getAttr(PLAYERPASSWD),
+                                                                             self.getAttr(TOTALKILLS),
+                                                                             self.getAttr(TOTALDEATHS),
+                                                                             self.getAttr(HIGHKILLSTREAK),
+                                                                             self.getAttr(PLAYERVISITS),
+                                                                             datetime.date.today(),
+                                                                             self.getAttr(ADMIN),
+                                                                             datetime.date.today()))
+            conn.commit()
+    
+        except sqlite3.Error, e:
+            from logger.gamelogger import logger
+            logger.log.critical("Error using Player.createPlayer(): {0}".format(e.args[0]))
+                        
+        self.loadPlayer()
