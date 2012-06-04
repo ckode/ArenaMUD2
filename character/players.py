@@ -385,14 +385,11 @@ class Player(StatefulTelnetProtocol):
         Call _playerSave() using a deferred.
         """
         
-        #self.d = defer.Deferred()
-        #self.d.addCallback(self._savePlayer())
-        #from logger.gamelogger import logger
-        #self.d.addErrback(logger.log.error("Failed to save player: {0}".format(self.name)))
+        self.d = defer.Deferred()
+        self.d.addCallback(self._savePlayer)
         from logger.gamelogger import logger
-        logger.log.debug("Saving player: {0}".format(self.name))        
-        self._savePlayer()             
-                     
+        self.d.addErrback(logger.log.error, "Failed to save player: {0}".format(self.name))
+
         
     def createPlayer(self):
         """
