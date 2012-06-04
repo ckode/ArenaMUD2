@@ -23,7 +23,7 @@ import sqlite3
 from character.players import AllPlayers
 import world.maps
 
-from utils.defines import PLAYING, SERVERVERSION, CLEARSCREEN
+from utils.defines import PLAYING, SERVERVERSION, CLEARSCREEN, PURGATORY
 from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
 from utils.defines import HP, MAXHP, RESTING, STEALTH
 from utils.defines import SPELLNAME
@@ -247,3 +247,18 @@ def userCheck(name):
             logger.log.warn("Duplicate username exists in player database: {0}".format(name))
      
     return False
+
+
+def saveAllPlayers():
+    """
+    Save all users.
+    """
+    
+    i = 0
+    
+    for player in AllPlayers.values():
+        if player.status is PLAYING or player.status is PURGATORY:
+            i += 1
+            player.save()
+    
+    logger.gamelogger.logger.log.debug("Saving {0} of {1} players.".format(i, len(AllPlayers)))

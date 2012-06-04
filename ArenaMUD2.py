@@ -33,7 +33,7 @@ import world.maps
 from combat.queue import CombatQueue
 from combat.functions import doCombatRound
 from utils.gameutils import restHealing, naturalHealing, doRoomSpells
-from utils.gameutils import doDurationEffectSpells
+from utils.gameutils import doDurationEffectSpells, saveAllPlayers
 import character.players
 import logger.gamelogger
 import character.classes
@@ -49,22 +49,39 @@ class SonzoFactory(ServerFactory):
         """Initialize any attributes the server needs"""
         self.combatQueue = CombatQueue()
         
+       
+    def TwoSecondLoop(self):
+        """
+        Run all events scheduled on a 2 second interval.
+        """
         
+       #doRoomSpells()
+        doDurationEffectSpells()
+     
     def FourSecondLoop(self):
+        """
+        Run all events scheduled on a 4 second interval.
+        """
+
         # Do rest healing.
         restHealing()
         # Do combat round
         doCombatRound(self.combatQueue)  
-
-        
+       
     def FifteenSecondLoop(self):
+        """
+        Run all events scheduled on a 15 second interval.
+        """
+
         naturalHealing()
 
-        
-    def TwoSecondLoop(self):
-#        doRoomSpells()
-        doDurationEffectSpells()
-        pass
+    def SixtySecondLoop(self):
+        """
+        Run all events scheduled on a 60 second interval.
+        """
+
+        saveAllPlayers()
+    
 
 #============================================
 # Start Game
@@ -101,6 +118,10 @@ def startup():
     # 15 Second Loop
     FifteenSecondLoop = LoopingCall(factory.FifteenSecondLoop)
     FifteenSecondLoop.start(15)
+     
+    # 60 Second Loop
+    SixtySecondLoop = LoopingCall(factory.SixtySecondLoop)
+    SixtySecondLoop.start(60)    
     
     reactor.run()
 

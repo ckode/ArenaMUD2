@@ -175,7 +175,7 @@ def getPasswd(player, line):
     
     if status == GETPASSWORD:
         if player.getAttr(PLAYERPASSWD) == utils.gameutils.hashPassword(line):
-            player.savePlayer()
+            player.save()
             player.status = GETCLASS
             askClass(player)
         else:
@@ -205,7 +205,7 @@ def getPasswd(player, line):
             else:
                 character.communicate.sendToPlayer("Password changed.")
                 player.status = PURGATORY
-                player.savePlayer()
+                player.save()
         else:
             player.status = GETNEWPASSWORD
             player.sendLine("Passwords did not match, please try again.")

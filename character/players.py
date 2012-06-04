@@ -19,6 +19,7 @@ AllPlayers = {}
 
 # Twisted imports
 from twisted.conch.telnet import StatefulTelnetProtocol
+from twisted.internet import defer
 
 # ArenaMUD2 imports
 
@@ -345,7 +346,7 @@ class Player(StatefulTelnetProtocol):
                 self.conntionLost("Error loading user from databaes, dropping connection.")
         
         
-    def savePlayer(self):
+    def _savePlayer(self):
         """
         Save / update the player to the database.
         """        
@@ -374,10 +375,25 @@ class Player(StatefulTelnetProtocol):
     
         except sqlite3.Error, e:
             from logger.gamelogger import logger
-            logger.log.critical("Error using Player.savePlayer(): {0}".format(e.args[0]))
-            
-            
-            
+            logger.log.critical("Error using Player._savePlayer(): {0}".format(e.args[0]))
+            return False
+         
+        return True   
+ 
+    def save(self):
+        """
+        Call _playerSave() using a deferred.
+        """
+        
+        #self.d = defer.Deferred()
+        #self.d.addCallback(self._savePlayer())
+        #from logger.gamelogger import logger
+        #self.d.addErrback(logger.log.error("Failed to save player: {0}".format(self.name)))
+        from logger.gamelogger import logger
+        logger.log.debug("Saving player: {0}".format(self.name))        
+        self._savePlayer()             
+                     
+        
     def createPlayer(self):
         """
         Create player in the database.
