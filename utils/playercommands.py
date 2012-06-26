@@ -243,18 +243,29 @@ def requestAdmin(player, passwd):
     
     if adminPasswd== utils.gameutils.hashPassword(passwd):
         player.setAttr(ADMIN, True)
-        character.communicate.sendToPlayer( player, "{0}-*** {1}Access Level raised to Administrator {2}***-{3}".format(LRED, YELLOW, LRED, WHITE))
+        character.communicate.sendToPlayer( player, "{0}*** {1}Access Level raised to Administrator {2}***{3}".format(LRED, YELLOW, LRED, WHITE))
     else:
         player.setAttr(ADMIN, False)
+        character.communicate.sendToPlayer( player, "{0}*** {1}Access Denied {2}***{3}".format(LRED, YELLOW, LRED, WHITE))
         
     player.statLine()
     
 def showSpells(player):
     """
-    shows the players a little about the spells they possess.
+    shows the players a little about the spells/skills they possess.
     """
     spellList = world.maps.World.CastableSpells
+    hasSpells = False
     
+    #if the player has no spells, then just say so and return
+    for each in spellList.keys():
+        if spellList[each].getAttr(SCLASS) is player.classid:
+            hasSpells = True
+    
+    if hasSpells is False:
+        character.communicate.sendToPlayer( player, "{0}No Spells or Skills are available to your class!{1}".format(LMAGENTA, WHITE) )
+        return
+            
     character.communicate.sendToPlayer( player, "{0}<<-=-=-=-=-=-=-=-=-=-=-= {1}Spells / Skills{0} -=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN, LMAGENTA) )
     character.communicate.sendToPlayer( player, "{0}    Spell/Skill         Mnemonic     Duration     Cooldown".format(LGREEN) )
     character.communicate.sendToPlayer( player, "{0}<<------------------------------------------------------------->>".format(LCYAN))

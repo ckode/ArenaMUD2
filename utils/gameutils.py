@@ -29,6 +29,7 @@ from utils.defines import HP, MAXHP, RESTING, STEALTH
 from utils.defines import SPELLNAME
 import character.communicate
 import logger.gamelogger
+import config.gameconfig
 
 #global variable holds the motd file contents
 welcomeScreen = None
@@ -195,8 +196,9 @@ def LoadAnsiScreens(strFile):
     date = time.localtime()
     year = date[0]
     strPath = os.path.join("data", strFile)
+    serverName = config.gameconfig.GameConfig.name
     
-    credits = ("{0}Welcome to ArenaMUD2 {1} - (C){2} SonzoSoft Software\n\rWritten By David C. Brown and Mark Richardson{3}\n\r".format(LRED, SERVERVERSION, year, WHITE))
+    credits = ("{0}Welcome to {1}{2}{3} - running ArenaMUD2 {4}\n\r(C){5} SonzoSoft Software - David C. Brown and Mark Richardson{6}\n\r".format(LGREEN, LRED, serverName, LGREEN, SERVERVERSION, year, WHITE))
         
     try:
         f = open(strPath,'rb')

@@ -21,7 +21,7 @@ from utils.defines import BLUE, WHITE, YELLOW, CYAN, LRED, SERVERVERSION
 from utils.defines import PLAYERID, TOTALKILLS, TOTALDEATHS, ADMIN, HIGHKILLSTREAK
 from utils.defines import PLAYERVISITS, PLAYERLASTVISIT, PLAYERCREATED, PLAYERPASSWD
 from utils.defines import GETNEWPASSWORD, CREATEPLAYER, CONFIRMPASSWORD, GETPASSWORD
-from utils.defines import GETNEWUSERNAME
+from utils.defines import GETNEWUSERNAME, CLEARSCREEN
 
 #from utils.defines import ECHO, NOECHO
 
@@ -120,7 +120,7 @@ def askClass(player):
     
     Ask user for a username.
     """
-    player.sendLine("Choose your class.")
+    player.sendLine("{0}Choose your class.".format(CLEARSCREEN))
     for each in character.classes.Classes.keys():
         player.sendLine(" - {0}) {1}".format(each, character.classes.Classes[each].name))
         

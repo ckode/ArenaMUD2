@@ -216,6 +216,7 @@ def GameParser(player, line):
                 return
             elif each == "admin" and len(cmd) > 1 and len(cmd[0]) > 2:
                 utils.playercommands.requestAdmin(player, line[(len(cmd[0]) + 1):])
+                return
             elif each == "spells" and len(cmd) == 1 and len(cmd[0]) == 6:
                 commands[each](player)            
                 return          

@@ -16,7 +16,7 @@
 
 # Server Version, should be maybe the commit number? something
 # besides NoDamnVersion anyhow.
-SERVERVERSION      = '0.6.7'
+SERVERVERSION      = '0.6.8'
 
 # Directions
 NORTH              = 1
