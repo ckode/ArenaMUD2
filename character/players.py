@@ -82,7 +82,7 @@ class Player(StatefulTelnetProtocol):
                        TOTALKILLS:      0,
                        TOTALDEATHS:     0,
                        HIGHKILLSTREAK:  0,   
-                       ADMIN:           0,
+                       ADMIN:           False,
                        
                        # None database attributes
                        HP:              0,
@@ -159,8 +159,8 @@ class Player(StatefulTelnetProtocol):
         # Check for max players 
         from config.gameconfig import GameConfig
         if len(AllPlayers) >= GameConfig.maxplayers:
-            logger.gamelogger.logger.log.info("To many connected.  Refusing new client: {0}".format(self.IP))
-            self.sendLine(player, "Too many connections, try again later.")
+            logger.gamelogger.logger.log.info("Too many connected.  Refusing new client: {0}".format(self.IP))
+            self.sendLine(player, "Too many connections, try again later...")
             self.disconnectClient()
 
         from utils.login import askUsername    

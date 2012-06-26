@@ -17,9 +17,9 @@
 from utils.defines import WHITE, RED, BROWN, YELLOW, BLUE, B_YELLOW, B_BLACK, B_BLUE
 from utils.defines import LMAGENTA, LCYAN, LRED, LGREEN, B_RED
 from utils.defines import DIRS, NORTH, NE, EAST, SE
-from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN
-from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS
-from utils.defines import PLAYING, PURGATORY
+from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN, MNEMONIC
+from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS, COOLDOWN
+from utils.defines import PLAYING, PURGATORY, SCLASS, SPELLNAME, DURATION
 from utils.defines import BLIND, KILLS, DEATHS, SNEAKING, ADMIN
 
 import character.communicate    
@@ -243,7 +243,26 @@ def requestAdmin(player, passwd):
     
     if adminPasswd== utils.gameutils.hashPassword(passwd):
         player.setAttr(ADMIN, True)
+        character.communicate.sendToPlayer( player, "{0}-*** {1}Access Level raised to Administrator {2}***-{3}".format(LRED, YELLOW, LRED, WHITE))
     else:
         player.setAttr(ADMIN, False)
         
     player.statLine()
+    
+def showSpells(player):
+    """
+    shows the players a little about the spells they possess.
+    """
+    spellList = world.maps.World.CastableSpells
+    
+    character.communicate.sendToPlayer( player, "{0}<<-=-=-=-=-=-=-=-=-=-=-= {1}Spells / Skills{0} -=-=-=-=-=-=-=-=-=-=-=>>".format(LCYAN, LMAGENTA) )
+    character.communicate.sendToPlayer( player, "{0}    Spell/Skill         Mnemonic     Duration     Cooldown".format(LGREEN) )
+    character.communicate.sendToPlayer( player, "{0}<<------------------------------------------------------------->>".format(LCYAN))
+    
+    for each in spellList.keys():
+        if spellList[each].getAttr(SCLASS) is player.classid:
+            character.communicate.sendToPlayer(player, "{0}    {1:<20}{2}{3:<13}{4}{5:^13}{6}{7:^5}".format(LMAGENTA, spellList[each].getAttr(SPELLNAME), YELLOW, spellList[each].getAttr(MNEMONIC), LMAGENTA, str(spellList[each].getAttr(DURATION)), str(spellList[each].getAttr(COOLDOWN)), WHITE) )
+            
+            
+    character.communicate.sendToPlayer( player, "{0}<<-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->>{1}".format(LCYAN, WHITE ))
+    player.statLine()    
