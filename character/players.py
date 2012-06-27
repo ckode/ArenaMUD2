@@ -346,7 +346,7 @@ class Player(StatefulTelnetProtocol):
                 self.conntionLost("Error loading user from databaes, dropping connection.")
         
         
-    def _savePlayer(self):
+    def save(self):
         """
         Save / update the player to the database.
         """        
@@ -379,16 +379,6 @@ class Player(StatefulTelnetProtocol):
             return False
          
         return True   
- 
-    def save(self):
-        """
-        Call _playerSave() using a deferred.
-        """
-        
-        self.d = defer.Deferred()
-        self.d.addCallback(self._savePlayer)
-        from logger.gamelogger import logger
-        self.d.addErrback(logger.log.error, "Failed to save player: {0}".format(self.name))
 
         
     def createPlayer(self):
