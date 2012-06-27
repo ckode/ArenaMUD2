@@ -25,7 +25,7 @@ import world.maps
 
 from utils.defines import PLAYING, SERVERVERSION, CLEARSCREEN, PURGATORY
 from utils.defines import CYAN, YELLOW, LRED, BLUE, LGREEN, BLUE, WHITE
-from utils.defines import HP, MAXHP, RESTING, STEALTH
+from utils.defines import HP, MAXHP, RESTING, STEALTH, GREEN
 from utils.defines import SPELLNAME
 import character.communicate
 import logger.gamelogger
@@ -198,7 +198,7 @@ def LoadAnsiScreens(strFile):
     strPath = os.path.join("data", strFile)
     serverName = config.gameconfig.GameConfig.name
     
-    credits = ("{0}Welcome to {1}{2}{3} - running ArenaMUD2 {4}\n\r(C){5} SonzoSoft Software - David C. Brown and Mark Richardson{6}\n\r".format(LGREEN, LRED, serverName, LGREEN, SERVERVERSION, year, WHITE))
+    credits = ("{0}Welcome to {1}{2}{3}. Running {4}ArenaMUD2 v.{5}{6}\n\r(C){7} SonzoSoft Software - David C. Brown and Mark Richardson{8}\n\r".format(LGREEN, LRED, serverName, LGREEN, LRED, SERVERVERSION, LGREEN, year, WHITE))
         
     try:
         f = open(strPath,'rb')

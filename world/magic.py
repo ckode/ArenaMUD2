@@ -272,8 +272,8 @@ class PlayerSpells:
                             else:
                                 combat.function.applyKillStats(_victim)
                                 
-                        combat.functions.playerKilled(_victim)                 
-                        _victim.statLine()
+                            combat.functions.playerKilled(_victim)                 
+                            _victim.statLine()
                     
                 elif stat is DISSPELL:
                     # Call DISSPELL

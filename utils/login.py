@@ -120,11 +120,11 @@ def askClass(player):
     
     Ask user for a username.
     """
-    player.sendLine("{0}Choose your class.".format(CLEARSCREEN))
+    player.sendLine("{0}{1}Choose your class:".format(CLEARSCREEN, YELLOW))
     for each in character.classes.Classes.keys():
-        player.sendLine(" - {0}) {1}".format(each, character.classes.Classes[each].name))
+        player.sendLine("  {0}{1}{2}) {3}{4}".format(CYAN, each, YELLOW, WHITE, character.classes.Classes[each].name))
         
-    player.transport.write("\r\nEnter your choice: ")
+    player.transport.write("{0}\r\nEnter your choice:{1} ".format(YELLOW, WHITE))
   
   
   
