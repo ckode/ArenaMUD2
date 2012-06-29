@@ -16,7 +16,7 @@
 
 # Server Version, should be maybe the commit number? something
 # besides NoDamnVersion anyhow.
-SERVERVERSION      = '0.6.9'
+SERVERVERSION      = '0.6.10'
 
 # Directions
 NORTH              = 1
@@ -90,6 +90,9 @@ AREADISSPELL           = 9
 
 ROOMSPELL              = 10
 
+MOVERATE        = .5
+SLOWMOVERATE    = .75
+
 SPELLID         = 0
 STYPE           = 1
 SCLASS          = 2
@@ -141,6 +144,7 @@ TOTALKILLS        = 29
 TOTALDEATHS       = 30
 HIGHKILLSTREAK    = 31
 PLAYERPASSWD      = 32
+SLOWED            = 33
 
 # Spell text identifiers
 YOU              = 0

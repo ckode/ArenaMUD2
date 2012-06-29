@@ -43,7 +43,7 @@ from utils.defines import KILLSTREAK, STUN, HELD, DODGE
 from utils.defines import BS_MULTIPLIER, ADMIN, PLAYERPASSWD
 from utils.defines import PLAYERCREATED, PLAYERID, PLAYERLASTVISIT
 from utils.defines import TOTALDEATHS, TOTALKILLS, HIGHKILLSTREAK
-from utils.defines import PLAYERPASSWD, PLAYERVISITS
+from utils.defines import PLAYERPASSWD, PLAYERVISITS, SLOWED
 
 # Python imports
 import sqlite3
@@ -108,7 +108,8 @@ class Player(StatefulTelnetProtocol):
                        KILLSTREAK:      0,
                        RESTING:         False,
                        BS_MULTIPLIER:   0,
-                       SNEAKING:        False
+                       SNEAKING:        False,
+                       SLOWED:          0
                      }
 
         self.weaponText = {}

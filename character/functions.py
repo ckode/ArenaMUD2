@@ -39,7 +39,7 @@ from utils.defines import BONUSDAMAGE, DAMAGEABSORB
 from utils.defines import KILLS, DEATHS, SNEAKING
 from utils.defines import MAXDAMAGE, MINDAMAGE, RESTING
 from utils.defines import MOVING, DODGE, BS_MULTIPLIER, ADMIN
-
+from utils.defines import MOVERATE, SLOWMOVERATE, SLOWED
 
 def movePlayer(player, direction):
     """
@@ -76,7 +76,11 @@ def movePlayer(player, direction):
             sendToRoomNotPlayer(player, "{0} ran into the {1} wall!".format(player, DIRS[direction]))
             
     else:
-        moverate = .5
+        if player.getAttr(SLOWED):
+            moverate = SLOWMOVERATE
+        else:
+            moverate = MOVERATE
+            
         player.stats[MOVING] = True
         if player.getAttr(SNEAKING):
             sendToPlayer(player, "Sneaking...")
