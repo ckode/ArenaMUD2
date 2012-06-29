@@ -302,7 +302,7 @@ class PlayerSpells:
                     dmg = value[0]
                 if stat in DirectEffects:      
                     value = int(dmg)
-                    statvalue = _victim.getAttr(stat) + value
+                    statvalue = victim.getAttr(stat) + value
                     victim.setAttr(stat, statvalue)
                     self.displaySpellText(value)
                     if victim.getAttr(HP) < 1:
@@ -337,6 +337,9 @@ class PlayerSpells:
             return
          
         if len(cmd) is 2:
+            if self.getAttr(STYPE) in AREASPELLS:
+                character.communicate.sendToPlayer( player, "You cannot target an area spell.")
+                return
             vicName = cmd[1]
             victims = world.maps.World.mapGrid[player.room].findPlayerInRoom(player, vicName)
             if not victims:
