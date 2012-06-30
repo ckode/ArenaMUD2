@@ -17,13 +17,14 @@
 import string
 
 
+
 def cleanPlayerInput(line):
     #Delete characters before backspaces
     pos = 0
     lineSize = len(line)
     newline = ""
     for character in line:
-        if character == chr(0x08):
+        if character == chr(0x08) or character == '\t':
             newline = newline[:-1]
         else:
             newline += character
