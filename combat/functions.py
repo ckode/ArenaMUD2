@@ -97,7 +97,7 @@ def doAttack(player, victim):
                 
             dmg += damageAdjustment(player, victim)
             displayDamage(player, victim, dmg, crit)
-            vampiricHealTouch(player, victim, dmg)
+            doPassiveCombatDamage(player, victim, dmg)
             player.setAttr(SNEAKING, False)
             victim.stats[HP] = victim.stats[HP] - dmg
             if victim.stats[HP] < 1:
@@ -272,7 +272,10 @@ def damageAdjustment(player, victim):
       
     return player.stats[BONUSDAMAGE] - victim.stats[DAMAGEABSORB]
 
-def vampiricHealTouch(player, victim, damage):
+
+
+
+def doPassiveCombatDamage(player, victim, damage):
     """
     Take victim damage and gives it back
     to attacker. (for Necros)
