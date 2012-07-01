@@ -100,7 +100,8 @@ commands = { '/quit':            "",
              'sneak':            "",
              'reloadspells':     "",
              'admin':            "",
-             'spells':           showSpells
+             'spells':           showSpells,
+             'whois':            ""
            }
 
 def GameParser(player, line):
@@ -219,7 +220,10 @@ def GameParser(player, line):
                 return
             elif each == "spells" and len(cmd) == 1 and len(cmd[0]) == 6:
                 commands[each](player)            
-                return          
+                return      
+            elif each == "whois" and len(cmd) == 2:
+                utils.playercommands.whoIs(player, cmd[1])
+                return
             
             
     from character.communicate import say

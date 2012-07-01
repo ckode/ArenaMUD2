@@ -20,10 +20,11 @@ from utils.defines import DIRS, NORTH, NE, EAST, SE
 from utils.defines import SOUTH, SW, WEST, NW, UP, DOWN, MNEMONIC
 from utils.defines import DIRLOOKUP, DIRS, OPPOSITEDIRS, COOLDOWN
 from utils.defines import PLAYING, PURGATORY, SCLASS, SPELLNAME, DURATION
-from utils.defines import BLIND, KILLS, DEATHS, SNEAKING, ADMIN
+from utils.defines import BLIND, KILLS, DEATHS, SNEAKING, ADMIN, TOTALKILLS
 
 import character.communicate    
 import character.functions
+import character.players
 import combat.functions
 import world.maps
 import utils.gameutils
@@ -277,3 +278,19 @@ def showSpells(player):
             
     character.communicate.sendToPlayer( player, "{0}<<-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=->>{1}".format(LCYAN, WHITE ))
     player.statLine()    
+    
+    
+    
+def whoIs(player, Name):
+    """
+    Look up a players information and display it.
+    """
+    
+    #allplayers = character.players.AllPlayers
+              
+    for name, found in character.players.AllPlayers.items():
+        if name.lower() == Name.lower():
+            character.communicate.sendToPlayer(player, "{0} {1}".format(found.name, found.getAttr(TOTALKILLS)))
+            return 
+        
+    character.communicate.sendToPlayer(player, "Player {0} not found.  You must type the complete name.".format(Name))

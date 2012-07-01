@@ -24,7 +24,7 @@ import utils.gameutils
 
 from utils.defines import YOUHIT, YOUMISS, VICTIMHIT, VICTIMMISS, PURGATORY
 from utils.defines import ROOMHIT, ROOMMISS, PLAYING, BROWN, WHITE, RED, BLUE, LRED
-from utils.defines import HP, MAXHP, POWER, MAXPOWER
+from utils.defines import HP, MAXHP, POWER, MAXPOWER, TOTALKILLS, TOTALDEATHS
 from utils.defines import BLIND, HELD, STEALTH, VISION
 from utils.defines import ATTACKS, ATTKSKILL, CRITICAL
 from utils.defines import DAMAGEABSORB, BONUSDAMAGE
@@ -244,11 +244,13 @@ def applyKillStats(victim, **kwargs):
         killer = kwargs['killer']
         killer.setAttr(KILLS, killer.getAttr(KILLS) + 1)
         killer.setAttr(KILLSTREAK, killer.getAttr(KILLSTREAK) + 1)
+        killer.setAttr(TOTALKILLS, killer.getAttr(TOTALKILLS) + 1)
         if killer.getAttr(KILLSTREAK) > killer.getAttr(HIGHKILLSTREAK):
             killer.setAttr(HIGHKILLSTREAK, killer.getAttr(KILLSTREAK))
       
     victim.setAttr(KILLSTREAK, 0)
     victim.setAttr(DEATHS, victim.getAttr(DEATHS) + 1)
+    victim.setAttr(TOTALDEATHS, victim.getAttr(TOTALDEATHS) + 1)
 
 
 def clearAttacksPlayerDead(victim):
